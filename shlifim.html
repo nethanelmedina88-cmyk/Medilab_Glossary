@@ -421,6 +421,41 @@ html.dark .bio-decor{opacity:.12}
 .stat-card::after{content:'✦';position:absolute;top:4px;left:6px;font-size:10px;color:var(--blue);opacity:.4}
 .sc-card{position:relative}
 .sc-card::after{content:'✦';position:absolute;top:4px;left:6px;font-size:10px;color:var(--blue-dark);opacity:.3}
+
+/* ============ GLOSSARY VIEW ============ */
+.gloss-wrap{padding:8px 16px 20px}
+.gloss-summary{display:flex;align-items:center;gap:12px;background:linear-gradient(135deg,var(--blue-soft),var(--green-soft));border:2px solid var(--line);border-radius:var(--r);padding:14px 16px;margin-bottom:16px;position:relative;overflow:hidden}
+.gloss-summary svg{width:36px!important;height:36px!important;flex-shrink:0}
+.gloss-summary-num{font-family:'Fredoka','Heebo',sans-serif;font-size:26px;font-weight:700;color:var(--blue-dark);line-height:1}
+.gloss-summary-lbl{font-size:13px;font-weight:600;color:var(--ink-soft);margin-top:2px}
+
+.gloss-letter-group{margin-bottom:14px}
+.gloss-letter-hdr{display:flex;align-items:center;gap:10px;margin-bottom:8px;padding:0 4px;position:sticky;top:0;background:var(--paper);z-index:5;padding:6px 4px}
+.gloss-letter-circle{font-family:'Fredoka','Heebo',sans-serif;font-size:22px;font-weight:700;width:42px;height:42px;border-radius:50%;background:var(--blue-dark);color:#fff;display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 2px 0 rgba(0,0,0,.12)}
+.gloss-letter-count{font-size:12px;font-weight:600;color:var(--ink-light)}
+
+.gloss-card{background:var(--paper-2);border:2px solid var(--line);border-radius:var(--r);padding:14px 16px;margin-bottom:8px;transition:border-color .15s,transform .1s;position:relative}
+.gloss-card:hover{border-color:var(--blue)}
+.gloss-card.is-studied{background:var(--green-soft);border-color:var(--green-dark)}
+html.dark .gloss-card.is-studied{background:rgba(92,184,92,0.12)}
+
+.gloss-card-hdr{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;margin-bottom:8px}
+.gloss-card-titles{flex:1;min-width:0}
+.gloss-card-heb{font-family:'Fredoka','Heebo',sans-serif;font-size:20px;font-weight:700;color:var(--ink);line-height:1.2;margin-bottom:2px}
+.gloss-card-eng{font-size:13px;font-weight:600;color:var(--ink-light);font-style:italic}
+.gloss-card-def{font-size:15px;font-weight:500;color:var(--ink-soft);line-height:1.65;letter-spacing:.1px}
+
+.gloss-card-actions{display:flex;gap:6px;flex-shrink:0}
+.gloss-act-btn{background:var(--paper);border:1.5px solid var(--line);width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:18px;font-weight:700;color:var(--ink-light);transition:all .15s;padding:0}
+.gloss-act-btn:hover{transform:scale(1.1);border-color:var(--blue)}
+.gloss-act-btn svg{width:18px!important;height:18px!important}
+.gloss-act-btn.fav-on{background:#fde8e6;border-color:#C44747}
+.gloss-act-btn.stud-on{background:var(--green);border-color:var(--green-dark);color:#fff}
+
+.gloss-hl{background:var(--yellow);color:var(--ink);padding:1px 3px;border-radius:3px;font-weight:700}
+html.dark .gloss-hl{background:#806b1f;color:#fff}
+
+/* Reset known-row alignment from buildFlash to not affect gloss */
 </style>
 
 <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-app-compat.js"></script>
@@ -504,7 +539,7 @@ const SVG_GIFT = `<svg viewBox="0 0 100 100" width="22" height="22" style="verti
 
 <script>
 // ===== STATE =====
-let mode = 'flash'; // 'flash' | 'quiz' | 'favs'
+let mode = 'glossary'; // 'glossary' | 'flash' | 'quiz' | 'favs' | 'about' | 'progress'
 let activeLetter = 'הכל';
 let searchQ = '';
 let cardIdx = 0;
@@ -725,7 +760,8 @@ function buildHeader(filtered){
 function buildControls(){
   const letters = getLetters();
   return `<div class="controls">
-    <div class="mode-toggle" style="grid-template-columns:1fr 1fr 1fr">
+    <div class="mode-toggle" style="grid-template-columns:1fr 1fr 1fr 1fr">
+      <button class="mode-btn ${mode==='glossary'?'on':''}" onclick="setMode('glossary')">${SVG_BOOK} <span>מילון</span></button>
       <button class="mode-btn ${mode==='flash'?'on':''}" onclick="setMode('flash')">${SVG_CARDS} <span>פלאש</span></button>
       <button class="mode-btn ${mode==='quiz'?'on':''}" onclick="setMode('quiz')">${SVG_TARGET} <span>מבחון</span></button>
       <button class="mode-btn ${mode==='about'?'on':''}" onclick="setMode('about')">${SVG_USER_BIO} <span>אודות</span></button>
@@ -743,6 +779,7 @@ function buildMain(filtered){
   if(mode==='favs') return buildFavs();
   if(mode==='about') return buildAbout();
   if(mode==='progress') return buildProgress();
+  if(mode==='glossary') return buildGlossary(filtered);
   if(!filtered.length) return `<div class="empty"><div class="empty-ico">${SVG_MICROSCOPE}</div><div>לא נמצאו מושגים</div></div>`;
   if(mode==='flash') return buildFlash(filtered);
   return buildQuiz(filtered);
@@ -882,6 +919,75 @@ function buildQuizQuestion(term, pool){
 }
 
 
+
+
+function buildGlossary(filtered){
+  if(!filtered.length){
+    return `<div class="empty"><div class="empty-ico">${SVG_MICROSCOPE}</div><div>לא נמצאו מושגים</div><div style="margin-top:6px;font-size:13px;font-weight:500">נסה אות אחרת או חיפוש שונה</div></div>`;
+  }
+  
+  // Group by letter
+  const byLetter = {};
+  filtered.forEach(t => {
+    if(!byLetter[t.letter]) byLetter[t.letter] = [];
+    byLetter[t.letter].push(t);
+  });
+  
+  const letters = Object.keys(byLetter);
+  const totalCount = filtered.length;
+  
+  return `<div class="gloss-wrap">
+    <div class="gloss-summary">
+      ${SVG_BOOK}
+      <div>
+        <div class="gloss-summary-num">${totalCount}</div>
+        <div class="gloss-summary-lbl">מושגים ${searchQ.trim()?`עבור "${searchQ.trim()}"`:activeLetter!=='הכל'?`באות ${activeLetter}`:'במילון'}</div>
+      </div>
+    </div>
+    ${letters.map(letter => `
+      <div class="gloss-letter-group">
+        <div class="gloss-letter-hdr">
+          <span class="gloss-letter-circle">${letter}</span>
+          <span class="gloss-letter-count">${byLetter[letter].length} מושגים</span>
+        </div>
+        ${byLetter[letter].map(t => {
+          const isFav = favorites.has(t.hebrew);
+          const isStudied = studied.has(t.hebrew);
+          const safeName = t.hebrew.replace(/'/g, "\\'");
+          return `
+            <div class="gloss-card ${isStudied?'is-studied':''}">
+              <div class="gloss-card-hdr">
+                <div class="gloss-card-titles">
+                  <div class="gloss-card-heb">${highlightText(t.hebrew, searchQ)}</div>
+                  <div class="gloss-card-eng">${highlightText(t.english, searchQ)}</div>
+                </div>
+                <div class="gloss-card-actions">
+                  <button class="gloss-act-btn ${isFav?'fav-on':''}" onclick="toggleFav('${safeName}')" title="${isFav?'הסר ממועדפים':'הוסף למועדפים'}">${isFav?SVG_HEART:SVG_HEART_OUTLINE}</button>
+                  <button class="gloss-act-btn ${isStudied?'stud-on':''}" onclick="toggleStudiedDirect('${safeName}')" title="${isStudied?'סמן כלא ידוע':'סמן כידוע לי'}">${isStudied?'✓':'○'}</button>
+                </div>
+              </div>
+              <div class="gloss-card-def">${highlightText(t.definition, searchQ)}</div>
+            </div>
+          `;
+        }).join('')}
+      </div>
+    `).join('')}
+  </div>`;
+}
+
+function toggleStudiedDirect(term){
+  if(studied.has(term)) studied.delete(term);
+  else studied.add(term);
+  saveStudied();
+  render();
+}
+
+function highlightText(text, q){
+  if(!q || !q.trim()) return text;
+  const query = q.trim();
+  const re = new RegExp('(' + query.replace(/[.*+?^${}()|[\\]\\\\]/g, '\\\\$&') + ')', 'gi');
+  return text.replace(re, '<mark class="gloss-hl">$1</mark>');
+}
 
 function buildProgress(){
   const total = GLOSSARY.length;
