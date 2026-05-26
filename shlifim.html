@@ -197,6 +197,39 @@ button{font-family:inherit;cursor:pointer}
 .user-zone .user-name{color:#fff;font-size:12px;font-weight:600;max-width:70px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .logout-btn{background:#fff;color:var(--blue-dark);border:none;width:26px;height:26px;border-radius:50%;font-size:14px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0;font-family:inherit;transition:background .15s}
 .logout-btn:hover{background:#fde8e6;color:#c44}
+
+/* PROGRESS PAGE */
+.prog-wrap-main{padding:16px}
+.prog-greeting{display:flex;align-items:center;gap:12px;margin-bottom:16px;background:linear-gradient(135deg,var(--blue-soft),var(--green-soft));border-radius:var(--r);padding:14px;border:1px solid var(--line)}
+.prog-greeting img{width:48px;height:48px;border-radius:50%;border:2px solid #fff}
+.prog-hello{font-family:'Fredoka',sans-serif;font-size:18px;font-weight:700;color:var(--ink)}
+.prog-sub{font-size:12px;color:var(--ink-soft)}
+.prog-card{background:var(--paper-2);border-radius:var(--r);border:1px solid var(--line);padding:14px 16px;margin-bottom:12px}
+.prog-card-big .prog-card-hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.prog-card-title{font-size:14px;font-weight:700;color:var(--ink)}
+.prog-card-pct{font-family:'Fredoka',sans-serif;font-size:22px;font-weight:700;color:var(--blue-dark)}
+.prog-card-bar{height:10px;background:rgba(0,0,0,.06);border-radius:5px;overflow:hidden;margin-bottom:10px}
+html.dark .prog-card-bar{background:rgba(255,255,255,.1)}
+.prog-card-fill{height:100%;background:linear-gradient(90deg,var(--blue),var(--blue-dark));border-radius:5px;transition:width .6s ease-out}
+.prog-fill-green{background:linear-gradient(90deg,var(--green),var(--green-dark))}
+.prog-card-stats{display:flex;justify-content:space-between;gap:8px;font-size:12px;color:var(--ink-soft)}
+.prog-card-stats div{text-align:center;flex:1}
+.prog-card-stats strong{display:block;font-family:'Fredoka',sans-serif;font-size:18px;color:var(--ink);font-weight:700}
+.prog-mini-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:14px}
+.prog-mini{background:var(--paper);border-radius:var(--r);border:1px solid var(--line);padding:12px 8px;text-align:center}
+.prog-mini-ico{font-size:22px;margin-bottom:4px}
+.prog-mini-num{font-family:'Fredoka',sans-serif;font-size:20px;font-weight:700;color:var(--blue-dark)}
+.prog-mini-lbl{font-size:11px;color:var(--ink-light)}
+.prog-actions{display:flex;flex-direction:column;gap:8px;margin-top:6px}
+.prog-empty{background:var(--paper);border:1px dashed var(--line);border-radius:var(--r);margin-bottom:14px}
+
+/* Clickable avatar button */
+.user-avatar-btn{background:none;border:none;padding:0;cursor:pointer;border-radius:50%;transition:transform .15s}
+.user-avatar-btn:hover{transform:scale(1.1)}
+.user-avatar-btn:active{transform:scale(0.95)}
+
+/* Quiz option needs to support longer text now (definitions) */
+.q-opt{line-height:1.5}
 </style>
 
 <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-app-compat.js"></script>
@@ -244,6 +277,12 @@ googleProvider.setCustomParameters({prompt: 'select_account'});
 let currentUser = null;
 let showUserMenu = false;
 let syncStatus = ''; // 'syncing' | 'synced' | ''
+let lifetimeStats = JSON.parse(localStorage.getItem('ml_stats') || '{"quizCorrect":0,"quizWrong":0,"quizTotal":0}');
+
+function saveLifetimeStats(){
+  localStorage.setItem('ml_stats', JSON.stringify(lifetimeStats));
+  if(currentUser) saveUserData(currentUser.uid);
+}
 
 async function signInWithGoogle(){
   try{
@@ -276,9 +315,10 @@ async function loadUserData(uid){
       // Cloud is source of truth on login
       favorites = new Set(data.favorites || []);
       studied = new Set(data.studied || []);
-      // Save to localStorage only (not cloud, since we just loaded from cloud)
+      if(data.stats) lifetimeStats = data.stats;
       localStorage.setItem('ml_favs', JSON.stringify([...favorites]));
       localStorage.setItem('ml_studied', JSON.stringify([...studied]));
+      localStorage.setItem('ml_stats', JSON.stringify(lifetimeStats));
       syncStatus = 'synced';
       render();
       setTimeout(()=>{syncStatus='';render();},2000);
@@ -305,6 +345,7 @@ async function saveUserData(uid){
       photoURL: currentUser.photoURL,
       favorites: [...favorites],
       studied: [...studied],
+      stats: lifetimeStats,
       lastSync: firebase.firestore.FieldValue.serverTimestamp()
     }, {merge:true});
     syncStatus = 'synced';
@@ -401,8 +442,10 @@ function buildHeader(filtered){
         <button class="score-pill" onclick="setMode('favs')">❤️ ${favorites.size}</button>
         ${currentUser ? `
           <div class="user-zone">
-            <img class="user-avatar" src="${currentUser.photoURL || ''}" alt="" referrerpolicy="no-referrer" onerror="this.style.display='none'"/>
-            <span class="user-name">${(currentUser.displayName||'').split(' ')[0]}</span>
+            <button class="user-avatar-btn" onclick="setMode('progress')" title="ההתקדמות שלי">
+              <img class="user-avatar" src="${currentUser.photoURL || ''}" alt="" referrerpolicy="no-referrer" onerror="this.style.display='none'"/>
+            </button>
+            <span class="user-name" onclick="setMode('progress')" style="cursor:pointer">${(currentUser.displayName||'').split(' ')[0]}</span>
             <button class="logout-btn" onclick="signOut()" title="התנתק">↩</button>
           </div>
         ` : `
@@ -441,6 +484,7 @@ function buildControls(){
 function buildMain(filtered){
   if(mode==='favs') return buildFavs();
   if(mode==='about') return buildAbout();
+  if(mode==='progress') return buildProgress();
   if(!filtered.length) return `<div class="empty"><div class="empty-ico">🔍</div><div>לא נמצאו מושגים</div></div>`;
   if(mode==='flash') return buildFlash(filtered);
   return buildQuiz(filtered);
@@ -501,7 +545,8 @@ function buildQuiz(filtered){
     </div>`;
   }
   const t = pool[quizState.idx];
-  const opts = buildOpts(t, filtered);
+  const q = buildQuizQuestion(t, filtered);
+  window._currentQuiz = q; // Store for click handler
   return `<div class="quiz-area">
     <div class="score-row">
       <div class="sc-card"><div class="sc-num g">${quizState.correct}</div><div class="sc-lbl">נכון</div></div>
@@ -509,22 +554,138 @@ function buildQuiz(filtered){
       <div class="sc-card"><div class="sc-num r">${quizState.wrong}</div><div class="sc-lbl">שגוי</div></div>
     </div>
     <div class="quiz-q">
-      <div class="quiz-q-tag">מהו המושג המתאים להגדרה הזו?</div>
-      <div class="quiz-def-text">${t.definition}</div>
+      <div class="quiz-q-tag">${q.promptLabel}</div>
+      <div class="quiz-def-text">${q.prompt}</div>
     </div>
     <div class="quiz-opts" id="quiz-opts">
-      ${opts.map((o,i)=>`<button class="q-opt" data-term="${o.hebrew}" onclick="answerQuiz(this,'${t.hebrew.replace(/'/g,"\\'")}','${o.hebrew.replace(/'/g,"\\'")}',${JSON.stringify(opts).replace(/</g,'\\u003c').replace(/>/g,'\\u003e').replace(/'/g,'\\x27')})">${o.hebrew}</button>`).join('')}
+      ${q.options.map((o,i)=>`<button class="q-opt" data-idx="${i}" onclick="answerQuiz(${i})">${o.text}</button>`).join('')}
     </div>
     <div class="quiz-fb" id="quiz-fb"></div>
-    <button class="quiz-next" id="quiz-next" style="display:none" onclick="nextQuiz()">המושג הבא ←</button>
+    <button class="quiz-next" id="quiz-next" style="display:none" onclick="nextQuiz()">השאלה הבאה ←</button>
   </div>`;
 }
 
-function buildOpts(correct, pool){
-  const others = pool.filter(t=>t.hebrew!==correct.hebrew).sort(()=>Math.random()-.5).slice(0,3);
-  return [...others,correct].sort(()=>Math.random()-.5);
+function buildQuizQuestion(term, pool){
+  const types = ['def_to_term', 'term_to_def', 'heb_to_eng', 'eng_to_heb'];
+  const type = types[Math.floor(Math.random() * types.length)];
+  const otherTerms = pool.filter(t => t.hebrew !== term.hebrew).sort(() => Math.random() - .5).slice(0, 3);
+  let promptLabel, prompt, options;
+  
+  if(type === 'def_to_term'){
+    promptLabel = '🎯 מהו המושג המתאים להגדרה?';
+    prompt = term.definition;
+    options = [term, ...otherTerms].sort(() => Math.random() - .5)
+      .map(t => ({text: t.hebrew, isCorrect: t.hebrew === term.hebrew}));
+  } else if(type === 'term_to_def'){
+    promptLabel = '📖 מהי ההגדרה הנכונה למושג:';
+    prompt = term.hebrew;
+    options = [term, ...otherTerms].sort(() => Math.random() - .5)
+      .map(t => ({text: t.definition, isCorrect: t.hebrew === term.hebrew}));
+  } else if(type === 'heb_to_eng'){
+    promptLabel = '🔤 מה התרגום באנגלית של:';
+    prompt = term.hebrew;
+    options = [term, ...otherTerms].sort(() => Math.random() - .5)
+      .map(t => ({text: t.english, isCorrect: t.hebrew === term.hebrew}));
+  } else {
+    promptLabel = '🔠 מהו המושג בעברית של:';
+    prompt = term.english;
+    options = [term, ...otherTerms].sort(() => Math.random() - .5)
+      .map(t => ({text: t.hebrew, isCorrect: t.hebrew === term.hebrew}));
+  }
+  return {promptLabel, prompt, options, term};
 }
 
+
+
+function buildProgress(){
+  const total = GLOSSARY.length;
+  const studiedCount = studied.size;
+  const remaining = total - studiedCount;
+  const studiedPct = Math.round((studiedCount / total) * 100);
+  const favCount = favorites.size;
+  const quizTotal = lifetimeStats.quizTotal || 0;
+  const quizCorrect = lifetimeStats.quizCorrect || 0;
+  const quizWrong = lifetimeStats.quizWrong || 0;
+  const accuracy = quizTotal > 0 ? Math.round((quizCorrect / quizTotal) * 100) : 0;
+  
+  return `<div class="prog-wrap-main">
+    ${currentUser ? `
+      <div class="prog-greeting">
+        <img src="${currentUser.photoURL || ''}" referrerpolicy="no-referrer" onerror="this.style.display='none'"/>
+        <div>
+          <div class="prog-hello">שלום ${(currentUser.displayName||'').split(' ')[0]}! 👋</div>
+          <div class="prog-sub">הנה ההתקדמות שלך עד כה</div>
+        </div>
+      </div>
+    ` : '<div class="prog-greeting"><div><div class="prog-hello">ההתקדמות שלך 📊</div></div></div>'}
+    
+    <div class="prog-card prog-card-big">
+      <div class="prog-card-hdr">
+        <span class="prog-card-title">📚 התקדמות בלימוד</span>
+        <span class="prog-card-pct">${studiedPct}%</span>
+      </div>
+      <div class="prog-card-bar"><div class="prog-card-fill" style="width:${studiedPct}%"></div></div>
+      <div class="prog-card-stats">
+        <div><strong>${studiedCount}</strong> מושגים ידועים</div>
+        <div><strong>${remaining}</strong> נותרו ללמוד</div>
+        <div><strong>${total}</strong> סה"כ</div>
+      </div>
+    </div>
+
+    <div class="prog-card prog-card-big">
+      <div class="prog-card-hdr">
+        <span class="prog-card-title">🎯 דיוק במבחון</span>
+        <span class="prog-card-pct">${accuracy}%</span>
+      </div>
+      <div class="prog-card-bar"><div class="prog-card-fill prog-fill-green" style="width:${accuracy}%"></div></div>
+      <div class="prog-card-stats">
+        <div><strong style="color:var(--green-dark)">${quizCorrect}</strong> נכון</div>
+        <div><strong style="color:#c44">${quizWrong}</strong> שגוי</div>
+        <div><strong>${quizTotal}</strong> סה"כ נענו</div>
+      </div>
+    </div>
+
+    <div class="prog-mini-row">
+      <div class="prog-mini">
+        <div class="prog-mini-ico">❤️</div>
+        <div class="prog-mini-num">${favCount}</div>
+        <div class="prog-mini-lbl">מועדפים</div>
+      </div>
+      <div class="prog-mini">
+        <div class="prog-mini-ico">🎓</div>
+        <div class="prog-mini-num">${studiedCount}</div>
+        <div class="prog-mini-lbl">נלמדו</div>
+      </div>
+      <div class="prog-mini">
+        <div class="prog-mini-ico">🔥</div>
+        <div class="prog-mini-num">${quizCorrect}</div>
+        <div class="prog-mini-lbl">תשובות נכונות</div>
+      </div>
+    </div>
+
+    ${quizTotal === 0 ? `
+      <div class="prog-empty">
+        <div style="font-size:14px;color:var(--ink-soft);text-align:center;padding:14px">עוד לא ניסית את המבחון. נסה עכשיו!</div>
+      </div>
+    ` : ''}
+
+    <div class="prog-actions">
+      <button class="cta-btn cta-primary" onclick="setMode('flash')">🃏 חזרה לכרטיסיות</button>
+      <button class="cta-btn cta-ghost" onclick="setMode('quiz')">🎯 התחל מבחון</button>
+    </div>
+
+    ${currentUser && quizTotal > 5 ? `
+      <button class="cta-btn cta-ghost" style="margin-top:8px;background:#fde8e6;border-color:#c44;color:#c44" onclick="resetProgress()">↺ אפס את הסטטיסטיקה</button>
+    ` : ''}
+  </div>`;
+}
+
+function resetProgress(){
+  if(!confirm('האם אתה בטוח שברצונך לאפס את כל הסטטיסטיקה? פעולה זו אינה הפיכה.')) return;
+  lifetimeStats = {quizCorrect:0, quizWrong:0, quizTotal:0};
+  saveLifetimeStats();
+  render();
+}
 
 function buildAbout(){
   return `<div class="about-wrap">
@@ -622,20 +783,35 @@ function toggleFav(term){ if(favorites.has(term)) favorites.delete(term); else f
 function removeFav(term){ favorites.delete(term); saveFavs(); render(); }
 function markStudied(term,yes){ if(yes) studied.add(term); else studied.delete(term); saveStudied(); nav(1); }
 
-function answerQuiz(btn,correct,chosen,opts){
+function answerQuiz(idx){
   if(quizState.answered) return;
-  quizState.answered=true; quizState.total++;
-  const ok=chosen===correct;
+  const q = window._currentQuiz;
+  if(!q) return;
+  quizState.answered = true;
+  quizState.total++;
+  const chosen = q.options[idx];
+  const ok = chosen.isCorrect;
   if(ok) quizState.correct++; else quizState.wrong++;
-  document.querySelectorAll('.q-opt').forEach(b=>{
-    b.disabled=true;
-    if(b.dataset.term===correct) b.classList.add('correct');
-    else if(b===btn && !ok) b.classList.add('wrong');
+  
+  // Update lifetime stats
+  lifetimeStats.quizTotal = (lifetimeStats.quizTotal || 0) + 1;
+  if(ok) lifetimeStats.quizCorrect = (lifetimeStats.quizCorrect || 0) + 1;
+  else lifetimeStats.quizWrong = (lifetimeStats.quizWrong || 0) + 1;
+  saveLifetimeStats();
+  
+  // Visual feedback
+  document.querySelectorAll('.q-opt').forEach((b, i) => {
+    b.disabled = true;
+    if(q.options[i].isCorrect) b.classList.add('correct');
+    else if(i === idx) b.classList.add('wrong');
   });
-  const fb=document.getElementById('quiz-fb');
-  if(fb){fb.textContent=ok?'✅ נכון מאוד!':'❌ תשובה שגויה'; fb.className='quiz-fb '+(ok?'ok':'bad');}
-  const nxt=document.getElementById('quiz-next');
-  if(nxt) nxt.style.display='block';
+  const fb = document.getElementById('quiz-fb');
+  if(fb){
+    fb.innerHTML = ok ? '✅ נכון מאוד!' : `❌ התשובה הנכונה: <strong>${q.options.find(o=>o.isCorrect).text}</strong>`;
+    fb.className = 'quiz-fb ' + (ok ? 'ok' : 'bad');
+  }
+  const nxt = document.getElementById('quiz-next');
+  if(nxt) nxt.style.display = 'block';
 }
 
 function nextQuiz(){ quizState.idx++; quizState.answered=false; render(); }
