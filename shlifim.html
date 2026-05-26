@@ -273,25 +273,31 @@ async function loadUserData(uid){
     const doc = await db.collection('users').doc(uid).get();
     if(doc.exists){
       const data = doc.data();
-      // Merge cloud with local (cloud is source of truth on login)
+      // Cloud is source of truth on login
       favorites = new Set(data.favorites || []);
       studied = new Set(data.studied || []);
-      saveFavs(); saveStudied();
+      // Save to localStorage only (not cloud, since we just loaded from cloud)
+      localStorage.setItem('ml_favs', JSON.stringify([...favorites]));
+      localStorage.setItem('ml_studied', JSON.stringify([...studied]));
+      syncStatus = 'synced';
+      render();
+      setTimeout(()=>{syncStatus='';render();},2000);
     } else {
-      // First time user — push local data up
+      // First time user — push current local data to cloud
       await saveUserData(uid);
     }
-    syncStatus = 'synced';
-    setTimeout(()=>{syncStatus='';render();},2000);
   }catch(e){
     console.error('Load failed:', e);
+    alert('שגיאה בטעינת הנתונים מהענן: ' + e.message);
     syncStatus = '';
+    render();
   }
-  render();
 }
 
 async function saveUserData(uid){
   if(!currentUser) return;
+  syncStatus = 'syncing';
+  updateSyncIndicator();
   try{
     await db.collection('users').doc(uid).set({
       displayName: currentUser.displayName,
@@ -301,7 +307,28 @@ async function saveUserData(uid){
       studied: [...studied],
       lastSync: firebase.firestore.FieldValue.serverTimestamp()
     }, {merge:true});
-  }catch(e){ console.error('Save failed:', e); }
+    syncStatus = 'synced';
+    updateSyncIndicator();
+    setTimeout(()=>{ syncStatus=''; updateSyncIndicator(); }, 1500);
+  }catch(e){
+    console.error('Save failed:', e);
+    syncStatus = 'error';
+    updateSyncIndicator();
+    alert('שגיאה בסנכרון: ' + e.message);
+  }
+}
+
+// Update only the sync indicator without re-rendering everything
+function updateSyncIndicator(){
+  const banner = document.getElementById('welcome-banner');
+  if(!banner || !currentUser) return;
+  const name = (currentUser.displayName||'').split(' ')[0];
+  let statusHtml = '';
+  if(syncStatus === 'syncing') statusHtml = ' <span class="sync-spinner"></span> שומר...';
+  else if(syncStatus === 'synced') statusHtml = ' ✓ נשמר בענן';
+  else if(syncStatus === 'error') statusHtml = ' ⚠ שגיאה';
+  else statusHtml = ' · הנתונים שלך מסונכרנים בין מכשירים';
+  banner.innerHTML = 'שלום <strong>'+name+'</strong>'+statusHtml;
 }
 
 // Auth state listener
@@ -319,11 +346,7 @@ function toggleUserMenu(){ showUserMenu = !showUserMenu; render(); }
 function closeUserMenu(){ showUserMenu = false; render(); }
 
 
-// Hook into save functions to also push to cloud
-const _saveFavs = saveFavs;
-const _saveStudied = saveStudied;
-saveFavs = function(){ _saveFavs(); if(currentUser) saveUserData(currentUser.uid); };
-saveStudied = function(){ _saveStudied(); if(currentUser) saveUserData(currentUser.uid); };
+// Cloud sync is built into saveFavs/saveStudied directly (below)
 
 
 
@@ -343,8 +366,14 @@ function getLetters(){
   return ['הכל',...all];
 }
 
-function saveFavs(){ localStorage.setItem('ml_favs',JSON.stringify([...favorites])) }
-function saveStudied(){ localStorage.setItem('ml_studied',JSON.stringify([...studied])) }
+function saveFavs(){
+  localStorage.setItem('ml_favs', JSON.stringify([...favorites]));
+  if(typeof currentUser !== 'undefined' && currentUser) saveUserData(currentUser.uid);
+}
+function saveStudied(){
+  localStorage.setItem('ml_studied', JSON.stringify([...studied]));
+  if(typeof currentUser !== 'undefined' && currentUser) saveUserData(currentUser.uid);
+}
 function saveDark(){ localStorage.setItem('ml_dark',dark?'1':'0') }
 
 // ===== RENDER =====
