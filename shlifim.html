@@ -355,11 +355,81 @@ body{font-family:'Assistant','Heebo',system-ui,sans-serif;font-weight:500;font-s
 .login-btn{font-size:13px!important;font-weight:700!important;padding:7px 12px!important;font-family:'Fredoka','Heebo',sans-serif!important}
 
 /* ============ BIOLOGY-THEMED BACKGROUND DECORATIONS ============ */
-.bio-decor{position:fixed;pointer-events:none;opacity:.07;z-index:0}
+.bio-decor{position:fixed;pointer-events:none;opacity:.07;z-index:0;animation:float 6s ease-in-out infinite}
 html.dark .bio-decor{opacity:.12}
-.bio-decor-1{top:80px;right:-30px;transform:rotate(-15deg)}
-.bio-decor-2{bottom:80px;left:-30px;transform:rotate(20deg)}
-.bio-decor-3{top:50%;right:-50px;transform:rotate(40deg)}
+.bio-decor-1{top:80px;right:-30px;--r:-15deg;animation-delay:-1s}
+.bio-decor-2{bottom:80px;left:-30px;--r:20deg;animation-delay:-3s;animation-duration:7s}
+.bio-decor-3{top:45%;right:-50px;--r:40deg;animation-delay:-2s;animation-duration:8s}
+
+/* Float animation — same as the original MediLab site */
+@keyframes float{
+  0%,100%{transform:translateY(0) rotate(var(--r,0deg))}
+  50%{transform:translateY(-12px) rotate(var(--r,0deg))}
+}
+
+/* Apply gentle floating to small SVG decorations in cards */
+.card-bio-decor{animation:floatSmall 5s ease-in-out infinite}
+.card-bio-decor-back{animation:floatSmall 6s ease-in-out infinite;animation-delay:-1.5s}
+
+@keyframes floatSmall{
+  0%,100%{transform:translateY(-50%) rotate(0deg)}
+  50%{transform:translateY(calc(-50% - 6px)) rotate(3deg)}
+}
+
+/* Card back decoration has different transform origin */
+.card-bio-decor-back{animation:floatSmallBack 6s ease-in-out infinite;animation-delay:-1.5s}
+@keyframes floatSmallBack{
+  0%,100%{transform:translateY(0) rotate(0deg)}
+  50%{transform:translateY(-5px) rotate(-3deg)}
+}
+
+/* Subtle pulse on the favorite heart indicator */
+.fav-indicator{animation:heartPulse 1.5s ease-in-out infinite}
+@keyframes heartPulse{
+  0%,100%{transform:scale(1)}
+  50%{transform:scale(1.12)}
+}
+
+/* Gentle wobble on glossary letter circles */
+.gloss-letter-circle{animation:wobble 8s ease-in-out infinite}
+.gloss-letter-group:nth-child(2n) .gloss-letter-circle{animation-delay:-2s}
+.gloss-letter-group:nth-child(3n) .gloss-letter-circle{animation-delay:-4s}
+@keyframes wobble{
+  0%,100%{transform:rotate(0deg)}
+  25%{transform:rotate(-4deg)}
+  75%{transform:rotate(4deg)}
+}
+
+/* SVG icons in mode toggle buttons gently rotate when active */
+.mode-btn.on svg{animation:spinSlow 12s linear infinite}
+@keyframes spinSlow{
+  from{transform:rotate(0deg)}
+  to{transform:rotate(360deg)}
+}
+
+/* Mini progress icons floating */
+.prog-mini-ico svg{animation:floatTiny 4s ease-in-out infinite}
+.prog-mini:nth-child(2) .prog-mini-ico svg{animation-delay:-1.5s}
+.prog-mini:nth-child(3) .prog-mini-ico svg{animation-delay:-3s}
+@keyframes floatTiny{
+  0%,100%{transform:translateY(0)}
+  50%{transform:translateY(-4px)}
+}
+
+/* Brand logo gentle breath effect */
+.brand img{animation:breath 4s ease-in-out infinite}
+@keyframes breath{
+  0%,100%{transform:scale(1)}
+  50%{transform:scale(1.05)}
+}
+
+/* Respect reduced motion preference */
+@media (prefers-reduced-motion:reduce){
+  .bio-decor,.card-bio-decor,.card-bio-decor-back,.fav-indicator,
+  .gloss-letter-circle,.mode-btn.on svg,.prog-mini-ico svg,.brand img{
+    animation:none!important;
+  }
+}
 
 /* Decorative corner accents inside cards */
 .face::before{content:'';position:absolute;top:-2px;left:-2px;width:30px;height:30px;border-radius:18px 0 0 0;border-left:3px solid var(--blue);border-top:3px solid var(--blue);opacity:.4}
@@ -385,7 +455,7 @@ html.dark .bio-decor{opacity:.12}
 .sc-card{border-width:2px!important;box-shadow:0 2px 0 rgba(0,0,0,.05)}
 
 /* Biology decorations inside cards */
-.card-bio-decor{position:absolute;top:50%;left:14px;transform:translateY(-50%);opacity:.08;pointer-events:none}
+.card-bio-decor{position:absolute;top:50%;left:14px;opacity:.08;pointer-events:none}
 .card-bio-decor svg{width:60px!important;height:110px!important}
 .card-bio-decor-back{position:absolute;bottom:14px;left:14px;opacity:.15;pointer-events:none}
 .card-bio-decor-back svg{width:50px!important;height:50px!important}
@@ -456,6 +526,49 @@ html.dark .gloss-card.is-studied{background:rgba(92,184,92,0.12)}
 html.dark .gloss-hl{background:#806b1f;color:#fff}
 
 /* Reset known-row alignment from buildFlash to not affect gloss */
+
+/* ============ MONETIZATION CTAs ============ */
+
+/* Quiz completion CTA */
+.quiz-finish{padding:30px 16px!important}
+.finish-cta{background:linear-gradient(135deg,var(--blue-soft),var(--green-soft));border:2.5px solid var(--blue);border-radius:var(--r);padding:20px 18px;margin-top:8px;text-align:center;position:relative;overflow:hidden}
+.finish-cta::before{content:'';position:absolute;top:-30px;right:-30px;width:100px;height:100px;background:radial-gradient(circle,rgba(63,169,214,.15),transparent);border-radius:50%}
+.finish-cta-icon{display:flex;justify-content:center;margin-bottom:8px}
+.finish-cta-icon svg{width:42px!important;height:42px!important}
+.finish-cta-title{font-family:'Fredoka','Heebo',sans-serif;font-size:19px;font-weight:700;color:var(--blue-dark);margin-bottom:6px}
+.finish-cta-desc{font-size:14px;font-weight:600;color:var(--ink-soft);line-height:1.55;margin-bottom:4px}
+
+/* Milestone banner in progress page */
+.milestone-banner{background:linear-gradient(135deg,#FFF8E0,#FFE5B4);border:2.5px solid var(--yellow);border-radius:var(--r);padding:18px 16px;margin:14px 0;display:flex;gap:14px;position:relative;overflow:hidden}
+html.dark .milestone-banner{background:linear-gradient(135deg,rgba(249,216,92,0.15),rgba(249,216,92,0.08));color:var(--ink)}
+.milestone-banner::before{content:'';position:absolute;top:-20px;left:-20px;width:80px;height:80px;background:radial-gradient(circle,rgba(249,216,92,.3),transparent);border-radius:50%}
+.milestone-icon{flex-shrink:0;position:relative;z-index:1}
+.milestone-icon svg{width:46px!important;height:46px!important}
+.milestone-content{flex:1;position:relative;z-index:1}
+.milestone-title{font-family:'Fredoka','Heebo',sans-serif;font-size:17px;font-weight:700;color:#8B6914;margin-bottom:4px}
+html.dark .milestone-title{color:var(--yellow)}
+.milestone-desc{font-size:13px;font-weight:600;color:var(--ink-soft);line-height:1.5;margin-bottom:10px}
+.milestone-cta{font-size:14px!important;padding:10px 14px!important;background:#B8860B!important;border:none!important}
+html.dark .milestone-cta{background:var(--yellow)!important;color:#1a2A38!important}
+
+/* Glossary summary CTA */
+.gloss-summary-cta{flex-shrink:0;background:#fff;border:2px solid var(--blue-dark);border-radius:50%;width:42px;height:42px;display:flex;align-items:center;justify-content:center;text-decoration:none;transition:transform .15s;box-shadow:0 2px 0 var(--blue-dark)}
+html.dark .gloss-summary-cta{background:var(--paper-2)}
+.gloss-summary-cta:hover{transform:translateY(-1px);box-shadow:0 3px 0 var(--blue-dark)}
+.gloss-summary-cta svg{width:22px!important;height:22px!important}
+
+/* Favorites banner */
+.fav-banner{background:linear-gradient(135deg,#FFE5E1,#FFD5CE);border:2.5px solid var(--coral);border-radius:var(--r);padding:14px;margin-bottom:14px;display:flex;gap:12px;align-items:center;position:relative;overflow:hidden}
+html.dark .fav-banner{background:linear-gradient(135deg,rgba(244,122,110,0.18),rgba(244,122,110,0.1));color:var(--ink)}
+.fav-banner::before{content:'';position:absolute;top:-15px;right:-15px;width:70px;height:70px;background:radial-gradient(circle,rgba(244,122,110,.25),transparent);border-radius:50%}
+.fav-banner-icon{flex-shrink:0;position:relative;z-index:1}
+.fav-banner-icon svg{width:38px!important;height:38px!important}
+.fav-banner-content{flex:1;position:relative;z-index:1}
+.fav-banner-title{font-family:'Fredoka','Heebo',sans-serif;font-size:16px;font-weight:700;color:#A33;margin-bottom:3px}
+html.dark .fav-banner-title{color:var(--coral)}
+.fav-banner-desc{font-size:13px;font-weight:600;color:var(--ink-soft);margin-bottom:8px;line-height:1.45}
+.fav-banner-btn{display:inline-block;background:#C44747;color:#fff;text-decoration:none;padding:7px 12px;border-radius:14px;font-size:13px;font-weight:700;font-family:'Fredoka','Heebo',sans-serif}
+.fav-banner-btn:hover{background:#A33}
 </style>
 
 <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-app-compat.js"></script>
@@ -845,12 +958,20 @@ function buildQuiz(filtered){
   const pool = quizState.pool;
   if(quizState.idx>=pool.length){
     return `<div class="quiz-area">
-      <div class="empty">
+      <div class="empty quiz-finish">
         <div class="empty-ico">🎉</div>
-        <div style="font-size:18px;font-weight:700;margin-bottom:8px">סיימת את כל 100 השאלות!</div>
-        <div style="font-size:15px;margin-bottom:6px">נכון: ${quizState.correct} | שגוי: ${quizState.wrong}</div>
-        <div style="font-size:13px;color:var(--ink-light)">דיוק: ${Math.round((quizState.correct/(quizState.correct+quizState.wrong||1))*100)}%</div>
-        <button class="quiz-next" style="display:block;margin-top:16px" onclick="resetQuiz()">סיבוב נוסף ↺</button>
+        <div style="font-size:20px;font-weight:700;margin-bottom:8px;font-family:'Fredoka','Heebo',sans-serif">סיימת את כל 100 השאלות!</div>
+        <div style="font-size:16px;margin-bottom:8px;font-weight:600">נכון: ${quizState.correct} | שגוי: ${quizState.wrong}</div>
+        <div style="font-size:14px;color:var(--ink-light);font-weight:600;margin-bottom:20px">דיוק: ${Math.round((quizState.correct/(quizState.correct+quizState.wrong||1))*100)}%</div>
+        
+        <div class="finish-cta">
+          <div class="finish-cta-icon">${SVG_BOOK}</div>
+          <div class="finish-cta-title">מוכן לקפיצה הבאה?</div>
+          <div class="finish-cta-desc">אם הצלחת ב-100 השאלות, אתה מוכן ל-1,674 שאלות בגרות אמיתיות מספר השאלות שלי, עם הסברים מפורטים</div>
+          <a class="cta-btn cta-primary" href="https://wa.me/972524295838?text=%D7%94%D7%99%D7%99%2C%20%D7%A1%D7%99%D7%99%D7%9E%D7%AA%D7%99%20%D7%90%D7%AA%20%D7%9E%D7%91%D7%97%D7%9F%20%D7%94%D7%A9%D7%9C%D7%99%D7%A4%D7%99%D7%9D%20%D7%95%D7%90%D7%A0%D7%99%20%D7%9E%D7%A2%D7%95%D7%A0%D7%99%D7%99%D7%9F%20%D7%91%D7%A1%D7%A4%D7%A8%20%D7%94%D7%A9%D7%90%D7%9C%D7%95%D7%AA" target="_blank" style="margin-top:14px">${SVG_PHONE} <span>קבל את ספר השאלות</span></a>
+        </div>
+        
+        <button class="quiz-next" style="display:block;margin-top:14px;background:var(--paper-2);color:var(--ink);border:1.5px solid var(--line)" onclick="resetQuiz()">↺ סיבוב נוסף</button>
       </div>
     </div>`;
   }
@@ -939,10 +1060,11 @@ function buildGlossary(filtered){
   return `<div class="gloss-wrap">
     <div class="gloss-summary">
       ${SVG_BOOK}
-      <div>
+      <div style="flex:1">
         <div class="gloss-summary-num">${totalCount}</div>
         <div class="gloss-summary-lbl">מושגים ${searchQ.trim()?`עבור "${searchQ.trim()}"`:activeLetter!=='הכל'?`באות ${activeLetter}`:'במילון'}</div>
       </div>
+      <a class="gloss-summary-cta" href="https://wa.me/972524295838?text=%D7%94%D7%99%D7%99%2C%20%D7%9E%D7%A2%D7%95%D7%A0%D7%99%D7%99%D7%9F%20%D7%91%D7%9E%D7%95%D7%A0%D7%97%D7%95%D7%9F%20%D7%94%D7%9E%D7%95%D7%93%D7%A4%D7%A1" target="_blank" title="קבל את המונחון המודפס">${SVG_BOOK}</a>
     </div>
     ${letters.map(letter => `
       <div class="gloss-letter-group">
@@ -1057,7 +1179,18 @@ function buildProgress(){
 
     ${quizTotal === 0 ? `
       <div class="prog-empty">
-        <div style="font-size:14px;color:var(--ink-soft);text-align:center;padding:14px">עוד לא ניסית את המבחון. נסה עכשיו!</div>
+        <div style="font-size:14px;color:var(--ink-soft);text-align:center;padding:14px;font-weight:600">עוד לא ניסית את המבחון. נסה עכשיו!</div>
+      </div>
+    ` : ''}
+    
+    ${studiedCount >= 50 ? `
+      <div class="milestone-banner">
+        <div class="milestone-icon">${SVG_GRAD_CAP}</div>
+        <div class="milestone-content">
+          <div class="milestone-title">${studiedCount >= 100 ? '🌟 אתה בדרך הנכונה!' : '🎯 התקדמות מרשימה!'}</div>
+          <div class="milestone-desc">${studiedCount >= 100 ? 'למדת מעל 100 מושגים. רוצה לקחת את זה לרמה הבאה עם שיעור פרטי?' : 'למדת 50+ מושגים. שיעור פרטי איתי יעזור לך להבין את הקשרים בעומק.'}</div>
+          <a class="cta-btn cta-primary milestone-cta" href="https://wa.me/972524295838?text=%D7%94%D7%99%D7%99%2C%20%D7%9C%D7%9E%D7%93%D7%AA%D7%99%20%D7%9B%D7%91%D7%A8%20${studiedCount}%20%D7%9E%D7%95%D7%A9%D7%92%D7%99%D7%9D%20%D7%91%D7%A9%D7%9C%D7%99%D7%A4%D7%99%D7%9D%20%D7%95%D7%90%D7%A0%D7%99%20%D7%A8%D7%95%D7%A6%D7%94%20%D7%9C%D7%A7%D7%91%D7%95%D7%A2%20%D7%A9%D7%99%D7%A2%D7%95%D7%A8%20%D7%94%D7%99%D7%9B%D7%A8%D7%95%D7%AA" target="_blank">${SVG_PHONE} <span>קבע שיעור היכרות חינם</span></a>
+        </div>
       </div>
     ` : ''}
 
@@ -1147,7 +1280,17 @@ function buildFavs(){
   const favItems = GLOSSARY.filter(t=>favorites.has(t.hebrew));
   if(!favItems.length) return `<div class="empty"><div class="empty-ico">${SVG_HEART_OUTLINE}</div><div>אין מועדפים עדיין</div><div style="margin-top:6px;font-size:13px">לחץ על הלב בכרטיסיות הפלאש</div></div>`;
   return `<div class="fav-section">
-    <div class="fav-title">${SVG_HEART} <span>המועדפים שלי</span> <span style="font-size:14px;color:var(--ink-light)">(${favItems.length})</span></div>
+    <div class="fav-title">${SVG_HEART} <span>המועדפים שלי</span> <span style="font-size:14px;color:var(--ink-light);font-weight:600">(${favItems.length})</span></div>
+    ${favItems.length >= 10 ? `
+      <div class="fav-banner">
+        <div class="fav-banner-icon">${SVG_GIFT}</div>
+        <div class="fav-banner-content">
+          <div class="fav-banner-title">${favItems.length} מועדפים? מרשים!</div>
+          <div class="fav-banner-desc">קח את כל 3 הספרים שלי במחיר מבצע (חוסך ₪64)</div>
+          <a class="fav-banner-btn" href="https://wa.me/972524295838?text=%D7%94%D7%99%D7%99%2C%20%D7%90%D7%A0%D7%99%20%D7%9E%D7%A2%D7%95%D7%A0%D7%99%D7%99%D7%9F%20%D7%91%D7%97%D7%91%D7%99%D7%9C%D7%AA%20%D7%94%D7%A1%D7%A4%D7%A8%D7%99%D7%9D%20%D7%91%D7%9E%D7%91%D7%A6%D7%A2" target="_blank">לחבילה במחיר ₪249 →</a>
+        </div>
+      </div>
+    ` : ''}
     <div class="fav-list">
       ${favItems.map(t=>`
         <div class="fav-item">
