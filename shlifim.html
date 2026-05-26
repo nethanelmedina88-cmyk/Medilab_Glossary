@@ -176,6 +176,8 @@ button{font-family:inherit;cursor:pointer}
 .user-pill:hover{background:rgba(255,255,255,.25)}
 .user-pill img{width:24px;height:24px;border-radius:50%;border:1.5px solid #fff}
 .user-name{max-width:80px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+
+.user-menu-backdrop{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.2);z-index:199}
 .user-menu{position:fixed;top:60px;left:16px;background:var(--paper);border:1px solid var(--line);border-radius:var(--r);padding:14px;box-shadow:0 8px 24px rgba(0,0,0,.2);z-index:200;min-width:220px}
 .user-menu-row{display:flex;align-items:center;gap:10px;margin-bottom:12px;padding-bottom:12px;border-bottom:1px solid var(--line)}
 .user-menu-row img{width:40px;height:40px;border-radius:50%}
@@ -230,6 +232,7 @@ firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
 const db = firebase.firestore();
 const googleProvider = new firebase.auth.GoogleAuthProvider();
+googleProvider.setCustomParameters({prompt: 'select_account'});
 
 let currentUser = null;
 let showUserMenu = false;
@@ -245,12 +248,15 @@ async function signInWithGoogle(){
 }
 
 async function signOut(){
-  await auth.signOut();
+  // Clear currentUser FIRST so saveFavs won't push empty data to cloud
+  currentUser = null;
   showUserMenu = false;
-  // Reset local data on sign out
+  await auth.signOut();
+  // Clear local cache only (not cloud)
   favorites = new Set();
   studied = new Set();
-  saveFavs(); saveStudied();
+  localStorage.setItem('ml_favs', '[]');
+  localStorage.setItem('ml_studied', '[]');
   render();
 }
 
@@ -303,6 +309,8 @@ auth.onAuthStateChanged(user=>{
 });
 
 function toggleUserMenu(){ showUserMenu = !showUserMenu; render(); }
+function closeUserMenu(){ showUserMenu = false; render(); }
+
 
 // Hook into save functions to also push to cloud
 const _saveFavs = saveFavs;
