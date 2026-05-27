@@ -569,6 +569,240 @@ html.dark .fav-banner-title{color:var(--coral)}
 .fav-banner-desc{font-size:13px;font-weight:600;color:var(--ink-soft);margin-bottom:8px;line-height:1.45}
 .fav-banner-btn{display:inline-block;background:#C44747;color:#fff;text-decoration:none;padding:7px 12px;border-radius:14px;font-size:13px;font-weight:700;font-family:'Fredoka','Heebo',sans-serif}
 .fav-banner-btn:hover{background:#A33}
+
+/* ============ MOBILE RESPONSIVE FIXES ============ */
+*{box-sizing:border-box}
+html,body{overflow-x:hidden;max-width:100vw}
+.app{max-width:100vw;overflow-x:hidden;padding-bottom:2rem}
+
+/* Header on mobile - prevent overflow */
+.hdr{padding:10px 12px 8px!important}
+.hdr-row{flex-wrap:nowrap!important;gap:6px!important;min-width:0}
+.brand{flex:0 1 auto;min-width:0;gap:8px!important}
+.brand img{width:36px!important;height:36px!important;border-width:2px!important;flex-shrink:0}
+.brand>span{min-width:0;flex:1}
+.brand-name{font-size:17px!important;letter-spacing:0!important;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.brand-sub{font-size:10px!important;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:block}
+
+.hdr-actions{flex-shrink:0;gap:4px!important;flex-wrap:nowrap}
+.score-pill{padding:4px 9px!important;font-size:12px!important;gap:4px!important}
+.score-pill svg{width:15px!important;height:15px!important}
+.user-zone{padding:3px 5px 3px 8px!important;gap:4px!important}
+.user-avatar{width:26px!important;height:26px!important}
+.user-zone .user-name{font-size:12px!important;max-width:60px!important}
+.logout-btn{width:26px!important;height:26px!important;font-size:13px!important}
+.login-btn{font-size:11px!important;padding:5px 9px!important;gap:3px!important}
+.login-btn svg{width:12px!important;height:12px!important}
+.dark-btn{width:30px!important;height:30px!important;font-size:14px!important}
+
+/* Progress bar header */
+.prog-wrap{margin-top:8px!important}
+.prog-info{font-size:11px!important}
+
+/* Welcome banner — keep on single line if possible */
+.welcome-banner{padding:9px 14px!important;font-size:12px!important;white-space:normal}
+
+/* Controls section */
+.controls{padding:10px 12px!important}
+.mode-toggle{gap:5px!important;margin-bottom:8px!important}
+.mode-btn{font-size:13px!important;padding:9px 4px!important;gap:4px!important;min-width:0}
+.mode-btn svg{width:16px!important;height:16px!important}
+.mode-btn span{font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
+
+/* Letter filter scroll */
+.letters{gap:4px!important;padding-bottom:4px!important;-webkit-overflow-scrolling:touch}
+.let-btn{padding:5px 10px!important;font-size:14px!important;min-width:32px;text-align:center}
+
+/* Search input */
+.search-inp{font-size:15px!important;padding:9px 14px!important}
+
+/* Flash card area */
+.card-area{padding:10px 12px!important}
+.card-outer{height:240px!important}
+.face{padding:18px 16px!important}
+.face-term{font-size:30px!important;line-height:1.1!important}
+.face-en{font-size:13px!important}
+.face-def{font-size:15px!important;line-height:1.55!important}
+.face-backterm{font-size:15px!important}
+.let-badge{font-size:11px!important;padding:3px 8px!important;top:10px!important;right:10px!important}
+.flip-hint{font-size:11px!important;margin-top:6px}
+
+/* Navigation buttons */
+.nav-row{gap:5px!important;margin-top:8px}
+.nav-btn{font-size:13px!important;padding:9px 6px!important}
+.counter{font-size:12px!important;min-width:45px!important}
+.fav-btn{font-size:20px!important;padding:3px}
+.known-row{gap:5px!important;margin-top:6px}
+.known-btn{font-size:13px!important;padding:9px 5px!important}
+
+/* QUIZ — fix the score row layout */
+.quiz-area{padding:10px 12px!important}
+.score-row{gap:5px!important;margin-bottom:10px!important}
+.sc-card{padding:8px 4px!important;border-width:1.5px!important}
+.sc-num{font-size:22px!important}
+.sc-lbl{font-size:11px!important}
+
+.quiz-q{padding:16px 14px!important;margin-bottom:10px!important}
+.quiz-q-tag{font-size:11px!important;letter-spacing:.4px!important;margin-bottom:8px!important;line-height:1.4}
+.quiz-q-tag svg{width:14px!important;height:14px!important}
+.quiz-def-text{font-size:15px!important;line-height:1.5!important}
+.q-opt{font-size:14px!important;padding:11px 14px!important;line-height:1.45!important}
+.quiz-fb{font-size:14px!important}
+.quiz-next{font-size:14px!important;padding:11px!important}
+
+/* Glossary view */
+.gloss-wrap{padding:8px 12px 16px!important}
+.gloss-summary{padding:12px 14px!important;gap:10px!important}
+.gloss-summary svg{width:28px!important;height:28px!important}
+.gloss-summary-num{font-size:22px!important}
+.gloss-summary-lbl{font-size:12px!important}
+.gloss-summary-cta{width:36px!important;height:36px!important}
+.gloss-summary-cta svg{width:18px!important;height:18px!important}
+
+.gloss-letter-hdr{gap:8px!important;padding:5px 2px!important}
+.gloss-letter-circle{width:36px!important;height:36px!important;font-size:18px!important}
+.gloss-letter-count{font-size:11px!important}
+
+.gloss-card{padding:12px 14px!important;border-width:1.5px!important;margin-bottom:6px!important}
+.gloss-card-heb{font-size:17px!important;line-height:1.2!important}
+.gloss-card-eng{font-size:12px!important}
+.gloss-card-def{font-size:13px!important;line-height:1.55!important}
+.gloss-card-actions{gap:4px!important}
+.gloss-act-btn{width:30px!important;height:30px!important;font-size:14px!important}
+.gloss-act-btn svg{width:15px!important;height:15px!important}
+
+/* About page */
+.about-wrap{padding:12px!important}
+.about-profile{padding:14px 12px!important;gap:10px!important;flex-wrap:wrap}
+.about-portrait{width:60px!important;height:60px!important;border-width:3px!important}
+.about-name{font-size:18px!important}
+.about-role{font-size:12px!important}
+.about-bio{font-size:13px!important;line-height:1.55!important}
+.about-quote{font-size:12px!important}
+.degrees{gap:5px!important;margin-top:10px!important}
+.deg-tag{font-size:10px!important;padding:2px 6px!important}
+.deg-name{font-size:13px!important}
+.deg-place{font-size:11px!important}
+
+.stats-row{gap:6px!important;margin-top:12px!important}
+.stat-card{padding:8px 4px!important}
+.stat-n{font-size:20px!important}
+.stat-l{font-size:11px!important}
+
+.cta-btn{font-size:14px!important;padding:11px!important;gap:6px!important}
+.cta-btn svg{width:16px!important;height:16px!important}
+.contact-line{font-size:12px!important;margin-top:6px!important}
+
+.books-section{margin-top:16px!important}
+.books-title{font-size:18px!important;gap:6px!important}
+.books-title svg{width:20px!important;height:20px!important}
+.books-sub{font-size:11px!important}
+.book-card{padding:12px!important;gap:10px!important;border-width:1.5px!important}
+.book-cover img{width:60px!important}
+.book-tag{font-size:10px!important;padding:2px 6px!important}
+.book-title{font-size:15px!important}
+.book-desc{font-size:12px!important;line-height:1.5!important}
+.book-price{font-size:18px!important}
+
+.bundle{padding:14px!important}
+.bundle-title{font-size:16px!important;gap:6px!important}
+.bundle-title svg{width:18px!important;height:18px!important}
+.bundle-desc{font-size:12px!important;margin-bottom:10px!important}
+.price-new{font-size:24px!important}
+.price-old{font-size:13px!important}
+.price-save{font-size:11px!important;padding:2px 7px!important}
+.bundle-btn{font-size:14px!important;padding:11px!important}
+
+/* Progress page */
+.prog-wrap-main{padding:12px!important}
+.prog-greeting{padding:12px!important;gap:10px!important;margin-bottom:12px!important}
+.prog-greeting img{width:44px!important;height:44px!important;border-width:2px!important}
+.prog-hello{font-size:18px!important}
+.prog-sub{font-size:11px!important}
+
+.prog-card{padding:12px 14px!important;margin-bottom:10px!important}
+.prog-card-title{font-size:13px!important;gap:6px!important}
+.prog-card-pct{font-size:22px!important}
+.prog-card-bar{height:9px!important}
+.prog-card-stats{font-size:11px!important;gap:5px!important}
+.prog-card-stats strong{font-size:16px!important}
+
+.prog-mini-row{gap:6px!important;margin-bottom:10px!important}
+.prog-mini{padding:10px 4px!important;border-width:1.5px!important}
+.prog-mini-ico svg{width:24px!important;height:24px!important}
+.prog-mini-num{font-size:18px!important}
+.prog-mini-lbl{font-size:10px!important}
+
+/* Milestone banner */
+.milestone-banner{padding:14px 12px!important;gap:10px!important}
+.milestone-icon svg{width:36px!important;height:36px!important}
+.milestone-title{font-size:14px!important}
+.milestone-desc{font-size:11px!important;margin-bottom:8px!important}
+.milestone-cta{font-size:13px!important;padding:8px 10px!important}
+
+/* Fav list */
+.fav-section{padding:12px!important}
+.fav-title{font-size:18px!important;gap:6px!important;margin-bottom:8px!important}
+.fav-item{padding:10px 14px!important}
+.fav-item-term{font-size:15px!important}
+.fav-item-en{font-size:11px!important}
+.fav-item-def{font-size:12px!important;line-height:1.5!important}
+.fav-banner{padding:12px!important;gap:10px!important;margin-bottom:10px!important}
+.fav-banner-icon svg{width:30px!important;height:30px!important}
+.fav-banner-title{font-size:14px!important}
+.fav-banner-desc{font-size:11px!important;margin-bottom:6px!important}
+.fav-banner-btn{font-size:12px!important;padding:6px 10px!important}
+
+/* Empty states */
+.empty{padding:30px 16px!important}
+.empty-ico svg{width:46px!important;height:46px!important}
+.empty div:not(.empty-ico){font-size:14px!important}
+
+/* Finish CTA */
+.finish-cta{padding:16px 14px!important}
+.finish-cta-icon svg{width:36px!important;height:36px!important}
+.finish-cta-title{font-size:16px!important}
+.finish-cta-desc{font-size:12px!important;line-height:1.5!important}
+
+/* Bio decorations — hide partial overflow on mobile */
+.bio-decor-1{right:-50px!important}
+.bio-decor-2{left:-50px!important}
+.bio-decor-3{right:-70px!important}
+.bio-decor svg{transform:scale(0.7)}
+
+/* User menu - prevent overflow */
+.user-menu{right:8px!important;left:auto!important;min-width:200px!important;max-width:calc(100vw - 16px)!important}
+
+/* Make sure all card decorations don't break layout */
+.card-bio-decor{display:none}
+.card-bio-decor-back{display:none}
+
+/* Specifically for screens under 400px (most phones in portrait) */
+@media (max-width:400px){
+  .brand-name{font-size:15px!important}
+  .brand-sub{font-size:9px!important}
+  .brand img{width:32px!important;height:32px!important}
+  .mode-btn{font-size:12px!important;padding:8px 3px!important}
+  .mode-btn svg{width:14px!important;height:14px!important}
+  .face-term{font-size:26px!important}
+  .let-btn{padding:4px 8px!important;font-size:13px!important;min-width:28px}
+  .gloss-card-heb{font-size:16px!important}
+  .quiz-def-text{font-size:14px!important}
+  .q-opt{font-size:13px!important;padding:10px 12px!important}
+  .stats-row{grid-template-columns:1fr 1fr 1fr!important}
+  .stat-card{padding:6px 2px!important}
+  .stat-n{font-size:18px!important}
+}
+
+/* Extra small screens */
+@media (max-width:360px){
+  .brand-name{font-size:14px!important}
+  .hdr-actions{gap:2px!important}
+  .score-pill{padding:3px 7px!important;font-size:11px!important}
+  .mode-toggle{grid-template-columns:1fr 1fr 1fr 1fr!important;gap:3px!important}
+  .mode-btn span{font-size:11px!important}
+  .face-term{font-size:24px!important}
+}
 </style>
 
 <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-app-compat.js"></script>
