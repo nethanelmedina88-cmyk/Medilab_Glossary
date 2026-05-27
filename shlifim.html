@@ -803,6 +803,168 @@ html,body{overflow-x:hidden;max-width:100vw}
   .mode-btn span{font-size:11px!important}
   .face-term{font-size:24px!important}
 }
+
+/* ============ CRITICAL MOBILE OVERFLOW FIXES ============ */
+html, body, .app {
+  overflow-x: hidden !important;
+  width: 100% !important;
+  max-width: 100vw !important;
+  padding-right: 0 !important;
+  padding-left: 0 !important;
+  margin: 0 !important;
+}
+
+/* Force every container to respect viewport width */
+.hdr, .controls, .card-area, .quiz-area, .gloss-wrap, .about-wrap, .prog-wrap-main, .fav-section {
+  max-width: 100vw !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
+}
+
+/* HEADER fix — title block must not push out */
+.hdr-row {
+  display: flex !important;
+  flex-direction: row-reverse !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  width: 100% !important;
+  gap: 8px !important;
+  min-width: 0 !important;
+}
+
+.brand {
+  flex: 1 1 auto !important;
+  min-width: 0 !important;
+  overflow: hidden !important;
+  display: flex !important;
+  flex-direction: row-reverse !important;
+  align-items: center !important;
+  gap: 8px !important;
+}
+
+.brand > span {
+  min-width: 0 !important;
+  flex: 1 1 auto !important;
+  overflow: hidden !important;
+  display: flex !important;
+  flex-direction: column !important;
+  text-align: right !important;
+}
+
+.brand-name {
+  font-size: 16px !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  max-width: 100% !important;
+}
+
+.brand-sub {
+  font-size: 10px !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  max-width: 100% !important;
+}
+
+.brand img {
+  width: 36px !important;
+  height: 36px !important;
+  flex-shrink: 0 !important;
+}
+
+.hdr-actions {
+  flex-shrink: 0 !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 4px !important;
+}
+
+/* MODE TOGGLE — must fit 4 buttons */
+.mode-toggle {
+  display: grid !important;
+  grid-template-columns: repeat(4, 1fr) !important;
+  gap: 4px !important;
+  width: 100% !important;
+}
+
+.mode-btn {
+  font-size: 12px !important;
+  padding: 8px 2px !important;
+  gap: 3px !important;
+  min-width: 0 !important;
+  overflow: hidden !important;
+  flex-direction: row !important;
+}
+
+.mode-btn svg {
+  width: 14px !important;
+  height: 14px !important;
+  flex-shrink: 0 !important;
+}
+
+.mode-btn span {
+  font-size: 12px !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  min-width: 0 !important;
+}
+
+/* GLOSSARY SUMMARY — fix the floating Hebrew letter icon */
+.gloss-summary {
+  flex-wrap: nowrap !important;
+  min-width: 0 !important;
+}
+.gloss-summary > div {
+  min-width: 0 !important;
+  overflow: hidden !important;
+}
+.gloss-summary-lbl {
+  font-size: 12px !important;
+  white-space: normal !important;
+}
+
+/* Remove the floating "א" that's overlapping content */
+.gloss-letter-circle {
+  position: relative !important;
+}
+
+/* Make sure progress bar doesn't break */
+.prog-bar {
+  width: 100% !important;
+  max-width: 100% !important;
+}
+
+/* Welcome banner */
+.welcome-banner {
+  padding: 8px 12px !important;
+  font-size: 11px !important;
+  line-height: 1.4 !important;
+}
+
+/* Make absolutely sure NO element pushes the layout */
+.bio-decor {
+  display: none !important;
+}
+
+@media (max-width: 600px) {
+  .bio-decor { display: none !important; }
+}
+
+/* Mobile-specific letter button sizes */
+.letters {
+  width: 100% !important;
+  overflow-x: auto !important;
+  -webkit-overflow-scrolling: touch !important;
+  scrollbar-width: none !important;
+}
+
+/* App container must clip overflow */
+#app {
+  overflow-x: hidden !important;
+  max-width: 100vw !important;
+}
 </style>
 
 <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-app-compat.js"></script>
