@@ -1,4 +1,4 @@
-const CACHE_NAME = 'shlifim-v1';
+const CACHE_NAME = 'shlifim-v2';
 const FILES_TO_CACHE = [
   './shlifim.html',
   './manifest.json',
@@ -38,7 +38,19 @@ self.addEventListener('fetch', (event) => {
     return; // let the browser handle it normally
   }
   
-  // Cache-first for app files
+  // Network-first for HTML (so users get updates immediately)
+  if (event.request.mode === 'navigate' || url.endsWith('.html')) {
+    event.respondWith(
+      fetch(event.request).then((response) => {
+        const clone = response.clone();
+        caches.open(CACHE_NAME).then(cache => cache.put(event.request, clone));
+        return response;
+      }).catch(() => caches.match(event.request).then(c => c || caches.match('./shlifim.html')))
+    );
+    return;
+  }
+  
+  // Cache-first for other assets
   event.respondWith(
     caches.match(event.request).then((cached) => {
       return cached || fetch(event.request).then((response) => {
