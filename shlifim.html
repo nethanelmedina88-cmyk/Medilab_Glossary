@@ -1118,6 +1118,211 @@ html, body, .app {
 @media (max-width:380px){
   .brand-logo{width:32px !important;height:32px !important}
 }
+
+/* ============ HEADER V2 - CLEAN MOBILE FIRST ============ */
+.hdr-v2{
+  background:linear-gradient(135deg,#1B6FA8 0%,#3FA9D6 100%);
+  color:#fff;
+  padding:14px 16px 12px;
+  position:sticky;
+  top:0;
+  z-index:100;
+  box-shadow:0 2px 12px rgba(27,111,168,0.3);
+  width:100%;
+  box-sizing:border-box;
+  overflow:hidden;
+}
+
+.hdr-top{
+  text-align:center;
+  margin-bottom:10px;
+}
+
+.hdr-brand{
+  display:inline-block;
+}
+
+.hdr-title{
+  font-family:'Fredoka','Heebo',sans-serif;
+  font-size:24px;
+  font-weight:700;
+  line-height:1.1;
+  letter-spacing:0.5px;
+  color:#fff;
+}
+
+.hdr-tagline{
+  font-size:11px;
+  font-weight:600;
+  opacity:0.85;
+  letter-spacing:1px;
+  margin-top:2px;
+}
+
+.hdr-toolbar{
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  gap:8px;
+  margin-bottom:10px;
+}
+
+.tool-btn{
+  background:rgba(255,255,255,0.18);
+  border:1.5px solid rgba(255,255,255,0.25);
+  color:#fff;
+  width:38px;
+  height:38px;
+  border-radius:50%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  cursor:pointer;
+  position:relative;
+  padding:0;
+  font-family:inherit;
+  transition:background 0.15s,transform 0.1s;
+  flex-shrink:0;
+}
+
+.tool-btn:hover, .tool-btn:active{
+  background:rgba(255,255,255,0.3);
+  transform:scale(1.05);
+}
+
+.tool-ico{
+  font-size:18px;
+  line-height:1;
+  font-weight:600;
+}
+
+.tool-btn.tool-login{
+  background:#fff;
+  color:#1B6FA8;
+}
+
+.tool-btn.tool-login .tool-ico{
+  font-family:'Fredoka',sans-serif;
+  font-weight:700;
+  font-size:17px;
+}
+
+.tool-btn.tool-user{
+  padding:0;
+  overflow:hidden;
+  background:#fff;
+  border-width:2px;
+  border-color:#fff;
+}
+
+.tool-btn.tool-user img{
+  width:100%;
+  height:100%;
+  border-radius:50%;
+  object-fit:cover;
+  display:block;
+}
+
+.tool-badge{
+  position:absolute;
+  top:-3px;
+  right:-3px;
+  background:#F47A6E;
+  color:#fff;
+  font-size:10px;
+  font-weight:800;
+  min-width:16px;
+  height:16px;
+  border-radius:8px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:0 4px;
+  line-height:1;
+  border:1.5px solid #1B6FA8;
+}
+
+.hdr-progress{
+  width:100%;
+  box-sizing:border-box;
+}
+
+.hdr-progress-info{
+  display:flex;
+  justify-content:space-between;
+  font-size:11px;
+  font-weight:600;
+  opacity:0.9;
+  margin-bottom:4px;
+}
+
+.hdr-progress-bar{
+  height:4px;
+  background:rgba(255,255,255,0.2);
+  border-radius:2px;
+  overflow:hidden;
+  width:100%;
+}
+
+.hdr-progress-fill{
+  height:100%;
+  background:linear-gradient(90deg,#F9D85C,#fff);
+  border-radius:2px;
+  transition:width 0.4s ease-out;
+}
+
+.welcome-banner-v2{
+  background:linear-gradient(135deg,#E0F0DA,#D6ECF6);
+  color:#1a2A38;
+  font-size:13px;
+  font-weight:600;
+  padding:10px 16px;
+  text-align:center;
+  border-bottom:1px solid #E6DEC9;
+}
+
+html.dark .welcome-banner-v2{
+  background:linear-gradient(135deg,#1B3220,#1A3344);
+  color:#F0EBD8;
+  border-bottom-color:#2A3845;
+}
+
+.welcome-banner-v2 strong{
+  font-family:'Fredoka','Heebo',sans-serif;
+  font-weight:700;
+  color:#1B6FA8;
+}
+
+html.dark .welcome-banner-v2 strong{
+  color:#3FA9D6;
+}
+
+/* Hide all old header elements completely */
+.hdr,
+.hdr-row,
+.hdr-row-simple,
+.hdr-actions,
+.hdr-actions-simple,
+.brand,
+.brand-simple,
+.brand-text,
+.user-zone,
+.user-pill,
+.score-pill,
+.icon-btn,
+.dark-btn,
+.login-btn,
+.brand-logo{
+  display:none !important;
+}
+
+/* Very small screens */
+@media (max-width:360px){
+  .hdr-title{font-size:21px}
+  .hdr-tagline{font-size:10px}
+  .tool-btn{width:34px;height:34px}
+  .tool-ico{font-size:16px}
+}
 </style>
 
 <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-app-compat.js"></script>
@@ -1390,36 +1595,47 @@ function buildHeader(filtered){
   const total = filtered.length;
   const pct = mode==='flash' ? (total?Math.round((cardIdx/(total-1||1))*100):0) : (quizState.pool.length?Math.round((quizState.total/quizState.pool.length)*100):0);
   const label = mode==='flash' ? `${Math.min(cardIdx+1,total||1)} / ${total}` : `${quizState.total} מתוך ${quizState.pool.length||total}`;
-  return `<div class="hdr">
-    <div class="hdr-row-simple">
-      <div class="brand-simple">
-        <img src="data:image/jpeg;base64,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" alt="MediLab" class="brand-logo"/>
-        <div class="brand-text">
-          <div class="brand-name">שליפים</div>
-          <div class="brand-sub">SHLIFIM · MediLab</div>
-        </div>
-      </div>
-      <div class="hdr-actions-simple">
-        <button class="icon-btn" onclick="setMode('favs')" title="מועדפים">${SVG_HEART}<span class="badge">${favorites.size||''}</span></button>
-        ${currentUser ? `
-          <button class="icon-btn user-icon-btn" onclick="setMode('progress')" title="${currentUser.displayName||''}">
-            <img src="${currentUser.photoURL || ''}" referrerpolicy="no-referrer" onerror="this.style.display='none'"/>
-          </button>
-          <button class="icon-btn" onclick="signOut()" title="התנתק">↩</button>
-        ` : `
-          <button class="icon-btn login-icon" onclick="signInWithGoogle()" title="התחבר עם Google">
-            <svg width="16" height="16" viewBox="0 0 48 48"><path fill="#FFC107" d="M43.6 20.1H42V20H24v8h11.3c-1.6 4.7-6.1 8-11.3 8-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.8 1.2 7.9 3.1l5.7-5.7C34 6.1 29.3 4 24 4 13 4 4 13 4 24s9 20 20 20 20-9 20-20c0-1.3-.1-2.7-.4-3.9z"/><path fill="#FF3D00" d="M6.3 14.7l6.6 4.8C14.7 16 19 13 24 13c3.1 0 5.8 1.2 7.9 3.1l5.7-5.7C34 6.1 29.3 4 24 4 16.3 4 9.7 8.3 6.3 14.7z"/><path fill="#4CAF50" d="M24 44c5.2 0 9.9-2 13.4-5.2l-6.2-5.2c-2 1.5-4.5 2.4-7.2 2.4-5.2 0-9.6-3.3-11.3-7.9l-6.5 5C9.5 39.6 16.2 44 24 44z"/><path fill="#1976D2" d="M43.6 20.1H42V20H24v8h11.3c-.8 2.2-2.2 4.2-4.1 5.6l6.2 5.2C41.5 35.7 44 30.3 44 24c0-1.3-.1-2.7-.4-3.9z"/></svg>
-          </button>
-        `}
-        <button class="icon-btn" onclick="toggleDark()" title="${dark?'מצב יום':'מצב לילה'}">${dark?'☀':'☾'}</button>
+  
+  // Get logo from existing embedded image in DOM (find first base64 jpg in document)
+  return `<div class="hdr-v2">
+    <div class="hdr-top">
+      <div class="hdr-brand">
+        <div class="hdr-title">שליפים</div>
+        <div class="hdr-tagline">SHLIFIM · MediLab</div>
       </div>
     </div>
-    <div class="prog-wrap">
-      <div class="prog-info"><span>${label}</span><span>${pct}%</span></div>
-      <div class="prog-bar"><div class="prog-fill" id="progress-fill" style="width:${pct}%"></div></div>
+    <div class="hdr-toolbar">
+      <button class="tool-btn" onclick="setMode('favs')" aria-label="מועדפים">
+        <span class="tool-ico">♥</span>
+        ${favorites.size > 0 ? `<span class="tool-badge">${favorites.size}</span>` : ''}
+      </button>
+      ${currentUser ? `
+        <button class="tool-btn tool-user" onclick="setMode('progress')" aria-label="פרופיל">
+          <img src="${currentUser.photoURL || ''}" referrerpolicy="no-referrer" onerror="this.style.display='none';this.parentNode.innerHTML='👤'"/>
+        </button>
+        <button class="tool-btn" onclick="signOut()" aria-label="התנתק">
+          <span class="tool-ico">⎋</span>
+        </button>
+      ` : `
+        <button class="tool-btn tool-login" onclick="signInWithGoogle()" aria-label="התחבר">
+          <span class="tool-ico">G</span>
+        </button>
+      `}
+      <button class="tool-btn" onclick="toggleDark()" aria-label="מצב לילה">
+        <span class="tool-ico">${dark?'☀':'☾'}</span>
+      </button>
+    </div>
+    <div class="hdr-progress">
+      <div class="hdr-progress-info">
+        <span>${label}</span>
+        <span>${pct}%</span>
+      </div>
+      <div class="hdr-progress-bar">
+        <div class="hdr-progress-fill" style="width:${pct}%"></div>
+      </div>
     </div>
   </div>
-  ${currentUser ? `<div class="welcome-banner" id="welcome-banner">שלום <strong>${(currentUser.displayName||'').split(' ')[0]}</strong>${syncStatus==='syncing'?' מסנכרן...':syncStatus==='synced'?' ✓ נשמר':''}</div>` : ''}`;
+  ${currentUser ? `<div class="welcome-banner-v2" id="welcome-banner">שלום <strong>${(currentUser.displayName||'').split(' ')[0]}</strong>${syncStatus==='syncing'?' מסנכרן…':syncStatus==='synced'?' ✓ נשמר':''}</div>` : ''}`;
 }
 
 function buildControls(){
