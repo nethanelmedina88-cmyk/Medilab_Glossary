@@ -1545,6 +1545,324 @@ html.dark .filter-tabs{background:rgba(255,255,255,0.08)}
 .install-ok:hover{
   background:var(--blue);
 }
+
+/* ============ STREAK SECTION ============ */
+.streak-section{
+  background:linear-gradient(135deg,#FFF0E0,#FFE5D0);
+  border:2.5px solid #F4B942;
+  border-radius:18px;
+  padding:14px 16px;
+  margin-bottom:12px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  position:relative;
+  overflow:hidden;
+}
+html.dark .streak-section{
+  background:linear-gradient(135deg,rgba(249,216,92,0.15),rgba(244,122,110,0.1));
+  color:var(--ink);
+}
+
+.streak-current{
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+
+.streak-fire{
+  font-size:36px;
+  filter:drop-shadow(0 2px 8px rgba(244,122,110,0.5));
+  animation:fireFlicker 1.8s ease-in-out infinite;
+}
+
+@keyframes fireFlicker{
+  0%,100%{transform:scale(1) rotate(-2deg)}
+  50%{transform:scale(1.08) rotate(2deg)}
+}
+
+.streak-num{
+  font-family:'Fredoka','Heebo',sans-serif;
+  font-size:32px;
+  font-weight:700;
+  color:#C44747;
+  line-height:1;
+}
+
+.streak-lbl{
+  font-size:11px;
+  font-weight:700;
+  color:#8B6914;
+  margin-top:2px;
+}
+html.dark .streak-lbl{color:#F4B942}
+
+.streak-info{
+  display:flex;
+  flex-direction:column;
+  gap:6px;
+  text-align:left;
+}
+
+.streak-stat{
+  display:flex;
+  align-items:center;
+  gap:6px;
+  font-size:11px;
+  font-weight:600;
+  color:var(--ink-soft);
+}
+
+.streak-stat-num{
+  font-family:'Fredoka','Heebo',sans-serif;
+  font-size:16px;
+  font-weight:700;
+  color:#1B6FA8;
+}
+
+.review-stat .streak-stat-num{color:#C44747}
+
+/* Streak button in header */
+.streak-btn .tool-badge.streak-badge{
+  background:#F4B942 !important;
+  color:#fff !important;
+  border-color:#1B6FA8 !important;
+}
+
+/* ============ LEVEL CARD ============ */
+.level-card{
+  background:var(--paper-2);
+  border:2.5px solid;
+  border-radius:18px;
+  padding:14px 16px;
+  margin-bottom:12px;
+}
+
+.level-info{
+  display:flex;
+  align-items:center;
+  gap:12px;
+}
+
+.level-emoji{
+  font-size:32px;
+  width:48px;
+  height:48px;
+  border-radius:50%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  flex-shrink:0;
+}
+
+.level-name{
+  font-family:'Fredoka','Heebo',sans-serif;
+  font-size:18px;
+  font-weight:700;
+  line-height:1.1;
+}
+
+.level-next{
+  font-size:12px;
+  font-weight:600;
+  color:var(--ink-soft);
+  margin-top:3px;
+}
+
+.level-bar{
+  height:8px;
+  background:rgba(0,0,0,0.06);
+  border-radius:4px;
+  overflow:hidden;
+  margin-top:10px;
+}
+html.dark .level-bar{background:rgba(255,255,255,0.1)}
+
+.level-fill{
+  height:100%;
+  border-radius:4px;
+  transition:width 0.6s ease-out;
+}
+
+/* ============ BADGES ============ */
+.badges-section{
+  background:var(--paper-2);
+  border:2px solid var(--line);
+  border-radius:18px;
+  padding:14px;
+  margin-bottom:12px;
+}
+
+.badges-title{
+  font-family:'Fredoka','Heebo',sans-serif;
+  font-size:17px;
+  font-weight:700;
+  color:var(--ink);
+  margin-bottom:10px;
+}
+
+.badges-count{
+  font-size:13px;
+  color:var(--ink-light);
+  font-weight:600;
+}
+
+.badges-grid{
+  display:grid;
+  grid-template-columns:repeat(3, 1fr);
+  gap:8px;
+}
+
+.badge-card{
+  background:var(--paper);
+  border:1.5px solid var(--line);
+  border-radius:12px;
+  padding:10px 6px;
+  text-align:center;
+  transition:transform 0.15s;
+}
+
+.badge-card.earned{
+  background:linear-gradient(135deg,#FFF8E0,#FFE5B4);
+  border-color:#F4B942;
+  border-width:2px;
+}
+html.dark .badge-card.earned{
+  background:linear-gradient(135deg,rgba(249,216,92,0.15),rgba(244,185,66,0.1));
+}
+
+.badge-card.locked{opacity:0.5}
+
+.badge-card:hover{transform:translateY(-2px)}
+
+.badge-emoji{
+  font-size:28px;
+  margin-bottom:4px;
+}
+
+.badge-name{
+  font-family:'Fredoka','Heebo',sans-serif;
+  font-size:11px;
+  font-weight:700;
+  color:var(--ink);
+  margin-bottom:2px;
+  line-height:1.2;
+}
+
+.badge-desc{
+  font-size:9px;
+  font-weight:500;
+  color:var(--ink-light);
+  line-height:1.2;
+}
+
+/* ============ BADGE TOAST ============ */
+.badge-toast{
+  position:fixed;
+  bottom:30px;
+  left:50%;
+  transform:translateX(-50%) translateY(120px);
+  background:linear-gradient(135deg,#F4B942,#F47A6E);
+  color:#fff;
+  padding:14px 20px;
+  border-radius:16px;
+  box-shadow:0 10px 40px rgba(244,122,110,0.5);
+  display:flex;
+  align-items:center;
+  gap:14px;
+  z-index:9999;
+  transition:transform 0.4s cubic-bezier(.34,1.56,.64,1);
+  max-width:90vw;
+  border:3px solid #fff;
+}
+
+.badge-toast.show{
+  transform:translateX(-50%) translateY(0);
+}
+
+.badge-toast-emoji{
+  font-size:42px;
+  filter:drop-shadow(0 2px 4px rgba(0,0,0,0.2));
+  animation:badgeBounce 0.6s cubic-bezier(.34,1.56,.64,1);
+}
+
+@keyframes badgeBounce{
+  0%{transform:scale(0)}
+  100%{transform:scale(1)}
+}
+
+.badge-toast-title{
+  font-size:11px;
+  font-weight:700;
+  opacity:0.95;
+  letter-spacing:1px;
+}
+
+.badge-toast-name{
+  font-family:'Fredoka','Heebo',sans-serif;
+  font-size:17px;
+  font-weight:700;
+  margin:2px 0;
+}
+
+.badge-toast-desc{
+  font-size:11px;
+  font-weight:500;
+  opacity:0.95;
+}
+
+/* ============ 3-WAY KNOWN BUTTONS ============ */
+.known-row-3{
+  grid-template-columns:1fr 1fr 1fr !important;
+  gap:5px !important;
+}
+
+.known-btn.maybe{
+  background:#FFF8E0;
+  color:#8B6914;
+}
+html.dark .known-btn.maybe{
+  background:rgba(249,216,92,0.15);
+  color:#F4B942;
+}
+
+.known-btn.maybe:hover{background:#FFE5B4}
+
+.known-row-3 .known-btn{
+  font-size:12px !important;
+  padding:9px 4px !important;
+  line-height:1.2;
+}
+
+/* ============ SPEAK BUTTON ============ */
+.speak-btn{
+  position:absolute;
+  top:14px;
+  left:14px;
+  background:rgba(255,255,255,0.2);
+  border:1.5px solid rgba(255,255,255,0.3);
+  color:#fff;
+  width:32px;
+  height:32px;
+  border-radius:50%;
+  cursor:pointer;
+  font-size:14px;
+  padding:0;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  transition:transform 0.15s;
+}
+
+.speak-btn:hover{
+  background:rgba(255,255,255,0.35);
+  transform:scale(1.1);
+}
+
+.gloss-act-btn[title="הקרא"]{
+  font-size:14px;
+}
 </style>
 
 <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-app-compat.js"></script>
@@ -1580,6 +1898,37 @@ const GLOSSARY = [{"letter":"א","hebrew":"אאוקריוטים","english":"Euka
 const QUIZ_QUESTIONS = [{"term":"אאוקריוטים","topic":"מאפייני חיים"},{"term":"פרוקריוטים","topic":"מאפייני חיים"},{"term":"ריבוזום","topic":"מאפייני חיים"},{"term":"מיטוכונדריון","topic":"מאפייני חיים"},{"term":"ליזוזום","topic":"מאפייני חיים"},{"term":"הומאוסטזיס","topic":"מאפייני חיים"},{"term":"שלד התא","topic":"מאפייני חיים"},{"term":"אוסמוזה","topic":"מעבר חומרים"},{"term":"דיפוזיה","topic":"מעבר חומרים"},{"term":"אנדוציטוזה","topic":"מעבר חומרים"},{"term":"אקסוציטוזה","topic":"מעבר חומרים"},{"term":"מפל ריכוזים","topic":"מעבר חומרים"},{"term":"פוספוליפידים","topic":"מעבר חומרים"},{"term":"קולטן","topic":"מעבר חומרים"},{"term":"אנזים","topic":"חלבונים ואנזימים"},{"term":"אתר פעיל","topic":"חלבונים ואנזימים"},{"term":"דנטורציה","topic":"חלבונים ואנזימים"},{"term":"חלבון","topic":"חלבונים ואנזימים"},{"term":"חומצה אמינית","topic":"חלבונים ואנזימים"},{"term":"סובסטרט (מצע)","topic":"חלבונים ואנזימים"},{"term":"פוטוסינתזה","topic":"פוטוסינתזה ונשימה"},{"term":"נשימה תאית","topic":"פוטוסינתזה ונשימה"},{"term":"ATP","topic":"פוטוסינתזה ונשימה"},{"term":"כלורופלסט","topic":"פוטוסינתזה ונשימה"},{"term":"תסיסה","topic":"פוטוסינתזה ונשימה"},{"term":"גליקוליזה","topic":"פוטוסינתזה ונשימה"},{"term":"DNA","topic":"החומר התורשתי"},{"term":"RNA","topic":"החומר התורשתי"},{"term":"גן","topic":"החומר התורשתי"},{"term":"כרומוזום","topic":"החומר התורשתי"},{"term":"גנום","topic":"החומר התורשתי"},{"term":"נוקלאוטיד","topic":"החומר התורשתי"},{"term":"מיטוזה","topic":"מיטוזה ומיוזה"},{"term":"מיוזה","topic":"מיטוזה ומיוזה"},{"term":"זיגוטה","topic":"מיטוזה ומיוזה"},{"term":"הפריה","topic":"מיטוזה ומיוזה"},{"term":"גמטה","topic":"מיטוזה ומיוזה"},{"term":"שחלוף","topic":"מיטוזה ומיוזה"},{"term":"שיעתוק","topic":"מדנא לחלבון"},{"term":"תרגום","topic":"מדנא לחלבון"},{"term":"קודון","topic":"מדנא לחלבון"},{"term":"אנטי-קודון","topic":"מדנא לחלבון"},{"term":"הקוד הגנטי","topic":"מדנא לחלבון"},{"term":"אלל","topic":"תורשה מנדלית"},{"term":"אלל דומיננטי","topic":"תורשה מנדלית"},{"term":"אלל רצסיבי","topic":"תורשה מנדלית"},{"term":"הומוזיגוט","topic":"תורשה מנדלית"},{"term":"הטרוזיגוט","topic":"תורשה מנדלית"},{"term":"מערכת אנדוקרינית","topic":"מבוא לגוף האדם"},{"term":"מערכת החיסון","topic":"מבוא לגוף האדם"},{"term":"מערכת ההובלה","topic":"מבוא לגוף האדם"},{"term":"ויטמינים","topic":"מערכת העיכול"},{"term":"גלוקוז","topic":"מערכת העיכול"},{"term":"דו-סוכר","topic":"מערכת העיכול"},{"term":"ושט","topic":"מערכת העיכול"},{"term":"כבד","topic":"מערכת העיכול"},{"term":"חילוף גזים","topic":"מערכת הנשימה"},{"term":"נאדיות","topic":"מערכת הנשימה"},{"term":"סרעפת","topic":"מערכת הנשימה"},{"term":"מרכז הנשימה","topic":"מערכת הנשימה"},{"term":"אבי העורקים","topic":"מערכת הובלה"},{"term":"המוגלובין","topic":"מערכת הובלה"},{"term":"אנדותל","topic":"מערכת הובלה"},{"term":"לב","topic":"מערכת הובלה"},{"term":"וריד","topic":"מערכת הובלה"},{"term":"נימים","topic":"מערכת הובלה"},{"term":"פלסמה","topic":"מערכת הובלה"},{"term":"אנטיגן","topic":"מערכת החיסון"},{"term":"נוגדן","topic":"מערכת החיסון"},{"term":"תאי זיכרון","topic":"מערכת החיסון"},{"term":"דלקת","topic":"מערכת החיסון"},{"term":"בלוטת התימוס","topic":"מערכת החיסון"},{"term":"דחיית שתל","topic":"מערכת החיסון"},{"term":"אקסון","topic":"מערכת העצבים"},{"term":"דנדריט","topic":"מערכת העצבים"},{"term":"סינפסה","topic":"מערכת העצבים"},{"term":"גזע המוח","topic":"מערכת העצבים"},{"term":"היפותלמוס","topic":"מערכת העצבים"},{"term":"גירוי","topic":"מערכת העצבים"},{"term":"אדרנלין","topic":"הפרשה פנימית"},{"term":"אינסולין","topic":"הפרשה פנימית"},{"term":"בלוטה","topic":"הפרשה פנימית"},{"term":"בלוטה אנדוקרינית","topic":"הפרשה פנימית"},{"term":"כליה","topic":"מערכת ההפרשה"},{"term":"נפרון","topic":"מערכת ההפרשה"},{"term":"אלדוסטרון","topic":"מערכת ההפרשה"},{"term":"אסטרוגן","topic":"מערכת הרבייה"},{"term":"גונדה","topic":"מערכת הרבייה"},{"term":"גופיף צהוב","topic":"מערכת הרבייה"},{"term":"אבולוציה","topic":"אקולוגיה"},{"term":"אוכלוסייה","topic":"אקולוגיה"},{"term":"ברירה טבעית","topic":"אקולוגיה"},{"term":"יצרנים","topic":"אקולוגיה"},{"term":"מפרקים","topic":"אקולוגיה"},{"term":"אנטיביוטיקה","topic":"מיקרוביולוגיה"},{"term":"בקטריופאג'","topic":"מיקרוביולוגיה"},{"term":"הלופילים","topic":"מיקרוביולוגיה"},{"term":"בועית מתכווצת","topic":"פיזיולוגיה השוואתית"},{"term":"אופרון","topic":"הנדסה גנטית"},{"term":"כלורופיל","topic":"פוטוסינתזה ונשימה"}];
 const QUIZ_DISTRACTOR_POOLS = {"מאפייני חיים":["אאוקריוטים","הומאוסטזיס","חלולית","ליזוזום","מיטוכונדריון","מטבוליזם","נגיף","פרוקריוטים","פלסמה","קרום התא","ריבוזום","שלד התא"],"מעבר חומרים":["אוסמוזה","אנדוציטוזה","אקסוציטוזה","דיפוזיה","העברה פסיבית","העברה פעילה","חלבוני חוצי קרום","תעלות","נשאים","משאבות","פוספוליפידים","פלסמוליזה","דה-פלסמוליזה"],"חלבונים ואנזימים":["גורם מגביל (אנזימים)","אתר פעיל","גורם מגביל (אנזימים)","דנטורציה","מטבוליזם","לב","מבנה ראשוני","מבנה שניוני","מבנה שלישוני","משוב חיובי","משוב שלילי","תחרות","תחרות","קצב התגובה האנזימטית","תצמיד אנזים-סובסטרט"],"פוטוסינתזה ונשימה":["אוטוטרוף","אור","אנרגיה כימית","אתנול","גליקוליזה","המרת אנרגיה","הטרוטרוף","כלורופיל","כלורופלסט","מגיבים","נשימה תאית","פוטוסינתזה","תוצרים","תסיסה"],"החומר התורשתי":["בסיס חנקני","גדיל","גדיל משלים","גן","גנום","דאוקסי-ריבוז","כרומטידות אחיות","כרומוזום","מוטציה","מיטוזה","נוקלאוטיד","קבוצת זרחה","ריבוז"],"מיטוזה ומיוזה":["הפרדה בלתי תלויה","הפריה","זיגוטה","חלבוני הכישור","כרומוזום","כרומוזומים הומולוגיים","כרומטידות אחיות","מחזור התא","מיוזה","מיטוזה","צנטרומר","שחלוף","תא אם","תא ביצה","תא דיפלואידי","תא הפלואידי","תא זרע","גמטה"],"מדנא לחלבון":["אנזים משעתק","אנטי-קודון","הקוד הגנטי","קודון","קודון אתחול","קודון סיום","ריבוזום","ריבוז","שחבור","אנזים שעתוק הפוך","תרגום"],"תורשה מנדלית":["אלל","אלל דומיננטי","אלל רצסיבי","גן","גמטה","גנוטיפ","דומיננטיות חלקית","דומיננטיות שלמה","הטרוזיגוט","זן טהור","פנוטיפ","קו-דומיננטיות","תאחיזה","תאחיזה"],"מבוא לגוף האדם":["הומאוסטזיס","מערכת","מערכת אנדוקרינית","מערכת","מערכת ההובלה","מערכת ההפרשה","מערכת הנשימה","מערכת","מערכת העצבים","מערכת"],"מערכת העיכול":["בלוטה אקסוקרינית","גלוקוז","ויטמינים","ושט","טריגליצרידים","כבד","כיס מרה","לבלב","ליפידים","מעי","מעי גס","מעי דק","סיסים","ספיגה","תחליב"],"מערכת הנשימה":["מרכז הנשימה","נשיפה","סרעפת","פחמן חד-חמצני","קנה הנשימה","שאיפה","ראה"],"מערכת הובלה":["אבי העורקים","אנדותל","אנמיה","אתר מקדם","דממת (המופיליה)","הומאותרמיים","המוגלובין","וריד","וריד הריאה","ורידון","ורידים חלולים","חדר","טסיות דם","טרשת עורקים","כלי דם","לב","לחץ דם","לחץ דם דיאסטולי","לחץ דם סיסטולי","מחזור דם כפול","מסתם","מערכת דם סגורה","מערכת דם פתוחה","מרכז הלב וכלי הדם","נימים","נפח פעימה","סיסטולה","עורק","עורק הריאה","עורק","עורק","עורקיק","עליה","פויקילותרמיים","פיברין","פיברינוגן","פלסמה","פעימת לב","לב","קוצב לב ראשי","קוצב לב משני","קרישת דם","תפוקת הלב"],"מערכת החיסון":["אנטיגן","בלוטת התימוס","דלקת","דמעה","לימפוציטים מסוג T","לימפוציטים מסוג B","מערכת הלימפה","נוגדן","פגוציט","פתוגן","תגובה ראשונית","תגובה שניונית"],"מערכת העצבים":["אקסון","גזע המוח","גירוי","דנדריט","היפותלמוס","לב","כפיס המוח","מוח","מוח השדרה","מוחון","מוח","מערכת","מערכת","נוירוטרנסמיטר","נוירון","נוירון","נוירון חישה","נוירון מוטורי","סינפסה","רפלקס"],"הפרשה פנימית":["אדרנלין","אינסולין","בלוטה","בלוטה אנדוקרינית","בלוטת יותרת המוח","בלוטת התריס","גלוקוז","גלוקגון","גליקוגן","הורמון","הורמונים סטרואידיים","פרולקטין"],"מערכת ההפרשה":["אלדוסטרון","בדיקת שתן","דיאליזה","כליה","נפרון","שופכן","שתנן"],"מערכת הרבייה":["אסטרוגן","גונדה","גמטה","הורמון","הורמון","הורמון","וסת","זיגוטה","זקיק","טסטוסטרון","מחזור הוסת","נרתיק","העברה אופקית","פין","שחלה","תא ביצה","תא זרע"],"אקולוגיה":["אבולוציה","אורגניזם","אקולוגיה","אור","ביומסה","ביוספרה","בית גידול","ברירה טבעית","ברירה מלאכותית","גורם א-ביוטי","גורם ביוטי","גורם מגביל (אנזימים)","גזי חממה","דיות","דשן","הדברה","הדברה ביולוגית","הדברה כימית","הומאותרמיים","הסתגלות","התאמה","חבר","אור","אור","טפילות","יחסי גומלין","יצרנים","מארג מזון","מי קולחין","מים מטבוליים","מין","מין אנדמי","מין פולש","מערכת אקולוגית","מפרקים","משאבים","סימביוזה","פוטוסינתזה","פויקילותרמיים","פירמידה אקולוגית","פקעת","צמח חד-שנתי","צמחי CAM","צרכן","קומנסליזם (סמוכנות)","רמת ארגון","רמת הזנה","שפע","שרשרת מזון","תחרות","תנאים","תפוצה"],"מיקרוביולוגיה":["אנזים","אנטיביוטיקה","בקטריופאג'","הלופילים","העברה אופקית","חיידקים","טרנסדוקציה","טרנספורמציה","טפיל","כימואוטוטרוף","מיקרוביוטה","מיקרואורגניזם","מסלול ליזוגני","מסלול ליטי","נגיף","נוקלאואיד","פפטידוגליקן","פרוקריוטים","עמידות לאנטיביוטיקה","קוניוגציה","שלב השהייה","שלב הגידול המעריכי","שלב העמידה","שלב התמותה"],"פיזיולוגיה השוואתית":["אבולוציה","גלגול","הומאותרמיים","הטלה","המלטה","השרצה","התאמה","זימים","חלמון","טרכאות","פויקילותרמיים","ראשן","רחם","שליה","שק חלמון"],"הנדסה גנטית":["אופרון","אורגניזם","חלבון","חלבון","אינטרון","אלקטרופורזה","אנזימי הגבלה","אקסון","אתר מפעיל","אתר מקדם","גן מבני","גן","גן בורר","גן","גנים של תחזוקה שוטפת","דכאן","אנזים","מקור השכפול","משרן","מחדר","נשאים","שחבור","שחבור חליפי","תאי גזע","פולימר"]};
 const TERM_TOPIC_MAP = {"אאוקריוטים":"מאפייני חיים","הומאוסטזיס":"מבוא לגוף האדם","חלולית":"מאפייני חיים","ליזוזום":"מאפייני חיים","מיטוכונדריון":"מאפייני חיים","מטבוליזם":"חלבונים ואנזימים","נגיף":"מיקרוביולוגיה","פרוקריוטים":"מיקרוביולוגיה","פלסמה":"מערכת הובלה","קרום התא":"מאפייני חיים","ריבוזום":"מדנ''א לחלבון","שלד התא":"מאפייני חיים","אוסמוזה":"מעבר חומרים  דרך קרום תא","אנדוציטוזה":"מעבר חומרים  דרך קרום תא","אקסוציטוזה":"מעבר חומרים  דרך קרום תא","דיפוזיה":"מעבר חומרים  דרך קרום תא","העברה פסיבית":"מעבר חומרים  דרך קרום תא","העברה פעילה":"מעבר חומרים  דרך קרום תא","חלבוני חוצי קרום":"מעבר חומרים  דרך קרום תא","תעלות":"מעבר חומרים  דרך קרום תא","נשאים":"בקרה על ביטוי גנים והנדסה גנטית","משאבות":"מעבר חומרים  דרך קרום תא","פוספוליפידים":"מעבר חומרים  דרך קרום תא","פלסמוליזה":"מעבר חומרים  דרך קרום תא","דה-פלסמוליזה":"מעבר חומרים  דרך קרום תא","גורם מגביל (אנזימים)":"אקולוגיה","אתר פעיל":"חלבונים ואנזימים","דנטורציה":"חלבונים ואנזימים","לב":"מערכת העצבים","מבנה ראשוני":"חלבונים ואנזימים","מבנה שניוני":"חלבונים ואנזימים","מבנה שלישוני":"חלבונים ואנזימים","משוב חיובי":"חלבונים ואנזימים","משוב שלילי":"חלבונים ואנזימים","תחרות":"אקולוגיה","קצב התגובה האנזימטית":"חלבונים ואנזימים","תצמיד אנזים-סובסטרט":"חלבונים ואנזימים","אוטוטרוף":"פוטוסינתזה  ונשימה תאית","אור":"אקולוגיה","אנרגיה כימית":"פוטוסינתזה  ונשימה תאית","אתנול":"פוטוסינתזה  ונשימה תאית","גליקוליזה":"פוטוסינתזה  ונשימה תאית","המרת אנרגיה":"פוטוסינתזה  ונשימה תאית","הטרוטרוף":"פוטוסינתזה  ונשימה תאית","כלורופיל":"פוטוסינתזה  ונשימה תאית","כלורופלסט":"פוטוסינתזה  ונשימה תאית","מגיבים":"פוטוסינתזה  ונשימה תאית","נשימה תאית":"פוטוסינתזה  ונשימה תאית","פוטוסינתזה":"אקולוגיה","תוצרים":"פוטוסינתזה  ונשימה תאית","תסיסה":"פוטוסינתזה  ונשימה תאית","בסיס חנקני":"החומר התורשתי","גדיל":"החומר התורשתי","גדיל משלים":"החומר התורשתי","גן":"בקרה על ביטוי גנים והנדסה גנטית","גנום":"החומר התורשתי","דאוקסי-ריבוז":"החומר התורשתי","כרומטידות אחיות":"מיטוזה ומיוזה","כרומוזום":"מיטוזה ומיוזה","מוטציה":"החומר התורשתי","מיטוזה":"מיטוזה ומיוזה","נוקלאוטיד":"החומר התורשתי","קבוצת זרחה":"החומר התורשתי","ריבוז":"מדנ''א לחלבון","הפרדה בלתי תלויה":"מיטוזה ומיוזה","הפריה":"מיטוזה ומיוזה","זיגוטה":"מערכת הרבייה","חלבוני הכישור":"מיטוזה ומיוזה","כרומוזומים הומולוגיים":"מיטוזה ומיוזה","מחזור התא":"מיטוזה ומיוזה","מיוזה":"מיטוזה ומיוזה","צנטרומר":"מיטוזה ומיוזה","שחלוף":"מיטוזה ומיוזה","תא אם":"מיטוזה ומיוזה","תא ביצה":"מערכת הרבייה","תא דיפלואידי":"מיטוזה ומיוזה","תא הפלואידי":"מיטוזה ומיוזה","תא זרע":"מערכת הרבייה","גמטה":"מערכת הרבייה","אנזים משעתק":"מדנ''א לחלבון","אנטי-קודון":"מדנ''א לחלבון","הקוד הגנטי":"מדנ''א לחלבון","קודון":"מדנ''א לחלבון","קודון אתחול":"מדנ''א לחלבון","קודון סיום":"מדנ''א לחלבון","שחבור":"בקרה על ביטוי גנים והנדסה גנטית","אנזים שעתוק הפוך":"מדנ''א לחלבון","תרגום":"מדנ''א לחלבון","אלל":"תורשה מנדלית","אלל דומיננטי":"תורשה מנדלית","אלל רצסיבי":"תורשה מנדלית","גנוטיפ":"תורשה מנדלית","דומיננטיות חלקית":"תורשה מנדלית","דומיננטיות שלמה":"תורשה מנדלית","הטרוזיגוט":"תורשה מנדלית","זן טהור":"תורשה מנדלית","פנוטיפ":"תורשה מנדלית","קו-דומיננטיות":"תורשה מנדלית","תאחיזה":"תורשה מנדלית","מערכת":"מערכת העצבים","מערכת אנדוקרינית":"מבוא לגוף האדם","מערכת ההובלה":"מבוא לגוף האדם","מערכת ההפרשה":"מבוא לגוף האדם","מערכת הנשימה":"מבוא לגוף האדם","מערכת העצבים":"מבוא לגוף האדם","בלוטה אקסוקרינית":"מערכת העיכול","גלוקוז":"מערכת ההפרשה הפנימית","ויטמינים":"מערכת העיכול","ושט":"מערכת העיכול","טריגליצרידים":"מערכת העיכול","כבד":"מערכת העיכול","כיס מרה":"מערכת העיכול","לבלב":"מערכת העיכול","ליפידים":"מערכת העיכול","מעי":"מערכת העיכול","מעי גס":"מערכת העיכול","מעי דק":"מערכת העיכול","סיסים":"מערכת העיכול","ספיגה":"מערכת העיכול","תחליב":"מערכת העיכול","מרכז הנשימה":"מערכת הנשימה","נשיפה":"מערכת הנשימה","סרעפת":"מערכת הנשימה","פחמן חד-חמצני":"מערכת הנשימה","קנה הנשימה":"מערכת הנשימה","שאיפה":"מערכת הנשימה","ראה":"מערכת הנשימה","אבי העורקים":"מערכת הובלה","אנדותל":"מערכת הובלה","אנמיה":"מערכת הובלה","אתר מקדם":"בקרה על ביטוי גנים והנדסה גנטית","דממת (המופיליה)":"מערכת הובלה","הומאותרמיים":"פיזיולוגיה השוואתית","המוגלובין":"מערכת הובלה","וריד":"מערכת הובלה","וריד הריאה":"מערכת הובלה","ורידון":"מערכת הובלה","ורידים חלולים":"מערכת הובלה","חדר":"מערכת הובלה","טסיות דם":"מערכת הובלה","טרשת עורקים":"מערכת הובלה","כלי דם":"מערכת הובלה","לחץ דם":"מערכת הובלה","לחץ דם דיאסטולי":"מערכת הובלה","לחץ דם סיסטולי":"מערכת הובלה","מחזור דם כפול":"מערכת הובלה","מסתם":"מערכת הובלה","מערכת דם סגורה":"מערכת הובלה","מערכת דם פתוחה":"מערכת הובלה","מרכז הלב וכלי הדם":"מערכת הובלה","נימים":"מערכת הובלה","נפח פעימה":"מערכת הובלה","סיסטולה":"מערכת הובלה","עורק":"מערכת הובלה","עורק הריאה":"מערכת הובלה","עורקיק":"מערכת הובלה","עליה":"מערכת הובלה","פויקילותרמיים":"פיזיולוגיה השוואתית","פיברין":"מערכת הובלה","פיברינוגן":"מערכת הובלה","פעימת לב":"מערכת הובלה","קוצב לב ראשי":"מערכת הובלה","קוצב לב משני":"מערכת הובלה","קרישת דם":"מערכת הובלה","תפוקת הלב":"מערכת הובלה","אנטיגן":"מערכת החיסון","בלוטת התימוס":"מערכת החיסון","דלקת":"מערכת החיסון","דמעה":"מערכת החיסון","לימפוציטים מסוג T":"מערכת החיסון","לימפוציטים מסוג B":"מערכת החיסון","מערכת הלימפה":"מערכת החיסון","נוגדן":"מערכת החיסון","פגוציט":"מערכת החיסון","פתוגן":"מערכת החיסון","תגובה ראשונית":"מערכת החיסון","תגובה שניונית":"מערכת החיסון","אקסון":"בקרה על ביטוי גנים והנדסה גנטית","גזע המוח":"מערכת העצבים","גירוי":"מערכת העצבים","דנדריט":"מערכת העצבים","היפותלמוס":"מערכת העצבים","כפיס המוח":"מערכת העצבים","מוח":"מערכת העצבים","מוח השדרה":"מערכת העצבים","מוחון":"מערכת העצבים","נוירוטרנסמיטר":"מערכת העצבים","נוירון":"מערכת העצבים","נוירון חישה":"מערכת העצבים","נוירון מוטורי":"מערכת העצבים","סינפסה":"מערכת העצבים","רפלקס":"מערכת העצבים","אדרנלין":"מערכת ההפרשה הפנימית","אינסולין":"מערכת ההפרשה הפנימית","בלוטה":"מערכת ההפרשה הפנימית","בלוטה אנדוקרינית":"מערכת ההפרשה הפנימית","בלוטת יותרת המוח":"מערכת ההפרשה הפנימית","בלוטת התריס":"מערכת ההפרשה הפנימית","גלוקגון":"מערכת ההפרשה הפנימית","גליקוגן":"מערכת ההפרשה הפנימית","הורמון":"מערכת הרבייה","הורמונים סטרואידיים":"מערכת ההפרשה הפנימית","פרולקטין":"מערכת ההפרשה הפנימית","אלדוסטרון":"מערכת ההפרשה","בדיקת שתן":"מערכת ההפרשה","דיאליזה":"מערכת ההפרשה","כליה":"מערכת ההפרשה","נפרון":"מערכת ההפרשה","שופכן":"מערכת ההפרשה","שתנן":"מערכת ההפרשה","אסטרוגן":"מערכת הרבייה","גונדה":"מערכת הרבייה","וסת":"מערכת הרבייה","זקיק":"מערכת הרבייה","טסטוסטרון":"מערכת הרבייה","מחזור הוסת":"מערכת הרבייה","נרתיק":"מערכת הרבייה","העברה אופקית":"מיקרוביולוגיה","פין":"מערכת הרבייה","שחלה":"מערכת הרבייה","אבולוציה":"פיזיולוגיה השוואתית","אורגניזם":"בקרה על ביטוי גנים והנדסה גנטית","אקולוגיה":"אקולוגיה","ביומסה":"אקולוגיה","ביוספרה":"אקולוגיה","בית גידול":"אקולוגיה","ברירה טבעית":"אקולוגיה","ברירה מלאכותית":"אקולוגיה","גורם א-ביוטי":"אקולוגיה","גורם ביוטי":"אקולוגיה","גזי חממה":"אקולוגיה","דיות":"אקולוגיה","דשן":"אקולוגיה","הדברה":"אקולוגיה","הדברה ביולוגית":"אקולוגיה","הדברה כימית":"אקולוגיה","הסתגלות":"אקולוגיה","התאמה":"פיזיולוגיה השוואתית","חבר":"אקולוגיה","טפילות":"אקולוגיה","יחסי גומלין":"אקולוגיה","יצרנים":"אקולוגיה","מארג מזון":"אקולוגיה","מי קולחין":"אקולוגיה","מים מטבוליים":"אקולוגיה","מין":"אקולוגיה","מין אנדמי":"אקולוגיה","מין פולש":"אקולוגיה","מערכת אקולוגית":"אקולוגיה","מפרקים":"אקולוגיה","משאבים":"אקולוגיה","סימביוזה":"אקולוגיה","פירמידה אקולוגית":"אקולוגיה","פקעת":"אקולוגיה","צמח חד-שנתי":"אקולוגיה","צמחי CAM":"אקולוגיה","צרכן":"אקולוגיה","קומנסליזם (סמוכנות)":"אקולוגיה","רמת ארגון":"אקולוגיה","רמת הזנה":"אקולוגיה","שפע":"אקולוגיה","שרשרת מזון":"אקולוגיה","תנאים":"אקולוגיה","תפוצה":"אקולוגיה","אנזים":"בקרה על ביטוי גנים והנדסה גנטית","אנטיביוטיקה":"מיקרוביולוגיה","בקטריופאג'":"מיקרוביולוגיה","הלופילים":"מיקרוביולוגיה","חיידקים":"מיקרוביולוגיה","טרנסדוקציה":"מיקרוביולוגיה","טרנספורמציה":"מיקרוביולוגיה","טפיל":"מיקרוביולוגיה","כימואוטוטרוף":"מיקרוביולוגיה","מיקרוביוטה":"מיקרוביולוגיה","מיקרואורגניזם":"מיקרוביולוגיה","מסלול ליזוגני":"מיקרוביולוגיה","מסלול ליטי":"מיקרוביולוגיה","נוקלאואיד":"מיקרוביולוגיה","פפטידוגליקן":"מיקרוביולוגיה","עמידות לאנטיביוטיקה":"מיקרוביולוגיה","קוניוגציה":"מיקרוביולוגיה","שלב השהייה":"מיקרוביולוגיה","שלב הגידול המעריכי":"מיקרוביולוגיה","שלב העמידה":"מיקרוביולוגיה","שלב התמותה":"מיקרוביולוגיה","גלגול":"פיזיולוגיה השוואתית","הטלה":"פיזיולוגיה השוואתית","המלטה":"פיזיולוגיה השוואתית","השרצה":"פיזיולוגיה השוואתית","זימים":"פיזיולוגיה השוואתית","חלמון":"פיזיולוגיה השוואתית","טרכאות":"פיזיולוגיה השוואתית","ראשן":"פיזיולוגיה השוואתית","רחם":"פיזיולוגיה השוואתית","שליה":"פיזיולוגיה השוואתית","שק חלמון":"פיזיולוגיה השוואתית","אופרון":"בקרה על ביטוי גנים והנדסה גנטית","חלבון":"בקרה על ביטוי גנים והנדסה גנטית","אינטרון":"בקרה על ביטוי גנים והנדסה גנטית","אלקטרופורזה":"בקרה על ביטוי גנים והנדסה גנטית","אנזימי הגבלה":"בקרה על ביטוי גנים והנדסה גנטית","אתר מפעיל":"בקרה על ביטוי גנים והנדסה גנטית","גן מבני":"בקרה על ביטוי גנים והנדסה גנטית","גן בורר":"בקרה על ביטוי גנים והנדסה גנטית","גנים של תחזוקה שוטפת":"בקרה על ביטוי גנים והנדסה גנטית","דכאן":"בקרה על ביטוי גנים והנדסה גנטית","מקור השכפול":"בקרה על ביטוי גנים והנדסה גנטית","משרן":"בקרה על ביטוי גנים והנדסה גנטית","מחדר":"בקרה על ביטוי גנים והנדסה גנטית","שחבור חליפי":"בקרה על ביטוי גנים והנדסה גנטית","תאי גזע":"בקרה על ביטוי גנים והנדסה גנטית","פולימר":"בקרה על ביטוי גנים והנדסה גנטית"};
+
+
+// ===== TOPIC COLOR THEMES (Feature #16) =====
+const TOPIC_THEMES = {
+  'מאפייני חיים':                    {primary:'#1B6FA8', accent:'#3FA9D6', bg:'#E8F4F8'},
+  'מעבר חומרים  דרך קרום תא':        {primary:'#1B6FA8', accent:'#3FA9D6', bg:'#E8F4F8'},
+  'חלבונים ואנזימים':                {primary:'#8B5A2B', accent:'#D4A574', bg:'#F5E8D4'},
+  'פוטוסינתזה  ונשימה תאית':         {primary:'#3F8C3F', accent:'#5CB85C', bg:'#E0F0DA'},
+  'החומר התורשתי':                   {primary:'#7B3F8C', accent:'#9B59B6', bg:'#EBDEF0'},
+  'מיטוזה ומיוזה':                   {primary:'#7B3F8C', accent:'#9B59B6', bg:'#EBDEF0'},
+  "מדנ''א לחלבון":                   {primary:'#7B3F8C', accent:'#9B59B6', bg:'#EBDEF0'},
+  'תורשה מנדלית':                    {primary:'#7B3F8C', accent:'#9B59B6', bg:'#EBDEF0'},
+  'מבוא לגוף האדם':                  {primary:'#C44747', accent:'#F47A6E', bg:'#FCE4E0'},
+  'מערכת העיכול':                    {primary:'#C44747', accent:'#F47A6E', bg:'#FCE4E0'},
+  'מערכת הנשימה':                    {primary:'#C44747', accent:'#F47A6E', bg:'#FCE4E0'},
+  'מערכת הובלה':                     {primary:'#C44747', accent:'#F47A6E', bg:'#FCE4E0'},
+  'מערכת החיסון':                    {primary:'#C44747', accent:'#F47A6E', bg:'#FCE4E0'},
+  'מערכת העצבים':                    {primary:'#C44747', accent:'#F47A6E', bg:'#FCE4E0'},
+  'מערכת ההפרשה הפנימית':            {primary:'#C44747', accent:'#F47A6E', bg:'#FCE4E0'},
+  'מערכת ההפרשה':                    {primary:'#C44747', accent:'#F47A6E', bg:'#FCE4E0'},
+  'מערכת הרבייה':                    {primary:'#C44747', accent:'#F47A6E', bg:'#FCE4E0'},
+  'אקולוגיה':                        {primary:'#3F8C3F', accent:'#5CB85C', bg:'#E0F0DA'},
+  'מיקרוביולוגיה':                   {primary:'#B8860B', accent:'#F4B942', bg:'#FFF8DC'},
+  'פיזיולוגיה השוואתית':             {primary:'#2E86AB', accent:'#5DADE2', bg:'#D6EAF8'},
+  'בקרה על ביטוי גנים והנדסה גנטית': {primary:'#7B3F8C', accent:'#9B59B6', bg:'#EBDEF0'}
+};
+
+function getTermTheme(term){
+  const topic = TERM_TOPIC_MAP[term];
+  return TOPIC_THEMES[topic] || {primary:'var(--blue-dark)', accent:'var(--blue)', bg:'var(--blue-soft)'};
+}
 
 const TOPICS_BOOK = [
   {key: 'מאפייני חיים', label: 'מאפייני חיים', emoji: '🧬'},
@@ -1754,6 +2103,219 @@ let currentUser = null;
 let showUserMenu = false;
 let syncStatus = ''; // 'syncing' | 'synced' | ''
 let lifetimeStats = JSON.parse(localStorage.getItem('ml_stats') || '{"quizCorrect":0,"quizWrong":0,"quizTotal":0}');
+// User progress tracking for streak, levels, badges, and spaced repetition
+let userProgress = JSON.parse(localStorage.getItem('ml_progress') || JSON.stringify({
+  streak: 0,
+  lastActiveDate: null,
+  longestStreak: 0,
+  termsMemory: {},  // term -> {lastSeen, nextReview, status: 'unsure'|'known'|'mastered', reviewCount}
+  earnedBadges: []
+}));
+
+function saveProgress(){
+  localStorage.setItem('ml_progress', JSON.stringify(userProgress));
+  if(currentUser) saveUserData(currentUser.uid);
+}
+
+function todayDateStr(){
+  const d = new Date();
+  return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+}
+
+function daysBetween(date1, date2){
+  const d1 = new Date(date1); const d2 = new Date(date2);
+  return Math.floor((d2-d1)/(1000*60*60*24));
+}
+
+function updateStreak(){
+  const today = todayDateStr();
+  if(userProgress.lastActiveDate === today) return;
+  if(!userProgress.lastActiveDate){
+    userProgress.streak = 1;
+  } else {
+    const days = daysBetween(userProgress.lastActiveDate, today);
+    if(days === 1) userProgress.streak += 1;
+    else if(days > 1) userProgress.streak = 1;
+  }
+  userProgress.longestStreak = Math.max(userProgress.longestStreak || 0, userProgress.streak);
+  userProgress.lastActiveDate = today;
+  saveProgress();
+  checkBadges();
+}
+
+// ===== LEVEL SYSTEM (Feature #5) =====
+const LEVELS = [
+  {key:'beginner',  min:0,    max:50,   name:'תלמיד מתחיל',    emoji:'🌱', color:'#5CB85C'},
+  {key:'student',   min:50,   max:150,  name:'תלמיד מתקדם',    emoji:'📚', color:'#3FA9D6'},
+  {key:'advanced',  min:150,  max:300,  name:'תלמיד בכיר',      emoji:'🎓', color:'#1B6FA8'},
+  {key:'expert',    min:300,  max:450,  name:'מומחה לביולוגיה', emoji:'🔬', color:'#9B59B6'},
+  {key:'master',    min:450,  max:9999, name:'מאסטר',           emoji:'👑', color:'#F4B942'}
+];
+
+function getCurrentLevel(){
+  const count = studied.size;
+  for(let i=LEVELS.length-1; i>=0; i--){
+    if(count >= LEVELS[i].min) return {...LEVELS[i], current: count, next: LEVELS[i+1]||null};
+  }
+  return LEVELS[0];
+}
+
+// ===== BADGES SYSTEM (Feature #6) =====
+const BADGES = [
+  {id:'first_term',     name:'הצעד הראשון',  desc:'סימנת את המושג הראשון כידוע',         emoji:'⭐'},
+  {id:'ten_streak',     name:'10 ברצף',       desc:'10 תשובות נכונות ברצף במבחון',         emoji:'⚡'},
+  {id:'streak_3',       name:'3 ימים ברצף',   desc:'נכנסת לאפליקציה 3 ימים ברצף',          emoji:'🔥'},
+  {id:'streak_7',       name:'שבוע ברצף',     desc:'נכנסת לאפליקציה 7 ימים ברצף',          emoji:'🔥'},
+  {id:'streak_30',      name:'חודש שלם!',     desc:'נכנסת לאפליקציה 30 ימים ברצף',         emoji:'💎'},
+  {id:'quiz_50',        name:'מתחיל במבחון',  desc:'ענית על 50 שאלות מבחון',                emoji:'🎯'},
+  {id:'quiz_200',       name:'מתמיד',          desc:'ענית על 200 שאלות מבחון',               emoji:'🏹'},
+  {id:'accuracy_90',    name:'דיוק 90%',      desc:'הגעת ל-90% דיוק (לפחות 50 שאלות)',    emoji:'🎖'},
+  {id:'cell_master',    name:'מאסטר התא',     desc:'ידעת את כל מושגי תת-הנושא "מאפייני חיים"', emoji:'🧬', topic:'מאפייני חיים'},
+  {id:'genetics_master',name:'מאסטר התורשה',  desc:'ידעת את כל מושגי תת-הנושא "תורשה מנדלית"', emoji:'👨‍👩‍👧', topic:'תורשה מנדלית'},
+  {id:'fav_10',         name:'אספן',           desc:'10 מושגים במועדפים',                    emoji:'❤'},
+  {id:'studied_100',    name:'100 מושגים',    desc:'סימנת 100 מושגים כידועים',              emoji:'📖'},
+  {id:'studied_all',    name:'שליטה מלאה',    desc:'סימנת את כל 465 המושגים כידועים',       emoji:'👑'}
+];
+
+let _quizStreakCount = 0; // tracks current correct streak in quiz session
+
+function checkBadges(){
+  const newBadges = [];
+  const earned = new Set(userProgress.earnedBadges);
+  
+  BADGES.forEach(badge => {
+    if(earned.has(badge.id)) return;
+    let win = false;
+    switch(badge.id){
+      case 'first_term': win = studied.size >= 1; break;
+      case 'ten_streak': win = _quizStreakCount >= 10; break;
+      case 'streak_3': win = userProgress.streak >= 3; break;
+      case 'streak_7': win = userProgress.streak >= 7; break;
+      case 'streak_30': win = userProgress.streak >= 30; break;
+      case 'quiz_50': win = (lifetimeStats.quizTotal||0) >= 50; break;
+      case 'quiz_200': win = (lifetimeStats.quizTotal||0) >= 200; break;
+      case 'accuracy_90': {
+        const t = lifetimeStats.quizTotal||0;
+        win = t >= 50 && (lifetimeStats.quizCorrect/t) >= 0.9;
+        break;
+      }
+      case 'fav_10': win = favorites.size >= 10; break;
+      case 'studied_100': win = studied.size >= 100; break;
+      case 'studied_all': win = studied.size >= 465; break;
+      case 'cell_master':
+      case 'genetics_master': {
+        if(!badge.topic) break;
+        const topicTerms = GLOSSARY.filter(t => TERM_TOPIC_MAP[t.hebrew] === badge.topic);
+        if(topicTerms.length === 0) break;
+        win = topicTerms.every(t => studied.has(t.hebrew));
+        break;
+      }
+    }
+    if(win){
+      newBadges.push(badge);
+      userProgress.earnedBadges.push(badge.id);
+    }
+  });
+  
+  if(newBadges.length){
+    saveProgress();
+    newBadges.forEach(b => showBadgeToast(b));
+  }
+}
+
+function showBadgeToast(badge){
+  const toast = document.createElement('div');
+  toast.className = 'badge-toast';
+  toast.innerHTML = `
+    <div class="badge-toast-emoji">${badge.emoji}</div>
+    <div>
+      <div class="badge-toast-title">תג חדש!</div>
+      <div class="badge-toast-name">${badge.name}</div>
+      <div class="badge-toast-desc">${badge.desc}</div>
+    </div>
+  `;
+  document.body.appendChild(toast);
+  if(soundEnabled){
+    try{
+      if(!_audioCtx) _audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      const now = _audioCtx.currentTime;
+      [{f:523.25,t:0},{f:659.25,t:0.1},{f:783.99,t:0.2},{f:1046.5,t:0.3}].forEach(n => {
+        const o = _audioCtx.createOscillator(); const g = _audioCtx.createGain();
+        o.type='sine'; o.frequency.value=n.f;
+        g.gain.setValueAtTime(0,now+n.t); g.gain.linearRampToValueAtTime(0.15,now+n.t+0.02);
+        g.gain.exponentialRampToValueAtTime(0.001,now+n.t+0.4);
+        o.connect(g); g.connect(_audioCtx.destination);
+        o.start(now+n.t); o.stop(now+n.t+0.4);
+      });
+    }catch(e){}
+  }
+  setTimeout(() => toast.classList.add('show'), 50);
+  setTimeout(() => {
+    toast.classList.remove('show');
+    setTimeout(() => toast.remove(), 400);
+  }, 4500);
+}
+
+// ===== SPACED REPETITION (Feature #2) =====
+// status: 'unsure'(repeat 1 day), 'known'(repeat 7 days), 'mastered'(repeat 30 days)
+function markTermStatus(term, status){
+  const today = new Date();
+  const nextDate = new Date();
+  const intervals = {unsure: 1, known: 7, mastered: 30};
+  nextDate.setDate(today.getDate() + intervals[status]);
+  
+  if(!userProgress.termsMemory[term]){
+    userProgress.termsMemory[term] = {reviewCount: 0};
+  }
+  userProgress.termsMemory[term].lastSeen = todayDateStr();
+  userProgress.termsMemory[term].nextReview = nextDate.toISOString().slice(0,10);
+  userProgress.termsMemory[term].status = status;
+  userProgress.termsMemory[term].reviewCount = (userProgress.termsMemory[term].reviewCount||0) + 1;
+  
+  if(status === 'mastered' || status === 'known'){
+    studied.add(term);
+    saveStudied();
+  } else {
+    studied.delete(term);
+    saveStudied();
+  }
+  saveProgress();
+}
+
+function getTermsForReview(){
+  const today = todayDateStr();
+  return Object.entries(userProgress.termsMemory)
+    .filter(([term, data]) => data.nextReview <= today)
+    .map(([term]) => term);
+}
+
+// ===== TEXT-TO-SPEECH (Feature #19) =====
+let speechEnabled = localStorage.getItem('ml_speech') !== '0';
+let currentUtterance = null;
+
+function speakText(text){
+  if(!speechEnabled || !window.speechSynthesis) return;
+  window.speechSynthesis.cancel();
+  const utter = new SpeechSynthesisUtterance(text);
+  utter.lang = 'he-IL';
+  utter.rate = 0.9;
+  utter.pitch = 1.0;
+  const voices = window.speechSynthesis.getVoices();
+  const heVoice = voices.find(v => v.lang.startsWith('he'));
+  if(heVoice) utter.voice = heVoice;
+  currentUtterance = utter;
+  window.speechSynthesis.speak(utter);
+}
+
+function stopSpeaking(){
+  if(window.speechSynthesis) window.speechSynthesis.cancel();
+}
+
+// Preload voices
+if(window.speechSynthesis){
+  window.speechSynthesis.onvoiceschanged = () => {};
+  window.speechSynthesis.getVoices();
+}
 
 function saveLifetimeStats(){
   localStorage.setItem('ml_stats', JSON.stringify(lifetimeStats));
@@ -1920,6 +2482,10 @@ function buildHeader(filtered){
       </div>
     </div>
     <div class="hdr-toolbar">
+      <button class="tool-btn streak-btn" onclick="setMode('progress')" aria-label="רצף ימים" title="רצף ימים: ${userProgress.streak}">
+        <span class="tool-ico">🔥</span>
+        ${userProgress.streak > 0 ? `<span class="tool-badge streak-badge">${userProgress.streak}</span>` : ''}
+      </button>
       <button class="tool-btn" onclick="setMode('favs')" aria-label="מועדפים">
         <span class="tool-ico">♥</span>
         ${favorites.size > 0 ? `<span class="tool-badge">${favorites.size}</span>` : ''}
@@ -2017,6 +2583,7 @@ function buildFlash(filtered){
         <div class="face back">
           <div class="card-bio-decor-back">${SVG_CELL}</div>
           <span class="let-badge">${t.letter}</span>
+          <button class="speak-btn" onclick="event.stopPropagation();speakText('${t.hebrew.replace(/'/g,"\\'")} ' + '${t.definition.replace(/'/g,"\\'").replace(/"/g,'')}')" title="הקרא הגדרה">🔊</button>
           <div class="face-backterm">${t.hebrew} · ${t.english}</div>
           <div class="face-label" style="color:rgba(255,255,255,.6)">הגדרה</div>
           <div class="face-def">${t.definition}</div>
@@ -2030,9 +2597,10 @@ function buildFlash(filtered){
       <button class="fav-btn" onclick="toggleFav('${t.hebrew.replace(/'/g,"\\'")}') ">${isFav?'❤️':'🤍'}</button>
       <button class="nav-btn" ${cardIdx>=filtered.length-1?'disabled':''} onclick="nav(1)">הבא ←</button>
     </div>
-    <div class="known-row">
-      <button class="known-btn yes" onclick="markStudied('${t.hebrew.replace(/'/g,"\\'")}',true)">✓ ידוע לי</button>
-      <button class="known-btn no" onclick="markStudied('${t.hebrew.replace(/'/g,"\\'")}',false)">✗ עוד לא</button>
+    <div class="known-row known-row-3">
+      <button class="known-btn yes" onclick="markTermStatusAndNext('${t.hebrew.replace(/'/g,"\\'")}','mastered')" title="חוזר אחרי 30 יום">✓ ידוע היטב</button>
+      <button class="known-btn maybe" onclick="markTermStatusAndNext('${t.hebrew.replace(/'/g,"\\'")}','known')" title="חוזר אחרי 7 ימים">~ פחות או יותר</button>
+      <button class="known-btn no" onclick="markTermStatusAndNext('${t.hebrew.replace(/'/g,"\\'")}','unsure')" title="חוזר מחר">✗ לא בטוח</button>
     </div>
   </div>`;
 }
@@ -2175,14 +2743,16 @@ function buildGlossary(filtered){
           const isFav = favorites.has(t.hebrew);
           const isStudied = studied.has(t.hebrew);
           const safeName = t.hebrew.replace(/'/g, "\\'");
+          const theme = getTermTheme(t.hebrew);
           return `
-            <div class="gloss-card ${isStudied?'is-studied':''}">
+            <div class="gloss-card ${isStudied?'is-studied':''}" style="border-right:4px solid ${theme.primary}">
               <div class="gloss-card-hdr">
                 <div class="gloss-card-titles">
                   <div class="gloss-card-heb">${highlightText(t.hebrew, searchQ)}</div>
                   <div class="gloss-card-eng">${highlightText(t.english, searchQ)}</div>
                 </div>
                 <div class="gloss-card-actions">
+                  <button class="gloss-act-btn" onclick="speakText('${safeName} ' + '${t.definition.replace(/'/g,"\\'").replace(/"/g,'')}')" title="הקרא">🔊</button>
                   <button class="gloss-act-btn ${isFav?'fav-on':''}" onclick="toggleFav('${safeName}')" title="${isFav?'הסר ממועדפים':'הוסף למועדפים'}">${isFav?SVG_HEART:SVG_HEART_OUTLINE}</button>
                   <button class="gloss-act-btn ${isStudied?'stud-on':''}" onclick="toggleStudiedDirect('${safeName}')" title="${isStudied?'סמן כלא ידוע':'סמן כידוע לי'}">${isStudied?'✓':'○'}</button>
                 </div>
@@ -2221,16 +2791,59 @@ function buildProgress(){
   const quizWrong = lifetimeStats.quizWrong || 0;
   const accuracy = quizTotal > 0 ? Math.round((quizCorrect / quizTotal) * 100) : 0;
   
+  const level = getCurrentLevel();
+  const levelProgress = level.next ? Math.round(((studiedCount - level.min) / (level.next.min - level.min)) * 100) : 100;
+  const reviewCount = getTermsForReview().length;
+  const earnedBadges = userProgress.earnedBadges || [];
+  
   return `<div class="prog-wrap-main">
     ${currentUser ? `
       <div class="prog-greeting">
-        <img src="${currentUser.photoURL || ''}" referrerpolicy="no-referrer" onerror="this.style.display='none'"/>
+        <img src="${currentUser.photoURL || ''}" referrerpolicy="no-referrer" onerror="this.style.display=\'none\'"/>
         <div>
           <div class="prog-hello">שלום ${(currentUser.displayName||'').split(' ')[0]}! 👋</div>
-          <div class="prog-sub">הנה ההתקדמות שלך עד כה</div>
+          <div class="prog-sub">${level.emoji} ${level.name}</div>
         </div>
       </div>
     ` : '<div class="prog-greeting"><div><div class="prog-hello">ההתקדמות שלך 📊</div></div></div>'}
+    
+    <!-- STREAK SECTION -->
+    <div class="streak-section">
+      <div class="streak-current">
+        <div class="streak-fire">🔥</div>
+        <div>
+          <div class="streak-num">${userProgress.streak || 0}</div>
+          <div class="streak-lbl">ימים ברצף</div>
+        </div>
+      </div>
+      <div class="streak-info">
+        <div class="streak-stat">
+          <span class="streak-stat-num">${userProgress.longestStreak || 0}</span>
+          <span class="streak-stat-lbl">הרצף הארוך ביותר</span>
+        </div>
+        ${reviewCount > 0 ? `
+        <div class="streak-stat review-stat">
+          <span class="streak-stat-num">${reviewCount}</span>
+          <span class="streak-stat-lbl">לחזרה היום</span>
+        </div>` : ''}
+      </div>
+    </div>
+    
+    <!-- LEVEL PROGRESS -->
+    <div class="level-card" style="border-color:${level.color}">
+      <div class="level-hdr">
+        <div class="level-info">
+          <div class="level-emoji" style="background:${level.color}20">${level.emoji}</div>
+          <div>
+            <div class="level-name" style="color:${level.color}">${level.name}</div>
+            ${level.next ? `<div class="level-next">עוד ${level.next.min - studiedCount} מושגים ל${level.next.name}</div>` : `<div class="level-next">השגת את הרמה הגבוהה ביותר! 👑</div>`}
+          </div>
+        </div>
+      </div>
+      ${level.next ? `
+        <div class="level-bar"><div class="level-fill" style="width:${levelProgress}%;background:${level.color}"></div></div>
+      ` : ''}
+    </div>
     
     <div class="prog-card prog-card-big">
       <div class="prog-card-hdr">
@@ -2258,6 +2871,21 @@ function buildProgress(){
       </div>
     </div>
 
+    <!-- BADGES SECTION -->
+    <div class="badges-section">
+      <div class="badges-title">🏆 התגים שלך <span class="badges-count">(${earnedBadges.length}/${BADGES.length})</span></div>
+      <div class="badges-grid">
+        ${BADGES.map(b => {
+          const earned = earnedBadges.includes(b.id);
+          return `<div class="badge-card ${earned?'earned':'locked'}" title="${b.desc}">
+            <div class="badge-emoji">${earned ? b.emoji : '🔒'}</div>
+            <div class="badge-name">${b.name}</div>
+            <div class="badge-desc">${b.desc}</div>
+          </div>`;
+        }).join('')}
+      </div>
+    </div>
+
     <div class="prog-mini-row">
       <div class="prog-mini">
         <div class="prog-mini-ico">${SVG_HEART}</div>
@@ -2276,12 +2904,6 @@ function buildProgress(){
       </div>
     </div>
 
-    ${quizTotal === 0 ? `
-      <div class="prog-empty">
-        <div style="font-size:14px;color:var(--ink-soft);text-align:center;padding:14px;font-weight:600">עוד לא ניסית את המבחון. נסה עכשיו!</div>
-      </div>
-    ` : ''}
-    
     ${studiedCount >= 50 ? `
       <div class="milestone-banner">
         <div class="milestone-icon">${SVG_GRAD_CAP}</div>
@@ -2295,12 +2917,8 @@ function buildProgress(){
 
     <div class="prog-actions">
       <button class="cta-btn cta-primary" onclick="setMode('flash')">${SVG_CARDS} <span>חזרה לכרטיסיות</span></button>
-      <button class="cta-btn cta-ghost" onclick="setMode('quiz')">${SVG_TARGET} <span>התחל מבחון</span></span></button>
+      <button class="cta-btn cta-ghost" onclick="setMode('quiz')">${SVG_TARGET} <span>התחל מבחון</span></button>
     </div>
-
-    ${currentUser && quizTotal > 5 ? `
-      <button class="cta-btn cta-ghost" style="margin-top:8px;background:#fde8e6;border-color:#c44;color:#c44" onclick="resetProgress()">↺ אפס את הסטטיסטיקה</button>
-    ` : ''}
   </div>`;
 }
 
@@ -2447,7 +3065,27 @@ function markStudied(term, yes){
     studied.delete(term);
   }
   saveStudied();
-  setTimeout(() => nav(1), yes ? 400 : 0); // small delay if correct to hear the sound
+  setTimeout(() => nav(1), yes ? 400 : 0);
+}
+
+function markTermStatusAndNext(term, status){
+  markTermStatus(term, status);
+  if(status === 'mastered' && soundEnabled) playSuccessSound();
+  else if(status === 'known' && soundEnabled){
+    // softer success sound
+    try{
+      if(!_audioCtx) _audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      const ctx = _audioCtx; const now = ctx.currentTime;
+      const o = ctx.createOscillator(); const g = ctx.createGain();
+      o.type='sine'; o.frequency.value=659.25;
+      g.gain.setValueAtTime(0, now); g.gain.linearRampToValueAtTime(0.1, now+0.02);
+      g.gain.exponentialRampToValueAtTime(0.001, now+0.25);
+      o.connect(g); g.connect(ctx.destination);
+      o.start(now); o.stop(now+0.25);
+    }catch(e){}
+  }
+  checkBadges();
+  setTimeout(() => nav(1), 350);
 }
 
 function answerQuiz(idx){
@@ -2460,11 +3098,15 @@ function answerQuiz(idx){
   const ok = chosen.isCorrect;
   if(ok) quizState.correct++; else quizState.wrong++;
   
-  // Play sound
-  if(soundEnabled){
-    if(ok) playSuccessSound();
-    else playWrongSound();
+  // Play sound + track streak
+  if(ok){
+    _quizStreakCount++;
+    if(soundEnabled) playSuccessSound();
+  } else {
+    _quizStreakCount = 0;
+    if(soundEnabled) playWrongSound();
   }
+  checkBadges();
   
   // Update lifetime stats
   lifetimeStats.quizTotal = (lifetimeStats.quizTotal || 0) + 1;
@@ -2535,7 +3177,8 @@ async function triggerInstall(){
       installPromptEvent = null;
       isInstalled = true;
     }
-    if(typeof render === 'function') render();
+    if(typeof render === 'function') updateStreak();
+render();
   } else {
     // Show manual instructions for browsers that don't support install prompt (iOS Safari, etc.)
     showInstallInstructions();
