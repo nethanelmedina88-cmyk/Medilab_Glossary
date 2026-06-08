@@ -1407,6 +1407,144 @@ html.dark .filter-tabs{background:rgba(255,255,255,0.08)}
   .filter-tab{font-size:12px;padding:6px 8px}
   .topic-btn{font-size:11px;padding:5px 9px}
 }
+
+/* ============ INSTALL BUTTON ============ */
+.tool-btn.tool-install{
+  background:#F9D85C !important;
+  color:#1B6FA8 !important;
+  border-color:#F9D85C !important;
+  animation:installPulse 2s ease-in-out infinite;
+}
+
+.tool-btn.tool-install:hover{
+  background:#fff !important;
+  transform:scale(1.1);
+}
+
+.tool-btn.tool-install .tool-ico{
+  font-size:18px;
+  font-weight:800;
+}
+
+@keyframes installPulse{
+  0%, 100%{box-shadow:0 0 0 0 rgba(249,216,92,0.7)}
+  50%{box-shadow:0 0 0 6px rgba(249,216,92,0)}
+}
+
+/* ============ INSTALL INSTRUCTIONS MODAL ============ */
+.install-overlay{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,0.55);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  z-index:9999;
+  padding:20px;
+  animation:fadeIn 0.2s ease-out;
+}
+
+@keyframes fadeIn{
+  from{opacity:0}
+  to{opacity:1}
+}
+
+.install-modal{
+  background:var(--paper);
+  border-radius:20px;
+  padding:28px 24px;
+  max-width:340px;
+  width:100%;
+  position:relative;
+  box-shadow:0 20px 60px rgba(0,0,0,0.3);
+  animation:slideUp 0.25s ease-out;
+}
+
+@keyframes slideUp{
+  from{transform:translateY(20px);opacity:0}
+  to{transform:translateY(0);opacity:1}
+}
+
+.install-close{
+  position:absolute;
+  top:12px;
+  left:12px;
+  background:transparent;
+  border:none;
+  font-size:28px;
+  color:var(--ink-light);
+  cursor:pointer;
+  width:32px;
+  height:32px;
+  border-radius:50%;
+  line-height:1;
+  font-family:inherit;
+}
+
+.install-close:hover{
+  background:rgba(0,0,0,0.05);
+  color:var(--ink);
+}
+
+.install-title{
+  font-family:'Fredoka','Heebo',sans-serif;
+  font-size:20px;
+  font-weight:700;
+  color:var(--blue-dark);
+  text-align:center;
+  margin-bottom:20px;
+}
+
+.install-step{
+  display:flex;
+  align-items:flex-start;
+  gap:12px;
+  margin-bottom:16px;
+  font-size:14px;
+  font-weight:600;
+  color:var(--ink-soft);
+  line-height:1.5;
+}
+
+.install-step strong{
+  color:var(--blue-dark);
+  font-weight:700;
+}
+
+.install-num{
+  flex-shrink:0;
+  width:28px;
+  height:28px;
+  border-radius:50%;
+  background:var(--blue-dark);
+  color:#fff;
+  font-family:'Fredoka','Heebo',sans-serif;
+  font-weight:700;
+  font-size:14px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+
+.install-ok{
+  display:block;
+  width:100%;
+  margin-top:12px;
+  padding:12px;
+  background:var(--blue-dark);
+  color:#fff;
+  border:none;
+  border-radius:12px;
+  font-family:'Fredoka','Heebo',sans-serif;
+  font-size:15px;
+  font-weight:700;
+  cursor:pointer;
+  transition:background 0.15s;
+}
+
+.install-ok:hover{
+  background:var(--blue);
+}
 </style>
 
 <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-app-compat.js"></script>
@@ -1532,6 +1670,8 @@ let isFlipped = false;
 let favorites = new Set(JSON.parse(localStorage.getItem('ml_favs') || '[]'));
 let studied = new Set(JSON.parse(localStorage.getItem('ml_studied') || '[]'));
 let dark = localStorage.getItem('ml_dark') === '1';
+let installPromptEvent = null;  // Saved beforeinstallprompt event
+let isInstalled = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
 
 // ===== SUCCESS SOUND =====
 let _audioCtx = null;
@@ -1796,6 +1936,11 @@ function buildHeader(filtered){
           <span class="tool-ico">G</span>
         </button>
       `}
+      ${!isInstalled ? `
+        <button class="tool-btn tool-install" onclick="triggerInstall()" aria-label="התקן אפליקציה" title="התקן את האפליקציה">
+          <span class="tool-ico">⬇</span>
+        </button>
+      ` : ''}
       <button class="tool-btn" onclick="toggleDark()" aria-label="מצב לילה">
         <span class="tool-ico">${dark?'☀':'☾'}</span>
       </button>
@@ -2369,42 +2514,76 @@ if ('serviceWorker' in navigator) {
 }
 
 // PWA install prompt handling
-let deferredPrompt;
 window.addEventListener('beforeinstallprompt', (e) => {
   e.preventDefault();
-  deferredPrompt = e;
-  // Show install button after 30 seconds or 5 interactions
-  setTimeout(() => {
-    if (deferredPrompt && !localStorage.getItem('ml_install_dismissed')) {
-      showInstallPrompt();
-    }
-  }, 30000);
+  installPromptEvent = e;
+  // Re-render so the install button appears
+  if(typeof render === 'function') render();
 });
 
-function showInstallPrompt() {
-  if (!deferredPrompt) return;
-  const banner = document.createElement('div');
-  banner.style.cssText = 'position:fixed;bottom:0;left:0;right:0;background:#1B6FA8;color:#fff;padding:14px 16px;display:flex;align-items:center;gap:12px;box-shadow:0 -4px 12px rgba(0,0,0,.2);z-index:1000;font-family:Assistant,sans-serif';
-  banner.innerHTML = `
-    <div style="flex:1">
-      <div style="font-weight:700;font-size:15px">התקן את שליפים בטלפון</div>
-      <div style="font-size:12px;opacity:.85">גישה מהירה, עובד גם ללא אינטרנט</div>
-    </div>
-    <button id="pwa-install" style="background:#fff;color:#1B6FA8;border:none;padding:8px 14px;border-radius:8px;font-weight:700;font-family:inherit;cursor:pointer">התקן</button>
-    <button id="pwa-dismiss" style="background:transparent;color:#fff;border:1px solid rgba(255,255,255,.4);padding:8px 12px;border-radius:8px;font-family:inherit;cursor:pointer">לא תודה</button>
-  `;
-  document.body.appendChild(banner);
-  document.getElementById('pwa-install').onclick = async () => {
-    deferredPrompt.prompt();
-    const result = await deferredPrompt.userChoice;
-    deferredPrompt = null;
-    banner.remove();
-  };
-  document.getElementById('pwa-dismiss').onclick = () => {
-    localStorage.setItem('ml_install_dismissed', '1');
-    banner.remove();
-  };
+window.addEventListener('appinstalled', () => {
+  installPromptEvent = null;
+  isInstalled = true;
+  if(typeof render === 'function') render();
+});
+
+async function triggerInstall(){
+  if(installPromptEvent){
+    installPromptEvent.prompt();
+    const result = await installPromptEvent.userChoice;
+    if(result.outcome === 'accepted'){
+      installPromptEvent = null;
+      isInstalled = true;
+    }
+    if(typeof render === 'function') render();
+  } else {
+    // Show manual instructions for browsers that don't support install prompt (iOS Safari, etc.)
+    showInstallInstructions();
+  }
 }
+
+function showInstallInstructions(){
+  const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+  const overlay = document.createElement('div');
+  overlay.className = 'install-overlay';
+  overlay.innerHTML = `
+    <div class="install-modal">
+      <button class="install-close" onclick="this.closest('.install-overlay').remove()">×</button>
+      <div class="install-title">התקנת האפליקציה</div>
+      ${isIOS ? `
+        <div class="install-step">
+          <span class="install-num">1</span>
+          <div>לחץ על כפתור השיתוף <strong>⬆</strong> בתחתית הדפדפן</div>
+        </div>
+        <div class="install-step">
+          <span class="install-num">2</span>
+          <div>גלול מטה ובחר <strong>"הוסף למסך הבית"</strong></div>
+        </div>
+        <div class="install-step">
+          <span class="install-num">3</span>
+          <div>לחץ <strong>"הוסף"</strong> בפינה הימנית העליונה</div>
+        </div>
+      ` : `
+        <div class="install-step">
+          <span class="install-num">1</span>
+          <div>פתח את תפריט הדפדפן <strong>⋮</strong> (3 נקודות)</div>
+        </div>
+        <div class="install-step">
+          <span class="install-num">2</span>
+          <div>בחר <strong>"התקן אפליקציה"</strong> או <strong>"הוסף למסך הבית"</strong></div>
+        </div>
+        <div class="install-step">
+          <span class="install-num">3</span>
+          <div>אשר את ההתקנה</div>
+        </div>
+      `}
+      <button class="install-ok" onclick="this.closest('.install-overlay').remove()">הבנתי</button>
+    </div>
+  `;
+  document.body.appendChild(overlay);
+}
+
+
 </script>
 </body>
 </html>
