@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SHLIFIM · סקירת תיוג נושאים</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;500;600;700;800&family=Rubik:wght@600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{--bg:#FBFAF6;--surface:#fff;--line:#ECE7DA;--ink:#15212C;--ink2:#5A6470;--ink3:#8A93A0;--blue-d:#1B6FA8;--green-d:#3F8C3F;--coral:#F0654F;--yellow:#F9D85C}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Assistant',system-ui,sans-serif;background:#e9e4d7;color:var(--ink);direction:rtl;-webkit-font-smoothing:antialiased}
+  .top{position:sticky;top:0;z-index:5;background:rgba(251,250,246,.95);backdrop-filter:blur(8px);border-bottom:1px solid var(--line);padding:14px 18px}
+  .top h1{font-family:'Rubik';font-weight:800;font-size:20px;background:linear-gradient(90deg,#1B6FA8,#3F8C3F);-webkit-background-clip:text;background-clip:text;color:transparent}
+  .sum{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+  .pill{font-size:12.5px;font-weight:700;padding:5px 11px;border-radius:999px;background:#fff;border:1px solid var(--line)}
+  .pill b{color:var(--blue-d)}
+  .search{margin-top:10px;width:100%;max-width:420px;padding:9px 12px;border:1px solid var(--line);border-radius:12px;font-family:inherit;font-size:14px}
+  .wrap{max-width:1000px;margin:18px auto;padding:0 16px 80px}
+  .subject{background:var(--surface);border-radius:18px;margin-bottom:18px;box-shadow:0 8px 24px rgba(0,0,0,.06);overflow:hidden}
+  .shead{padding:14px 18px;display:flex;align-items:center;gap:10px;color:#fff}
+  .shead h2{font-family:'Rubik';font-weight:700;font-size:19px}
+  .shead .cnt{margin-inline-start:auto;font-weight:700;font-size:14px;opacity:.95}
+  .track{font-size:11px;font-weight:700;background:rgba(255,255,255,.25);padding:2px 9px;border-radius:999px}
+  .c-cell{background:linear-gradient(135deg,#3FA9D6,#1B6FA8)}
+  .c-body{background:linear-gradient(135deg,#e0792e,#c9601a)}
+  .c-eco{background:linear-gradient(135deg,#5CB85C,#3F8C3F)}
+  .c-micro{background:linear-gradient(135deg,#8e7cc3,#5e4b97)}
+  .c-comp{background:linear-gradient(135deg,#39b3a6,#1f7a70)}
+  .c-gen{background:linear-gradient(135deg,#F0654F,#D24B36)}
+  .sub{padding:6px 18px 14px}
+  .subtopic{margin-top:12px}
+  .subtopic h3{font-size:13px;font-weight:700;color:var(--ink3);border-bottom:1px dashed var(--line);padding-bottom:5px;margin-bottom:7px}
+  .terms{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:5px 14px}
+  .term{font-size:14px;padding:3px 0;display:flex;align-items:baseline;gap:7px}
+  .term .he{font-weight:600}
+  .term .en{font-size:11.5px;color:var(--ink3)}
+  .term .also{font-size:10.5px;font-weight:700;color:#9a5b00;background:#FFF4DE;border:1px solid #F3E2B0;padding:0 6px;border-radius:999px}
+  .hide{display:none}
+</style>
+</head>
+<body>
+<div class="top">
+  <h1>סקירת תיוג נושאים — 465 מושגים</h1>
+  <div class="sum" id="sum"></div>
+  <input class="search" id="q" placeholder="🔍 סינון מהיר: הקלד מושג…">
+</div>
+<div class="wrap" id="out">טוען…</div>
+
+<script src="../glossary.js"></script>
+<script src="../data/subjects.js"></script>
+<script>
+  var G = window.GLOSSARY || [], S = window.SUBJECTS || {core:[],depth:[]};
+  var colors = {'התא':'c-cell','גוף האדם':'c-body','אקולוגיה':'c-eco','מיקרוביולוגיה':'c-micro','פיזיולוגיה השוואתית':'c-comp','הנדסה גנטית':'c-gen'};
+  var order = S.core.concat(S.depth);
+
+  // distribution
+  var counts = {}; G.forEach(function(t){ counts[t.subject]=(counts[t.subject]||0)+1; });
+  var sum = document.getElementById('sum');
+  order.forEach(function(s){ var p=document.createElement('span'); p.className='pill'; p.innerHTML=s.name+' <b>'+(counts[s.name]||0)+'</b>'; sum.appendChild(p); });
+  var alsoCount = G.filter(function(t){return t.subjectAlso;}).length;
+  var pe=document.createElement('span'); pe.className='pill'; pe.innerHTML='מסומנים "גם וגם" <b>'+alsoCount+'</b>'; sum.appendChild(pe);
+
+  var out = document.getElementById('out'); out.innerHTML='';
+  order.forEach(function(s){
+    var items = G.filter(function(t){return t.subject===s.name;});
+    if(!items.length) return;
+    var card=document.createElement('div'); card.className='subject';
+    var head='<div class="shead '+(colors[s.name]||'')+'"><h2>'+s.name+'</h2><span class="track">'+(s.track==='core'?'ליבה':'העמקה')+'</span><span class="cnt">'+items.length+' מושגים</span></div>';
+    var body='<div class="sub">';
+    var subs = s.subtopics.concat(['']);
+    subs.forEach(function(st){
+      var group = items.filter(function(t){return (t.subtopic||'')===st;});
+      if(!group.length) return;
+      body+='<div class="subtopic"><h3>'+(st||'— ללא תת-נושא —')+' ('+group.length+')</h3><div class="terms">';
+      group.forEach(function(t){
+        body+='<div class="term" data-h="'+t.hebrew+'"><span class="he">'+t.hebrew+'</span>'+
+          (t.english?'<span class="en">'+t.english+'</span>':'')+
+          (t.subjectAlso?'<span class="also">גם: '+t.subjectAlso+'</span>':'')+'</div>';
+      });
+      body+='</div></div>';
+    });
+    body+='</div>';
+    card.innerHTML=head+body; out.appendChild(card);
+  });
+
+  // quick filter
+  document.getElementById('q').addEventListener('input', function(e){
+    var q=e.target.value.trim();
+    document.querySelectorAll('.term').forEach(function(el){
+      el.classList.toggle('hide', q && el.getAttribute('data-h').indexOf(q)===-1);
+    });
+  });
+</script>
+</body>
+</html>
