@@ -395,7 +395,7 @@ html, body {
 .app {
   background: var(--bg);
   min-height: 100vh;
-  padding-bottom: 76px;
+  padding-bottom: 160px;
   max-width: 100vw;
   overflow-x: hidden;
 }
@@ -3691,6 +3691,467 @@ html.dark .home-about-body em {
   transform: translateX(-3px);
 }
 
+
+/* ============ EXTRA: bottom spacing for home content ============ */
+.home {
+  padding-bottom: 24px !important;
+}
+
+.home-shop {
+  margin-bottom: 24px;
+}
+
+/* Ensure bundle doesn't get clipped by bottom nav */
+.home > *:last-child {
+  margin-bottom: 16px;
+}
+
+
+
+/* ================================================================
+   TOPICS — Vertical grid layout (no horizontal scroll)
+   ================================================================ */
+
+.topics-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-bottom: 12px;
+  animation: gridFade 0.3s ease-out;
+}
+
+@keyframes gridFade {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.topic-tile {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  color: var(--ink);
+  font-family: inherit;
+  padding: 10px 12px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  text-align: right;
+  cursor: pointer;
+  transition: all 0.15s;
+  min-height: 44px;
+}
+
+.topic-tile:hover {
+  border-color: var(--border-2);
+  background: var(--surface-2);
+}
+
+.topic-tile:active {
+  transform: scale(0.97);
+}
+
+.topic-tile.on {
+  background: var(--primary);
+  border-color: var(--primary);
+  color: white;
+  box-shadow: 0 4px 12px -2px rgba(79, 70, 229, 0.3);
+}
+
+.topic-tile-emoji {
+  font-size: 18px;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.topic-tile-name {
+  flex: 1;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: -0.2px;
+  line-height: 1.25;
+  white-space: normal;
+  word-break: break-word;
+}
+
+.topic-tile-count {
+  font-size: 10px;
+  font-weight: 800;
+  background: var(--surface-2);
+  color: var(--ink-3);
+  padding: 2px 7px;
+  border-radius: 999px;
+  flex-shrink: 0;
+  font-variant-numeric: tabular-nums;
+  min-width: 26px;
+  text-align: center;
+}
+
+.topic-tile.on .topic-tile-count {
+  background: rgba(255, 255, 255, 0.25);
+  color: white;
+}
+
+/* Topic tiles stagger entrance */
+.topic-tile {
+  animation: topicTilePop 0.3s ease-out backwards;
+}
+
+.topic-tile:nth-child(1) { animation-delay: 0.02s; }
+.topic-tile:nth-child(2) { animation-delay: 0.04s; }
+.topic-tile:nth-child(3) { animation-delay: 0.06s; }
+.topic-tile:nth-child(4) { animation-delay: 0.08s; }
+.topic-tile:nth-child(5) { animation-delay: 0.10s; }
+.topic-tile:nth-child(6) { animation-delay: 0.12s; }
+.topic-tile:nth-child(7) { animation-delay: 0.14s; }
+.topic-tile:nth-child(8) { animation-delay: 0.16s; }
+.topic-tile:nth-child(n+9) { animation-delay: 0.18s; }
+
+@keyframes topicTilePop {
+  from { opacity: 0; transform: scale(0.92); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+/* Smaller screens — keep 2 columns but tighter */
+@media (max-width: 380px) {
+  .topics-grid { gap: 6px; }
+  .topic-tile { padding: 9px 10px; gap: 6px; min-height: 40px; }
+  .topic-tile-emoji { font-size: 16px; }
+  .topic-tile-name { font-size: 11px; }
+  .topic-tile-count { font-size: 9px; padding: 2px 6px; min-width: 22px; }
+}
+
+/* Larger screens — 3 columns possible */
+@media (min-width: 500px) {
+  .topics-grid { grid-template-columns: 1fr 1fr 1fr; }
+}
+
+
+
+/* ================================================================
+   BOTTOM NAV CLEARANCE — Fixed space at bottom of every page
+   ================================================================ */
+
+:root {
+  --nav-height: 70px;
+  --nav-clearance: calc(var(--nav-height) + env(safe-area-inset-bottom, 0px) + 20px);
+}
+
+/* App-level bottom space (catches everything) */
+.app {
+  padding-bottom: var(--nav-clearance) !important;
+}
+
+/* Each page screen also explicitly reserves bottom space — belt and suspenders */
+.home,
+.study,
+.quiz-area,
+.profile,
+.favs-view,
+.flash-screen,
+.card-mode {
+  padding-bottom: 32px !important;
+}
+
+/* The bottom-nav itself */
+.bottom-nav {
+  height: auto;
+  min-height: var(--nav-height);
+  padding-top: 6px !important;
+  padding-bottom: calc(env(safe-area-inset-bottom, 6px) + 6px) !important;
+}
+
+/* Mobile - make sure the clearance is right for various devices */
+@media (max-width: 480px) {
+  :root {
+    --nav-height: 68px;
+  }
+}
+
+
+
+/* ================================================================
+   MASSIVE BOTTOM CLEARANCE — Final override
+   Nothing else can compete with this.
+   ================================================================ */
+
+:root {
+  --nav-height: 76px !important;
+  --nav-clearance: 180px !important;
+}
+
+html, body {
+  padding-bottom: 0 !important;
+}
+
+.app {
+  padding-bottom: 180px !important;
+  min-height: 100vh;
+  box-sizing: border-box;
+}
+
+/* Every page container gets explicit massive padding */
+.home,
+.study,
+.quiz-area,
+.profile,
+.favs-view,
+.flash-screen,
+.card-mode,
+.gloss-wrap,
+.fav-list,
+.prog-wrap-main,
+.about-wrap {
+  padding-bottom: 120px !important;
+  margin-bottom: 0 !important;
+}
+
+/* Add a visible spacer at the end of every page */
+.bottom-spacer {
+  height: 140px;
+  width: 100%;
+  flex-shrink: 0;
+}
+
+/* Bottom nav itself - keep compact but secure on bottom */
+.bottom-nav {
+  height: auto !important;
+  min-height: 60px !important;
+  padding: 8px 0 max(8px, env(safe-area-inset-bottom, 8px)) !important;
+  z-index: 1000;
+}
+
+/* iOS safe area handling */
+@supports (padding: max(0px)) {
+  .app {
+    padding-bottom: max(180px, calc(180px + env(safe-area-inset-bottom, 0px))) !important;
+  }
+}
+
+
+
+/* ================================================================
+   CONTACT FOOTER — Replaces dead space at bottom of every page
+   ================================================================ */
+
+.page-footer {
+  margin-top: 32px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 20px 18px 18px;
+  position: relative;
+  overflow: hidden;
+}
+
+.page-footer::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--primary), #7C3AED, var(--accent));
+}
+
+/* Brand row */
+.pf-brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--border);
+}
+
+.pf-logo {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: 2px solid var(--primary-soft);
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+.pf-brand-text {
+  flex: 1;
+  min-width: 0;
+}
+
+.pf-brand-name {
+  font-size: 17px;
+  font-weight: 900;
+  color: var(--ink);
+  letter-spacing: -0.4px;
+}
+
+.pf-brand-tag {
+  font-size: 11px;
+  color: var(--ink-3);
+  font-weight: 600;
+  margin-top: 1px;
+}
+
+/* Contact grid - 2x2 */
+.pf-contact-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+
+.pf-contact-card {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 10px 12px;
+  text-decoration: none;
+  color: var(--ink);
+  transition: all 0.15s;
+}
+
+.pf-contact-card:hover {
+  border-color: var(--primary);
+  transform: translateY(-1px);
+}
+
+.pf-contact-card:active {
+  transform: scale(0.97);
+}
+
+.pf-c-icon {
+  font-size: 20px;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.pf-c-text {
+  flex: 1;
+  min-width: 0;
+}
+
+.pf-c-label {
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--ink-3);
+  letter-spacing: 0.3px;
+  line-height: 1.2;
+}
+
+.pf-c-value {
+  font-size: 12px;
+  font-weight: 800;
+  color: var(--ink);
+  letter-spacing: -0.2px;
+  margin-top: 2px;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Specific brand colors */
+.pf-whatsapp { border-color: rgba(37, 211, 102, 0.3); }
+.pf-whatsapp:hover { border-color: #25D366; background: rgba(37, 211, 102, 0.06); }
+
+.pf-instagram { border-color: rgba(225, 48, 108, 0.3); }
+.pf-instagram:hover { border-color: #E1306C; background: rgba(225, 48, 108, 0.06); }
+
+.pf-phone:hover { border-color: var(--success); background: var(--success-tint); }
+.pf-web:hover { border-color: var(--primary); background: var(--primary-tint); }
+
+/* Big CTA button */
+.pf-cta-row {
+  margin-bottom: 14px;
+}
+
+.pf-cta {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  background: linear-gradient(135deg, var(--primary), #7C3AED);
+  color: white;
+  border-radius: 14px;
+  padding: 14px 18px;
+  font-size: 14px;
+  font-weight: 800;
+  text-decoration: none;
+  box-shadow: 0 6px 16px -4px rgba(79, 70, 229, 0.35);
+  transition: transform 0.15s;
+  letter-spacing: -0.2px;
+}
+
+.pf-cta:active {
+  transform: scale(0.98);
+}
+
+.pf-cta-arrow {
+  font-size: 18px;
+  font-weight: 300;
+  animation: pfArrowFloat 1.8s ease-in-out infinite;
+  display: inline-block;
+}
+
+@keyframes pfArrowFloat {
+  0%, 100% { transform: translateX(0); }
+  50% { transform: translateX(-4px); }
+}
+
+/* Fine print */
+.pf-fine {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--ink-3);
+  letter-spacing: 0.3px;
+  flex-wrap: wrap;
+  padding-top: 14px;
+  border-top: 1px solid var(--border);
+}
+
+.pf-dot {
+  color: var(--ink-4);
+}
+
+/* Mobile fine-tune */
+@media (max-width: 380px) {
+  .page-footer { padding: 16px 14px 14px; }
+  .pf-contact-card { padding: 9px 10px; gap: 8px; }
+  .pf-c-icon { font-size: 18px; }
+  .pf-c-value { font-size: 11px; }
+  .pf-c-label { font-size: 9px; }
+  .pf-cta { font-size: 13px; padding: 12px 16px; }
+  .pf-fine { font-size: 9px; }
+}
+
+/* Dark mode adjustments */
+html.dark .pf-whatsapp { background: rgba(37, 211, 102, 0.08); }
+html.dark .pf-instagram { background: rgba(225, 48, 108, 0.08); }
+
+/* Animation - footer appears with a soft slide */
+.page-footer {
+  animation: pfSlideUp 0.5s ease-out 0.4s backwards;
+}
+
+@keyframes pfSlideUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Now we don't need the bottom-spacer at all since the footer fills the space */
+.bottom-spacer { display: none !important; }
+
+/* Reduce the .app bottom padding since the footer provides natural space + the nav clearance */
+.app {
+  padding-bottom: 100px !important;
+}
+
 </style>
 
 <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-app-compat.js"></script>
@@ -4536,7 +4997,64 @@ function buildQuiz(filtered){
     </div>
     <div class="q-feedback" id="quiz-fb"></div>
     <button class="q-next-btn" id="quiz-next" style="display:none" onclick="nextQuiz()">השאלה הבאה ←</button>
-  </div>`;
+  <div class="page-footer">
+      <div class="pf-brand">
+        <img class="pf-logo" src="${IMG.logo}" alt="MediLab"/>
+        <div class="pf-brand-text">
+          <div class="pf-brand-name">MediLab</div>
+          <div class="pf-brand-tag">מדע קצר ולעניין</div>
+        </div>
+      </div>
+      
+      <div class="pf-contact-grid">
+        <a class="pf-contact-card pf-whatsapp" href="https://wa.me/972524295838" target="_blank">
+          <div class="pf-c-icon">💬</div>
+          <div class="pf-c-text">
+            <div class="pf-c-label">WhatsApp</div>
+            <div class="pf-c-value">052-429-5838</div>
+          </div>
+        </a>
+        
+        <a class="pf-contact-card pf-phone" href="tel:+972524295838">
+          <div class="pf-c-icon">📞</div>
+          <div class="pf-c-text">
+            <div class="pf-c-label">חיוג ישיר</div>
+            <div class="pf-c-value">052-429-5838</div>
+          </div>
+        </a>
+        
+        <a class="pf-contact-card pf-instagram" href="https://instagram.com/bio_bagrut" target="_blank">
+          <div class="pf-c-icon">📷</div>
+          <div class="pf-c-text">
+            <div class="pf-c-label">Instagram</div>
+            <div class="pf-c-value">@bio_bagrut</div>
+          </div>
+        </a>
+        
+        <a class="pf-contact-card pf-web" href="https://nethanelmedina88-cmyk.github.io/Bio_MediLab/" target="_blank">
+          <div class="pf-c-icon">🌐</div>
+          <div class="pf-c-text">
+            <div class="pf-c-label">האתר המלא</div>
+            <div class="pf-c-value">MediLab</div>
+          </div>
+        </a>
+      </div>
+      
+      <div class="pf-cta-row">
+        <a class="pf-cta" href="https://wa.me/972524295838?text=%D7%94%D7%99%D7%99%2C%20%D7%A8%D7%90%D7%99%D7%AA%D7%99%20%D7%90%D7%AA%20%D7%A9%D7%9C%D7%99%D7%A4%D7%99%D7%9D" target="_blank">
+          <span>קבעו שיעור היכרות חינם</span>
+          <span class="pf-cta-arrow">←</span>
+        </a>
+      </div>
+      
+      <div class="pf-fine">
+        <span>© 2026 MediLab</span>
+        <span class="pf-dot">·</span>
+        <span>נתנאל יוחאי מדינה</span>
+        <span class="pf-dot">·</span>
+        <span>ביולוגיה 5 יח״ל</span>
+      </div>
+    </div></div>`;
 }
 
 function buildQuizQuestion(term, pool){
@@ -4870,6 +5388,64 @@ function buildHome(filtered){
       </div>
     </div>
     
+    <div class="page-footer">
+      <div class="pf-brand">
+        <img class="pf-logo" src="${IMG.logo}" alt="MediLab"/>
+        <div class="pf-brand-text">
+          <div class="pf-brand-name">MediLab</div>
+          <div class="pf-brand-tag">מדע קצר ולעניין</div>
+        </div>
+      </div>
+      
+      <div class="pf-contact-grid">
+        <a class="pf-contact-card pf-whatsapp" href="https://wa.me/972524295838" target="_blank">
+          <div class="pf-c-icon">💬</div>
+          <div class="pf-c-text">
+            <div class="pf-c-label">WhatsApp</div>
+            <div class="pf-c-value">052-429-5838</div>
+          </div>
+        </a>
+        
+        <a class="pf-contact-card pf-phone" href="tel:+972524295838">
+          <div class="pf-c-icon">📞</div>
+          <div class="pf-c-text">
+            <div class="pf-c-label">חיוג ישיר</div>
+            <div class="pf-c-value">052-429-5838</div>
+          </div>
+        </a>
+        
+        <a class="pf-contact-card pf-instagram" href="https://instagram.com/bio_bagrut" target="_blank">
+          <div class="pf-c-icon">📷</div>
+          <div class="pf-c-text">
+            <div class="pf-c-label">Instagram</div>
+            <div class="pf-c-value">@bio_bagrut</div>
+          </div>
+        </a>
+        
+        <a class="pf-contact-card pf-web" href="https://nethanelmedina88-cmyk.github.io/Bio_MediLab/" target="_blank">
+          <div class="pf-c-icon">🌐</div>
+          <div class="pf-c-text">
+            <div class="pf-c-label">האתר המלא</div>
+            <div class="pf-c-value">MediLab</div>
+          </div>
+        </a>
+      </div>
+      
+      <div class="pf-cta-row">
+        <a class="pf-cta" href="https://wa.me/972524295838?text=%D7%94%D7%99%D7%99%2C%20%D7%A8%D7%90%D7%99%D7%AA%D7%99%20%D7%90%D7%AA%20%D7%A9%D7%9C%D7%99%D7%A4%D7%99%D7%9D" target="_blank">
+          <span>קבעו שיעור היכרות חינם</span>
+          <span class="pf-cta-arrow">←</span>
+        </a>
+      </div>
+      
+      <div class="pf-fine">
+        <span>© 2026 MediLab</span>
+        <span class="pf-dot">·</span>
+        <span>נתנאל יוחאי מדינה</span>
+        <span class="pf-dot">·</span>
+        <span>ביולוגיה 5 יח״ל</span>
+      </div>
+    </div>
   </div>`;
 }
 
@@ -4927,8 +5503,8 @@ function buildStudy(filtered){
           <button class="${filterMode==='topic'?'on':''}" onclick="setFilterMode('topic')">נושאים</button>
         </div>
         
-        <div class="chips-row">
-          ${filterMode === 'letter' ? `
+        ${filterMode === 'letter' ? `
+          <div class="chips-row">
             <button class="chip ${activeLetter==='הכל'?'on':''}" onclick="setLetter('הכל')">
               <span>הכל</span><span class="chip-count">${GLOSSARY.length}</span>
             </button>
@@ -4938,19 +5514,25 @@ function buildStudy(filtered){
                 <span>${l}</span><span class="chip-count">${cnt}</span>
               </button>`;
             }).join('')}
-          ` : `
-            <button class="chip ${activeTopic==='הכל'?'on':''}" onclick="setTopic('הכל')">
-              <span>הכל</span><span class="chip-count">${GLOSSARY.length}</span>
+          </div>
+        ` : `
+          <div class="topics-grid">
+            <button class="topic-tile ${activeTopic==='הכל'?'on':''}" onclick="setTopic('הכל')">
+              <span class="topic-tile-emoji">📚</span>
+              <span class="topic-tile-name">הכל</span>
+              <span class="topic-tile-count">${GLOSSARY.length}</span>
             </button>
             ${TOPICS_BOOK.map(t => {
               const cnt = GLOSSARY.filter(g => TERM_TOPIC_MAP[g.hebrew] === t.key).length;
               if(cnt === 0) return '';
-              return `<button class="chip chip-topic ${activeTopic===t.key?'on':''}" onclick="setTopic('${t.key.replace(/'/g, "\\'")}')">
-                <span class="chip-emoji">${t.emoji}</span><span>${t.label}</span><span class="chip-count">${cnt}</span>
+              return `<button class="topic-tile ${activeTopic===t.key?'on':''}" onclick="setTopic('${t.key.replace(/'/g, "\\'")}')">
+                <span class="topic-tile-emoji">${t.emoji}</span>
+                <span class="topic-tile-name">${t.label}</span>
+                <span class="topic-tile-count">${cnt}</span>
               </button>`;
             }).join('')}
-          `}
-        </div>
+          </div>
+        `}
       </div>
       
       <div class="result-line">
@@ -4965,6 +5547,65 @@ function buildStudy(filtered){
         <div style="font-size:13px;margin-top:6px">נסה סינון אחר או חיפוש שונה</div>
       </div>
     ` : studyView === 'list' ? buildTermList(filtered) : buildFlashView(filtered)}
+    
+    <div class="page-footer">
+      <div class="pf-brand">
+        <img class="pf-logo" src="${IMG.logo}" alt="MediLab"/>
+        <div class="pf-brand-text">
+          <div class="pf-brand-name">MediLab</div>
+          <div class="pf-brand-tag">מדע קצר ולעניין</div>
+        </div>
+      </div>
+      
+      <div class="pf-contact-grid">
+        <a class="pf-contact-card pf-whatsapp" href="https://wa.me/972524295838" target="_blank">
+          <div class="pf-c-icon">💬</div>
+          <div class="pf-c-text">
+            <div class="pf-c-label">WhatsApp</div>
+            <div class="pf-c-value">052-429-5838</div>
+          </div>
+        </a>
+        
+        <a class="pf-contact-card pf-phone" href="tel:+972524295838">
+          <div class="pf-c-icon">📞</div>
+          <div class="pf-c-text">
+            <div class="pf-c-label">חיוג ישיר</div>
+            <div class="pf-c-value">052-429-5838</div>
+          </div>
+        </a>
+        
+        <a class="pf-contact-card pf-instagram" href="https://instagram.com/bio_bagrut" target="_blank">
+          <div class="pf-c-icon">📷</div>
+          <div class="pf-c-text">
+            <div class="pf-c-label">Instagram</div>
+            <div class="pf-c-value">@bio_bagrut</div>
+          </div>
+        </a>
+        
+        <a class="pf-contact-card pf-web" href="https://nethanelmedina88-cmyk.github.io/Bio_MediLab/" target="_blank">
+          <div class="pf-c-icon">🌐</div>
+          <div class="pf-c-text">
+            <div class="pf-c-label">האתר המלא</div>
+            <div class="pf-c-value">MediLab</div>
+          </div>
+        </a>
+      </div>
+      
+      <div class="pf-cta-row">
+        <a class="pf-cta" href="https://wa.me/972524295838?text=%D7%94%D7%99%D7%99%2C%20%D7%A8%D7%90%D7%99%D7%AA%D7%99%20%D7%90%D7%AA%20%D7%A9%D7%9C%D7%99%D7%A4%D7%99%D7%9D" target="_blank">
+          <span>קבעו שיעור היכרות חינם</span>
+          <span class="pf-cta-arrow">←</span>
+        </a>
+      </div>
+      
+      <div class="pf-fine">
+        <span>© 2026 MediLab</span>
+        <span class="pf-dot">·</span>
+        <span>נתנאל יוחאי מדינה</span>
+        <span class="pf-dot">·</span>
+        <span>ביולוגיה 5 יח״ל</span>
+      </div>
+    </div>
   </div>`;
 }
 
@@ -5102,7 +5743,66 @@ function buildFavsView(){
     <div class="favs-head">
       <div class="favs-count">${favItems.length} מועדפים</div>
     </div>
-    ${buildStudyList(favItems)}
+    ${buildTermList(favItems)}
+    
+    <div class="page-footer">
+      <div class="pf-brand">
+        <img class="pf-logo" src="${IMG.logo}" alt="MediLab"/>
+        <div class="pf-brand-text">
+          <div class="pf-brand-name">MediLab</div>
+          <div class="pf-brand-tag">מדע קצר ולעניין</div>
+        </div>
+      </div>
+      
+      <div class="pf-contact-grid">
+        <a class="pf-contact-card pf-whatsapp" href="https://wa.me/972524295838" target="_blank">
+          <div class="pf-c-icon">💬</div>
+          <div class="pf-c-text">
+            <div class="pf-c-label">WhatsApp</div>
+            <div class="pf-c-value">052-429-5838</div>
+          </div>
+        </a>
+        
+        <a class="pf-contact-card pf-phone" href="tel:+972524295838">
+          <div class="pf-c-icon">📞</div>
+          <div class="pf-c-text">
+            <div class="pf-c-label">חיוג ישיר</div>
+            <div class="pf-c-value">052-429-5838</div>
+          </div>
+        </a>
+        
+        <a class="pf-contact-card pf-instagram" href="https://instagram.com/bio_bagrut" target="_blank">
+          <div class="pf-c-icon">📷</div>
+          <div class="pf-c-text">
+            <div class="pf-c-label">Instagram</div>
+            <div class="pf-c-value">@bio_bagrut</div>
+          </div>
+        </a>
+        
+        <a class="pf-contact-card pf-web" href="https://nethanelmedina88-cmyk.github.io/Bio_MediLab/" target="_blank">
+          <div class="pf-c-icon">🌐</div>
+          <div class="pf-c-text">
+            <div class="pf-c-label">האתר המלא</div>
+            <div class="pf-c-value">MediLab</div>
+          </div>
+        </a>
+      </div>
+      
+      <div class="pf-cta-row">
+        <a class="pf-cta" href="https://wa.me/972524295838?text=%D7%94%D7%99%D7%99%2C%20%D7%A8%D7%90%D7%99%D7%AA%D7%99%20%D7%90%D7%AA%20%D7%A9%D7%9C%D7%99%D7%A4%D7%99%D7%9D" target="_blank">
+          <span>קבעו שיעור היכרות חינם</span>
+          <span class="pf-cta-arrow">←</span>
+        </a>
+      </div>
+      
+      <div class="pf-fine">
+        <span>© 2026 MediLab</span>
+        <span class="pf-dot">·</span>
+        <span>נתנאל יוחאי מדינה</span>
+        <span class="pf-dot">·</span>
+        <span>ביולוגיה 5 יח״ל</span>
+      </div>
+    </div>
   </div>`;
 }
 
@@ -5552,15 +6252,17 @@ function onSearch(v){
   if(_searchTimeout) clearTimeout(_searchTimeout);
   _searchTimeout = setTimeout(() => {
     const activeInput = document.activeElement;
-    const wasSearchFocused = activeInput && activeInput.classList.contains('search-inp');
+    const wasSearchFocused = activeInput && (activeInput.classList.contains('study-search') || activeInput.classList.contains('search-inp'));
     const selStart = wasSearchFocused ? activeInput.selectionStart : null;
     const selEnd = wasSearchFocused ? activeInput.selectionEnd : null;
     render();
     if(wasSearchFocused){
-      const newInput = document.querySelector('.search-inp');
+      const newInput = document.querySelector('.study-search') || document.querySelector('.search-inp');
       if(newInput){
         newInput.focus();
-        if(selStart !== null) newInput.setSelectionRange(selStart, selEnd);
+        if(selStart !== null && selStart !== undefined){
+          try { newInput.setSelectionRange(selStart, selEnd); } catch(e){}
+        }
       }
     }
   }, 200);
