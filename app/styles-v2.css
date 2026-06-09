@@ -191,3 +191,64 @@ html.dark .fb.ok{background:#15301c} html.dark .fb.no{background:#371a15}
 @keyframes pop{0%{opacity:0;transform:scale(.4)}30%{opacity:1;transform:scale(1.1)}100%{opacity:0;transform:scale(1.3)}}
 .result{text-align:center;background:var(--surface);border:1px solid var(--border);border-radius:var(--r-xl);padding:30px 20px;box-shadow:var(--e3);margin-top:14px}
 .result .big{font-family:'Rubik';font-weight:800;font-size:46px;background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+
+/* ============ AUTH / AVATAR (header) ============ */
+.avatar{width:38px;height:38px;border-radius:50%;overflow:hidden;border:2px solid var(--accent);background:var(--surface-2);display:flex;align-items:center;justify-content:center;font-size:17px}
+.avatar img{width:100%;height:100%;object-fit:cover}
+.signin-mini{display:inline-flex;align-items:center;gap:6px;height:38px;padding:0 12px;border-radius:var(--r-pill);background:var(--surface);border:1px solid var(--border);font-weight:700;font-size:13px;box-shadow:var(--e1)}
+
+/* ============ ABOUT ============ */
+.about-hero{display:flex;gap:14px;align-items:center;margin:10px 0 6px}
+.portrait{width:78px;height:78px;border-radius:20px;object-fit:cover;border:2px solid var(--accent);box-shadow:var(--e2);flex:0 0 auto}
+.about-kicker{font-size:12px;font-weight:700;color:var(--accent-strong)}
+.about-name{font-family:'Rubik';font-weight:800;font-size:22px;margin:2px 0}
+.about-body{font-size:14.5px;line-height:1.65;color:var(--text-2);margin:10px 0}
+.quote{border-inline-start:4px solid var(--accent);background:var(--accent-soft);border-radius:0 12px 12px 0;padding:10px 14px;font-size:14px;color:var(--text);margin:12px 0}
+.stat-row{display:flex;gap:10px;margin:14px 0}
+.stat-box{flex:1;background:var(--surface);border:1px solid var(--border);border-radius:var(--r-md);padding:12px;text-align:center;box-shadow:var(--e1)}
+.stat-box b{display:block;font-family:'Rubik';font-weight:800;font-size:22px;color:var(--accent-strong)}
+.stat-box span{font-size:11.5px;color:var(--text-3);font-weight:600}
+.degrees{display:flex;flex-direction:column;gap:8px;margin:12px 0}
+.degree{display:flex;gap:10px;align-items:center;background:var(--surface);border:1px solid var(--border);border-radius:var(--r-md);padding:9px 12px}
+.degree .tag{font-family:'Rubik';font-weight:700;font-size:12px;color:#fff;background:var(--grad);border-radius:8px;padding:4px 8px;flex:0 0 auto}
+.degree b{font-size:13.5px} .degree span{font-size:12px;color:var(--text-3);display:block}
+.sec-title{font-family:'Rubik';font-weight:700;font-size:19px;margin:24px 0 4px}
+.sec-sub{font-size:13px;color:var(--text-3);margin-bottom:12px}
+.books{display:flex;flex-direction:column;gap:12px}
+.book{display:flex;gap:12px;background:var(--surface);border:1px solid var(--border);border-radius:var(--r-lg);padding:12px;box-shadow:var(--e2);text-decoration:none;color:inherit}
+.book img{width:74px;height:96px;object-fit:cover;border-radius:8px;flex:0 0 auto;background:var(--surface-2)}
+.book h4{font-family:'Rubik';font-size:16px;margin:2px 0}
+.book p{font-size:12.5px;color:var(--text-2);line-height:1.45;margin:4px 0}
+.book .price{font-family:'Rubik';font-weight:800;color:var(--accent-strong);font-size:17px}
+.book .tag{display:inline-block;font-size:10.5px;font-weight:700;color:var(--accent-strong);background:var(--accent-soft);border-radius:var(--r-pill);padding:2px 8px;margin-bottom:4px}
+.bundle{margin-top:14px;background:var(--grad);color:#fff;border-radius:var(--r-lg);padding:16px;box-shadow:var(--e2)}
+.bundle h4{font-family:'Rubik';font-size:18px;margin:0 0 4px}
+.bundle p{font-size:13px;opacity:.95;margin:0 0 10px}
+.bundle .prices{display:flex;align-items:baseline;gap:10px;margin-bottom:12px}
+.bundle .old{text-decoration:line-through;opacity:.7;font-size:15px}
+.bundle .new{font-family:'Rubik';font-weight:800;font-size:28px}
+.bundle .save{font-size:12px;font-weight:700;background:rgba(255,255,255,.25);border-radius:var(--r-pill);padding:3px 9px}
+.bundle a{display:block;text-align:center;background:#fff;color:var(--accent-strong);font-weight:700;border-radius:var(--r-md);padding:12px;text-decoration:none}
+.contact{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:8px}
+.contact a{display:flex;align-items:center;gap:9px;background:var(--surface);border:1px solid var(--border);border-radius:var(--r-md);padding:12px;text-decoration:none;color:var(--text);font-weight:700;font-size:13.5px;box-shadow:var(--e1)}
+.contact a .em{font-size:20px}
+
+/* ============ PROFILE / STATS ============ */
+.prof-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-lg);padding:18px;box-shadow:var(--e2);text-align:center;margin-bottom:14px}
+.prof-card .av{width:64px;height:64px;border-radius:50%;overflow:hidden;margin:0 auto 10px;border:2px solid var(--accent);display:flex;align-items:center;justify-content:center;font-size:28px;background:var(--surface-2)}
+.prof-card .av img{width:100%;height:100%;object-fit:cover}
+.prof-name{font-family:'Rubik';font-weight:700;font-size:18px}
+.prof-email{font-size:12.5px;color:var(--text-3);margin-top:2px}
+.google-btn{display:inline-flex;align-items:center;justify-content:center;gap:9px;width:100%;min-height:48px;border-radius:var(--r-md);background:#fff;color:#3c4043;font-weight:700;font-size:15px;border:1px solid #dadce0;box-shadow:var(--e1)}
+.sync-note{font-size:12.5px;color:var(--text-3);margin-top:10px;line-height:1.5}
+.ring-wrap{display:flex;align-items:center;gap:16px;background:var(--surface);border:1px solid var(--border);border-radius:var(--r-lg);padding:16px;box-shadow:var(--e2);margin-bottom:14px}
+.ring{flex:0 0 auto}
+.ring-txt{font-family:'Rubik';font-weight:800;font-size:20px}
+.mini-stats{display:flex;gap:10px;flex:1}
+.topic-prog{margin-bottom:9px}
+.topic-prog .lab{display:flex;justify-content:space-between;font-size:12.5px;font-weight:600;margin-bottom:3px}
+.topic-prog .lab span:last-child{color:var(--text-3)}
+.tbar{height:8px;border-radius:var(--r-pill);background:var(--surface-2);overflow:hidden}
+.tbar i{display:block;height:100%;border-radius:var(--r-pill);transition:width var(--slow) var(--ease)}
+.signout{margin-top:8px;color:var(--danger);font-weight:700;font-size:13px}
+.sync-pill{font-size:11px;font-weight:700;padding:3px 9px;border-radius:var(--r-pill);background:var(--accent-soft);color:var(--accent-strong)}
