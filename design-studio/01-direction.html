@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SHLIFIM · בחירת כיוון עיצובי</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;500;600;700;800&family=Heebo:wght@400;500;700;800&family=Fredoka:wght@500;600;700&family=Rubik:wght@500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Assistant', system-ui, sans-serif;
+    background: #20262e;
+    color: #e9edf2;
+    direction: rtl;
+    padding: 32px 20px 80px;
+    -webkit-font-smoothing: antialiased;
+  }
+  .wrap { max-width: 1180px; margin: 0 auto; }
+  .pagehead { text-align: center; margin-bottom: 8px; }
+  .pagehead h1 { font-family: 'Rubik', sans-serif; font-weight: 800; font-size: 30px; letter-spacing: -0.5px; }
+  .pagehead p { color: #aab4c0; font-size: 16px; margin-top: 8px; max-width: 640px; margin-inline: auto; line-height: 1.6; }
+  .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; margin-top: 40px; align-items: start; }
+  @media (max-width: 980px){ .grid { grid-template-columns: 1fr; max-width: 380px; margin-inline: auto; } }
+
+  .col { text-align: center; }
+  .badge { display:inline-block; font-weight:700; font-size:13px; padding:5px 12px; border-radius:999px; background:#2d3640; color:#aab4c0; margin-bottom:14px; }
+  .col h2 { font-family:'Rubik',sans-serif; font-weight:700; font-size:21px; margin-bottom:6px; }
+  .col .desc { color:#aab4c0; font-size:14px; line-height:1.55; min-height:66px; padding:0 6px; }
+  .rec { margin-top:10px; font-size:12.5px; font-weight:700; color:#5CB85C; }
+  .rec.empty { visibility:hidden; }
+
+  /* phone frame */
+  .phone {
+    width: 300px; margin: 18px auto 0; border-radius: 38px; padding: 12px;
+    background: #11151a; box-shadow: 0 22px 50px rgba(0,0,0,.5);
+    border: 1px solid #333b45; cursor: pointer; transition: transform .18s, box-shadow .18s;
+  }
+  .col:hover .phone { transform: translateY(-6px); }
+  .col.sel .phone { box-shadow: 0 0 0 3px #5CB85C, 0 22px 50px rgba(0,0,0,.5); }
+  .screen { border-radius: 28px; overflow: hidden; height: 600px; display:flex; flex-direction:column; }
+
+  /* generic screen pieces */
+  .s-head { display:flex; align-items:center; gap:9px; padding:16px 16px 12px; }
+  .flask { width:30px; height:30px; flex:0 0 auto; }
+  .brandtxt { display:flex; flex-direction:column; line-height:1.05; }
+  .s-body { flex:1; overflow:hidden; padding: 4px 14px 0; }
+  .term-en { font-size:11.5px; opacity:.65; }
+  .nav { display:flex; justify-content:space-around; padding:10px 6px calc(10px + env(safe-area-inset-bottom)); }
+  .nav .tab { display:flex; flex-direction:column; align-items:center; gap:3px; font-size:11px; font-weight:600; opacity:.55; }
+  .nav .tab.on { opacity:1; }
+  .nav .ic { width:22px; height:22px; }
+
+  /* ============ A: REFINED DOODLE ============ */
+  .A .screen { background:#FAF6EC; color:#1a2a38; }
+  .A .s-head { border-bottom:2px dashed #E6DEC9; }
+  .A .brand-name { font-family:'Fredoka',sans-serif; font-weight:700; font-size:18px; color:#1B6FA8; }
+  .A .brand-sub { font-size:10px; color:#4A5868; font-weight:600; }
+  .A .search { margin:14px 0; background:#fff; border:2px solid #1a2a38; border-radius:14px; padding:10px 12px; font-size:13px; color:#8090A0; box-shadow:2px 2px 0 #1B6FA8; }
+  .A .card { background:#fff; border:2px solid #1a2a38; border-radius:16px; padding:12px 13px; margin-bottom:12px; box-shadow:3px 3px 0 rgba(27,111,168,.85); }
+  .A .card.g { box-shadow:3px 3px 0 rgba(63,140,63,.85); }
+  .A .ttl { font-family:'Fredoka',sans-serif; font-weight:600; font-size:16px; }
+  .A .def { font-size:12px; color:#4A5868; line-height:1.5; margin-top:4px; }
+  .A .nav { background:#fff; border-top:2px dashed #E6DEC9; color:#1a2a38; }
+  .A .nav .tab.on { color:#1B6FA8; }
+  .A .pill { display:inline-block; font-size:10px; font-weight:700; background:#F9D85C; color:#1a2a38; padding:2px 8px; border-radius:999px; }
+
+  /* ============ B: MODERN CLINICAL ============ */
+  .B .screen { background:#F4F6F8; color:#16202b; }
+  .B .brand-name { font-family:'Heebo',sans-serif; font-weight:800; font-size:17px; letter-spacing:-.3px; }
+  .B .brand-sub { font-size:10px; color:#8a97a5; font-weight:600; }
+  .B .search { margin:14px 0; background:#fff; border:1px solid #e4e9ee; border-radius:12px; padding:11px 12px; font-size:13px; color:#9aa6b2; }
+  .B .card { background:#fff; border:1px solid #eceff2; border-radius:14px; padding:14px; margin-bottom:11px; box-shadow:0 1px 2px rgba(20,30,45,.04), 0 6px 16px rgba(20,30,45,.05); }
+  .B .ttl { font-family:'Heebo',sans-serif; font-weight:700; font-size:16px; }
+  .B .def { font-size:12px; color:#5d6b78; line-height:1.55; margin-top:5px; }
+  .B .nav { background:#fff; border-top:1px solid #eceff2; color:#16202b; }
+  .B .nav .tab.on { color:#1B6FA8; }
+  .B .dot { width:6px;height:6px;border-radius:50%;background:#3FA9D6;display:inline-block; }
+
+  /* ============ C: MODERN + BRAND SPARK ============ */
+  .C .screen { background:#FBFAF6; color:#15212c; }
+  .C .s-head { background:linear-gradient(180deg,#ffffff,#FBFAF6); }
+  .C .brand-name { font-family:'Rubik',sans-serif; font-weight:700; font-size:17px; background:linear-gradient(90deg,#1B6FA8,#3F8C3F); -webkit-background-clip:text; background-clip:text; color:transparent; }
+  .C .brand-sub { font-size:10px; color:#8a8270; font-weight:600; }
+  .C .search { margin:14px 0; background:#fff; border:1px solid #ece7da; border-radius:14px; padding:12px; font-size:13px; color:#9a9486; box-shadow:0 4px 14px rgba(27,111,168,.06); }
+  .C .card { background:#fff; border:1px solid #f0ebdd; border-radius:18px; padding:14px; margin-bottom:12px; box-shadow:0 6px 18px rgba(27,111,168,.07); position:relative; overflow:hidden; }
+  .C .card::before { content:''; position:absolute; inset-inline-start:0; top:0; bottom:0; width:4px; background:linear-gradient(180deg,#3FA9D6,#5CB85C); }
+  .C .ttl { font-family:'Rubik',sans-serif; font-weight:700; font-size:16px; }
+  .C .hl { background:linear-gradient(180deg,transparent 62%, #F9D85C 62%); padding:0 2px; }
+  .C .def { font-size:12px; color:#5a6470; line-height:1.55; margin-top:5px; }
+  .C .nav { background:#fff; border-top:1px solid #f0ebdd; color:#15212c; }
+  .C .nav .tab.on { color:transparent; background:linear-gradient(90deg,#1B6FA8,#3F8C3F); -webkit-background-clip:text; background-clip:text; }
+  .C .nav .tab.on .ic { color:#3F8C3F; }
+  .C .prog { height:6px; border-radius:999px; background:#eee6d6; margin-top:6px; overflow:hidden; }
+  .C .prog i { display:block; height:100%; width:62%; background:linear-gradient(90deg,#3FA9D6,#5CB85C); border-radius:999px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="pagehead">
+    <h1>SHLIFIM — באיזה כיוון עיצובי ללכת?</h1>
+    <p>שלוש פרשנויות לאותו מותג (MediLab). כולן בעברית RTL, מובייל-פירסט, ושומרות על כחול-ירוק והבקבוק. השוני הוא ב<b>אופי</b>. לחצו על הכיוון שמדבר אליכם, וספרו לי בצ'אט.</p>
+  </div>
+
+  <div class="grid">
+
+    <!-- ============ A ============ -->
+    <div class="col A" onclick="pick(this,'A')">
+      <div class="badge">כיוון A</div>
+      <h2>דודל מעודן · מחברת מעבדה</h2>
+      <div class="desc">שומר על ה-DNA המצויר והחם של המותג, אבל מסודר ומרוסן. שובב, ידידותי, מובחן מאוד.</div>
+      <div class="rec empty">·</div>
+      <div class="phone"><div class="screen">
+        <div class="s-head">
+          <svg class="flask" viewBox="0 0 40 40"><path d="M16 4h8M18 4v12L9 32a3 3 0 0 0 3 4h16a3 3 0 0 0 3-4l-9-16V4" fill="none" stroke="#1B6FA8" stroke-width="2.4" stroke-linejoin="round"/><path d="M13 26h14l3 6a2 2 0 0 1-2 3H12a2 2 0 0 1-2-3z" fill="#5CB85C" opacity=".55"/></svg>
+          <div class="brandtxt"><span class="brand-name">שליפים</span><span class="brand-sub">MediLab · ביולוגיה</span></div>
+        </div>
+        <div class="s-body">
+          <div class="search">🔍 חיפוש מושג…</div>
+          <div class="card"><span class="pill">א</span><div class="ttl" style="margin-top:6px">אוסמוזה</div><div class="term-en">Osmosis</div><div class="def">מעבר מים דרך קרום חדיר-בררני מאזור דליל לאזור מרוכז.</div></div>
+          <div class="card g"><span class="pill" style="background:#5CB85C;color:#fff">מ</span><div class="ttl" style="margin-top:6px">מיטוזה</div><div class="term-en">Mitosis</div><div class="def">חלוקת תא ליצירת שני תאי-בת זהים גנטית.</div></div>
+        </div>
+        <div class="nav">
+          <div class="tab"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="14" rx="2"/></svg>כרטיסיות</div>
+          <div class="tab"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="9"/></svg>מבחון</div>
+          <div class="tab on"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 5h16M4 12h16M4 19h10"/></svg>מילון</div>
+        </div>
+      </div></div>
+    </div>
+
+    <!-- ============ B ============ -->
+    <div class="col B" onclick="pick(this,'B')">
+      <div class="badge">כיוון B</div>
+      <h2>מודרני · נקי וקליני</h2>
+      <div class="desc">מינימליסטי ובוגר. הרבה אוויר, היררכיה חדה, הצבעים כמבטא בלבד. ממוקד ורגוע ללחץ בחינות.</div>
+      <div class="rec empty">·</div>
+      <div class="phone"><div class="screen">
+        <div class="s-head">
+          <svg class="flask" viewBox="0 0 40 40"><path d="M16 4h8M18 4v12L9 32a3 3 0 0 0 3 4h16a3 3 0 0 0 3-4l-9-16V4" fill="none" stroke="#1B6FA8" stroke-width="2.4" stroke-linejoin="round"/></svg>
+          <div class="brandtxt"><span class="brand-name">שליפים</span><span class="brand-sub">MediLab</span></div>
+        </div>
+        <div class="s-body">
+          <div class="search">🔍 חיפוש מושג…</div>
+          <div class="card"><div class="ttl">אוסמוזה</div><div class="term-en">Osmosis</div><div class="def">מעבר מים דרך קרום חדיר-בררני מאזור דליל לאזור מרוכז.</div></div>
+          <div class="card"><div class="ttl">מיטוזה</div><div class="term-en">Mitosis</div><div class="def">חלוקת תא ליצירת שני תאי-בת זהים גנטית.</div></div>
+          <div class="card"><div class="ttl">אנזים</div><div class="term-en">Enzyme</div><div class="def">חלבון המזרז תגובה ביוכימית בגוף.</div></div>
+        </div>
+        <div class="nav">
+          <div class="tab"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="14" rx="2"/></svg>כרטיסיות</div>
+          <div class="tab"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="9"/></svg>מבחון</div>
+          <div class="tab on"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 5h16M4 12h16M4 19h10"/></svg>מילון</div>
+        </div>
+      </div></div>
+    </div>
+
+    <!-- ============ C ============ -->
+    <div class="col C sel" onclick="pick(this,'C')">
+      <div class="badge">כיוון C</div>
+      <h2>מודרני + ניצוץ מותגי</h2>
+      <div class="desc">בסיס נקי ומודרני כמו B, אבל עם נשמת MediLab: גרדיאנט כחול→ירוק, הבקבוק, וקו הדגשה צהוב. מודרני אך מובחן.</div>
+      <div class="rec">★ ההמלצה שלי — מודרני וממוקד, ועדיין MediLab</div>
+      <div class="phone"><div class="screen">
+        <div class="s-head">
+          <svg class="flask" viewBox="0 0 40 40"><defs><linearGradient id="fg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#3FA9D6"/><stop offset="1" stop-color="#5CB85C"/></linearGradient></defs><path d="M16 4h8M18 4v12L9 32a3 3 0 0 0 3 4h16a3 3 0 0 0 3-4l-9-16V4" fill="none" stroke="url(#fg)" stroke-width="2.6" stroke-linejoin="round"/><path d="M13 26h14l3 6a2 2 0 0 1-2 3H12a2 2 0 0 1-2-3z" fill="url(#fg)" opacity=".5"/></svg>
+          <div class="brandtxt"><span class="brand-name">שליפים</span><span class="brand-sub">MediLab · ביולוגיה</span></div>
+        </div>
+        <div class="s-body">
+          <div class="search">🔍 חיפוש מושג…</div>
+          <div class="card"><div class="ttl"><span class="hl">אוסמוזה</span></div><div class="term-en">Osmosis</div><div class="def">מעבר מים דרך קרום חדיר-בררני מאזור דליל לאזור מרוכז.</div></div>
+          <div class="card"><div class="ttl">מיטוזה</div><div class="term-en">Mitosis</div><div class="def">חלוקת תא ליצירת שני תאי-בת זהים גנטית.</div><div class="prog"><i></i></div></div>
+        </div>
+        <div class="nav">
+          <div class="tab"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="14" rx="2"/></svg>כרטיסיות</div>
+          <div class="tab"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="9"/></svg>מבחון</div>
+          <div class="tab on"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 5h16M4 12h16M4 19h10"/></svg>מילון</div>
+        </div>
+      </div></div>
+    </div>
+
+  </div>
+</div>
+<script>
+  function pick(el, key){
+    document.querySelectorAll('.col').forEach(c=>c.classList.remove('sel'));
+    el.classList.add('sel');
+  }
+</script>
+</body>
+</html>

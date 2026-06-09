@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"><title>SHLIFIM tests</title>
+<style>body{font-family:monospace;padding:20px;background:#0E151C;color:#dfe6ee}
+.pass{color:#5CB85C}.fail{color:#F0654F}.s{margin:6px 0}</style></head>
+<body>
+<h1 id="head">running…</h1><div id="out"></div>
+<script src="../glossary.js"></script>
+<script src="assert.js"></script>
+<script src="../lib/normalize.js"></script>
+<script src="../lib/aliases.js"></script>
+<script src="../lib/search.js"></script>
+<script src="../lib/quiz.js"></script>
+<script src="../lib/validate.js"></script>
+<script src="spec-normalize.js"></script>
+<script src="spec-aliases.js"></script>
+<script src="spec-search.js"></script>
+<script src="spec-quiz.js"></script>
+<script src="spec-validate.js"></script>
+<script>
+  var r = window.__RESULTS__;
+  document.getElementById('head').textContent =
+    (r.failed === 0 ? 'PASS' : 'FAIL') + ' — ' + r.passed + '/' + r.total + ' passed, ' + r.failed + ' failed';
+  document.getElementById('head').className = r.failed === 0 ? 'pass' : 'fail';
+  var out = document.getElementById('out'), html = '';
+  Object.keys(r.suites).forEach(function (s) {
+    var x = r.suites[s];
+    html += '<div class="s ' + (x.failed ? 'fail' : 'pass') + '">' + s + ': ' + x.passed + ' ok, ' + x.failed + ' fail</div>';
+  });
+  r.failures.forEach(function (f) { html += '<div class="s fail">✗ [' + f.suite + '] ' + f.test + ' — ' + f.message + '</div>'; });
+  out.innerHTML = html;
+</script>
+</body></html>

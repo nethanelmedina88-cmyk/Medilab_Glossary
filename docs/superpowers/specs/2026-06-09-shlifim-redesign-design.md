@@ -1,0 +1,274 @@
+# SHLIFIM — Redesign Design System & UX Spec
+
+**Date:** 2026-06-09
+**Product:** SHLIFIM (שליפים) — Hebrew biology vocabulary PWA for Israeli high-school students preparing for the biology *bagrut* (5 יח״ל).
+**Brand:** MediLab (מדע קצר ולעניין).
+**Status:** Approved design direction — ready for implementation planning.
+
+---
+
+## 1. Goals & Context
+
+A ground-up redesign of the visual and interaction system. Fresh, modern, mobile-first, fully RTL Hebrew, while keeping MediLab's brand identity (blue→green, the flask, the yellow "spark").
+
+**Primary users:** 15–17 y.o. Israeli students, studying on phones, often at night, under exam pressure.
+
+**Design principles**
+1. **Clarity & focus first** — nothing competes with the term being studied.
+2. **Modern, not childish** — this generation expects Instagram/TikTok-grade polish; cartoonish reads as "for kids" and loses trust.
+3. **Three distinct modes, one coherent system** — same components, per-mode accent color.
+4. **Reward without distraction** — subtle motion and a "spark" reward layer (streaks, progress) that motivates but never interrupts.
+5. **Calm dark mode as a first-class citizen** — late-night phone studying.
+
+**Chosen visual direction:** *Modern + Brand Spark* — a clean modern foundation carrying unmistakable MediLab personality (blue→green gradient, flask mark, yellow highlight underline).
+
+---
+
+## 2. Tech Approach
+
+- **PWA** (existing): `manifest.json`, `service-worker.js`, installable, `dir="rtl"`, `lang="he"`.
+- **Auth model — guest-first.** Students use everything immediately; progress saves to `localStorage`. **Firebase Auth is optional** and only unlocks **cross-device sync via Firestore**. No login wall.
+- **Sync:** on sign-in, merge local progress into the user's Firestore document, then keep them in sync. One doc per user: `{ favorites[], studied[], streak, settings }`.
+- Update `manifest.json` `theme_color` / `background_color` and the service-worker cache list to the new tokens during build.
+
+---
+
+## 3. Color Tokens
+
+### 3.1 Brand ramps
+```
+blue   50 #EAF6FB · 100 #D6ECF6 · 300 #7CC7EC · 500 #3FA9D6 · 700 #1B6FA8 · 900 #0E3F5E
+green  50 #EEF7EC · 100 #DCEFD6 · 500 #5CB85C · 700 #3F8C3F · 900 #235023
+coral  50 #FDEEEC · 100 #F9D5CF · 500 #F0654F · 700 #D24B36 · 900 #7A2418
+spark  (yellow) 400 #F9D85C · text-safe 600 #C98A00
+```
+Coral `#F0654F` replaces the old muted `#F47A6E`. Yellow is reserved for the spark layer only (highlights, streak, progress, reward) so it stays special.
+
+### 3.2 Semantic tokens — Light
+```
+--bg          #FBFAF6   (warm canvas)
+--surface     #FFFFFF
+--surface-2   #F4F1E9
+--border      #ECE7DA
+--text        #15212C   (strong)
+--text-2      #5A6470   (secondary / definitions)
+--text-3      #8A93A0   (muted / english, hints)
+```
+### 3.3 Semantic tokens — Dark
+```
+--bg          #0E151C   (deep blue-charcoal, not black)
+--surface     #16202B
+--surface-2   #1C2733
+--border      #2A3744
+--text        #ECEFF3
+--text-2      #AEB8C2
+--text-3      #7C8794
+```
+### 3.4 Functional tokens
+```
+--success  green-500/700      --danger   coral-500/700
+--spark    yellow-400         --focus-ring  blue-500 @ 40% alpha
+```
+### 3.5 Per-mode accent (set on a container via `data-mode`)
+```
+[data-mode="glossary"]   --accent #3FA9D6  --accent-strong #1B6FA8  --accent-soft blue-50
+[data-mode="flashcards"] --accent #5CB85C  --accent-strong #3F8C3F  --accent-soft green-50
+[data-mode="quiz"]       --accent #F0654F  --accent-strong #D24B36  --accent-soft coral-50
+```
+The brand gradient `linear-gradient(135deg,#3FA9D6,#5CB85C)` is the shared signature (logo mark, card edge bar, primary buttons).
+
+**Contrast:** all text/background pairs target **WCAG AA** (≥4.5:1 body, ≥3:1 large). Verify coral-on-white for small text — use coral-700 for text, coral-500 for fills.
+
+---
+
+## 4. Typography (Hebrew-tuned)
+
+- **Display / headings:** **Rubik** (700/800) — modern, geometric, strong Hebrew. Used for UI chrome with **no nikud**.
+- **Body / UI:** **Assistant** (400/500/600/700) — high legibility, full nikud support.
+- **Vocalized (מנוקד) term titles:** render with **Assistant 700/800**, not Rubik — Rubik's nikud coverage is incomplete. This is a deliberate Hebrew-typography rule: anything carrying nikud uses Assistant.
+
+| Token | Font / weight | Size / line-height | Use |
+|---|---|---|---|
+| Display | Rubik 800 | 30 / 1.15, ls −0.5 | mode hero, flashcard term |
+| H2 | Rubik 700 | 22 / 1.25 | section titles |
+| H3 / term | Rubik 700 *(Assistant 800 if nikud)* | 18 / 1.3 | card / term title |
+| Body | Assistant 400 | 16 / 1.6 | definitions |
+| Body-strong | Assistant 600 | 16 / 1.6 | emphasis |
+| Small | Assistant 500 | 14 / 1.5 | secondary |
+| Caption | Assistant 700 | 12.5, ls 0.04em | labels, tags |
+| English sub | Assistant 500 | 12–14 | english term, `--text-3` |
+
+**1.6 line-height on definitions** is mandatory — dense, often-vocalized biology text needs vertical breathing room.
+
+---
+
+## 5. Spacing, Radius, Elevation, Motion
+
+- **Spacing** (4px base): 4 · 8 · 12 · 16 · 20 · 24 · 32 · 40 · 48 · 64
+- **Radius:** sm 10 · md 14 · lg 18 · xl 24 · pill 999
+- **Tap targets:** min **44×44px**.
+- **Elevation (light):** e1 `0 1px 2px rgba(20,30,45,.04)` · e2 `0 6px 18px rgba(27,111,168,.07)` · e3 `0 14px 34px rgba(27,111,168,.12)`. Dark uses `rgba(0,0,0,.4)`.
+- **Motion:** fast 120ms · base 200ms · slow 320ms · flip 480ms; easing `cubic-bezier(.2,.7,.2,1)`.
+  - Card flip = 3D rotateY; correct answer = brief spark; progress bar = eased width fill.
+  - **`prefers-reduced-motion`:** drop 3D flip + spark, use instant state changes.
+
+---
+
+## 6. Mode Identity
+
+| Mode | Hebrew | Accent | Feeling |
+|---|---|---|---|
+| Glossary | מילון | Blue | calm browsing & reading |
+| Flashcards | כרטיסיות | Green | active study / growth |
+| Quiz | מבחון | Coral | alertness / self-test |
+
+Constant across modes: brand header, bottom 3-tab nav, card shapes, type, spacing. Only the accent changes. The **active bottom tab** lights up in its mode color — persistent orientation.
+
+---
+
+## 7. Component Library
+
+Each component: states + RTL behavior. (Mockups: `design-studio/03-modes.html`.)
+
+1. **App shell** — sticky brand header (flask gradient mark, שליפים + sub, streak chip); bottom tab bar (3 tabs, active = mode accent + pill indicator); safe-area padding.
+2. **Streak chip** — 🔥 + count, spark-yellow text, pill.
+3. **Search field** — icon + input + clear; `--surface`, hairline border, e2 shadow.
+4. **Letter filter strip** — horizontal-scroll Hebrew letters, RTL order, active = gradient fill, empty letters disabled.
+5. **Term card (Glossary)** — leading blue→green edge bar; term (H3) + english sub; definition (Body); fav + studied icon buttons. States: *default, favorite (yellow), studied (green tint + ✓), expanded (read-more for long defs)*.
+6. **Icon button** — 44px; states default / fav (yellow) / done (green fill).
+7. **Flashcard** — front (letter badge, term, english, flip hint) / back (term + definition); 3D flip; swipe + arrow-key nav; top accent bar (green). Completion summary at deck end.
+8. **Deck filter (segmented chips)** — הכל / לא נלמדו / מועדפים, counts; active = gradient.
+9. **Progress** — linear bar (mode gradient), ring variant, and the streak. Eased fill animation.
+10. **Quiz question card** — type tag (pick-definition / pick-term / type-answer), question (H3, supports highlight), answer area.
+11. **MC option** — states: *default, selected, correct (green ✓), wrong (dimmed coral), disabled-after-answer*.
+12. **Type-answer input** — text field + check; tolerant matching (ignores nikud, punctuation, whitespace — reuse existing `normalize()`).
+13. **Feedback strip** — correct (green + 🎉 spark) / incorrect (coral + correct answer shown).
+14. **Buttons** — primary (brand gradient), secondary/ghost (1.5px border), icon. 44px min.
+15. **Empty state** — friendly illustration + guidance (e.g. no results, empty deck).
+16. **Results screen (Quiz)** — score, accuracy, review of wrong answers, "retry wrong only".
+17. **Dark-mode toggle** + system-preference default.
+18. **Toast / sheet** — bottom sheet for filters/settings on mobile.
+
+---
+
+## 8. Mode Flows
+
+**Glossary (מילון):** browse all terms → search (Hebrew/English/definition, nikud-insensitive) → filter by letter → favorite / mark studied → expand long definitions → "surprise me" random term.
+
+**Flashcards (כרטיסיות):** pick deck (all / unstudied / favorites) → flip card (tap or space) → navigate (swipe / arrows) → mark studied or favorite → progress tracked → completion summary with "study unstudied again".
+
+**Quiz (מבחון):** choose deck + length (e.g. 10) → mixed question types:
+- *pick the definition* (term → 3–4 definitions),
+- *pick the term* (definition → 3–4 terms),
+- *type the answer* (definition → typed term, tolerant match).
+Immediate feedback per question → running score → results screen with wrong-answer review and "retry wrong".
+
+---
+
+## 9. Data & State
+
+- **Term shape (extended):** `{ letter, hebrew, english, definition, subject, subtopic?, aliasOf?, synonyms?[] }` (465 terms in `glossary.js`). `subject`/`subtopic` per §13; `aliasOf`/`synonyms` per §12.
+- **Progress state:** `favorites[]`, `studied[]`, `streak`, `settings{ dark }`.
+- **Persistence:** `localStorage` (guest) → Firestore (signed-in), merge-on-login.
+- **Streak:** increment on a study action once per calendar day; reset if a day is skipped.
+
+---
+
+## 10. Accessibility
+
+- WCAG **AA** contrast (light + dark).
+- Tap targets ≥ 44×44px.
+- Visible focus ring (`--focus-ring`) on all interactive elements.
+- Full keyboard support (flashcard flip/nav, quiz answer/next); `aria-label`s on icon buttons; `role`/`aria-modal` on sheets.
+- `dir="rtl"` everywhere; logical properties (`inset-inline-*`, `margin-inline-*`).
+- Honor `prefers-reduced-motion` and `prefers-color-scheme`.
+
+---
+
+## 11. Build Mapping (current → new)
+
+- Keep the React component structure already in `app.jsx`; re-skin against CSS-variable tokens in `styles.css` and add the **Quiz** mode (new) + bottom tab navigation + guest-first Firebase sync layer.
+- Replace the doodle-heavy chrome with the Modern + Brand Spark system; keep the flask mark and `normalize()` search.
+- Token layer: define §3–§5 as `:root` CSS variables + `html.is-dark` overrides + `[data-mode]` accent scopes.
+
+---
+
+# Part B — Content, Correctness & Scale
+
+Added 2026-06-09 from explicit requirements: fix bugs, legit/mistake-free quiz, per-term subject identification, no duplications, logic effective at all scale, clean/validated content.
+
+## 12. Aliases, Synonyms & Deduplication
+
+Audit (2026-06-09) of `glossary.js`: 465 terms, all fields populated, **no encoding corruption, no exact or near-duplicate Hebrew terms**. "Duplicates" are an intentional **alias/synonym system**:
+- **9 "ראה:" cross-reference stubs** (definition is a pointer, e.g. `תא הפלואידי → "ראה: הפלואידי, תא."`).
+- **Genuine synonym pairs** sharing one English term: היפופיזה/בלוטת יותרת המוח, מטבוליזם/חילוף חומרים, נוירוטרנסמיטר/מוליך עצבי, שחבור/שיחבור, and the תמיסה X / X, תמיסה ordering variants.
+- **One correctly-disambiguated pair** to keep separate: גורם מגביל (אנזימים) vs (אקולוגיה).
+
+**Rules:**
+- Add `aliasOf` (canonical hebrew key) to stub entries and `synonyms[]` to canonical entries.
+- **Glossary:** keep aliases searchable; an alias result shows the canonical definition (resolved), with a "ראו: <canonical>" link.
+- **Quiz:** exclude alias stubs as standalone questions; treat synonyms as equivalent (see §14).
+- A term is a "true duplicate" only if same canonical concept AND same definition — none exist today; the validator (§15) blocks future ones.
+
+## 13. Subjects & Sub-topics (per-term classification)
+
+Goal: a student instantly sees a term's subject (e.g. אקסון → הנדסה גנטית) and can browse/quiz by topic.
+- **Data:** `subject` (required), `subtopic` (optional), drawn from a single controlled taxonomy file `data/subjects.js`.
+- **Taxonomy source:** recover from MediLab materials (the question book / docx in Downloads is organized by נושא/תת-נושא); fall back to the standard Israeli 5-יח״ל curriculum. Two levels.
+- **Process (with review gate):** build draft taxonomy → auto-classify all 465 → **author reviews a representative sample (~30–40 terms) and the taxonomy** → correct → tag all → validator enforces every term has a valid `subject`.
+- **UI surfacing (all three modes):**
+  - *Glossary:* a subject **chip** on each card (accent-tinted) + filter by subject/sub-topic (bottom sheet).
+  - *Flashcards:* deck can be scoped to a subject; subject shown on the card.
+  - *Quiz:* "quiz by subject" selection; results broken down per subject (shows weak topics).
+- Subject color: use the **active mode accent** tint (not a per-subject rainbow) to stay coherent; subject identity comes from the label, not a new color axis.
+
+## 14. Quiz Correctness Guarantees
+
+The quiz must never mark a correct student wrong or present an unanswerable item.
+- **Eligible items:** canonical terms with a real definition and a `subject`; alias stubs excluded.
+- **Distractor safety:** distractors are other canonical terms/definitions that are **not synonyms** of the answer and (for definition questions) not near-identical text; prefer same-subject distractors for difficulty, but never a synonym.
+- **Answer equivalence:** "type the answer" accepts the canonical term **or any `synonym`**, compared via `normalize()` (nikud/punctuation/spacing-insensitive).
+- **Disambiguation:** parenthetical context (e.g. גורם מגביל (אקולוגיה)) is preserved in the prompt so the item is answerable.
+- **Validation:** an automated check generates every possible quiz item and asserts each has exactly one correct answer and ≥2 valid distractors; failures block release.
+
+## 15. Content Validation (automated)
+
+A `scripts/validate-glossary` check (run pre-commit / CI-style) asserts:
+- every entry has `letter, hebrew, english, definition, subject`;
+- `letter` matches the Hebrew first letter; no stray control/replacement chars;
+- every `aliasOf` resolves to an existing canonical term; no orphan synonyms;
+- no true duplicates (same canonical + definition);
+- `subject`/`subtopic` exist in `data/subjects.js`;
+- quiz-eligibility invariants from §14 hold.
+Output is a human-readable report; the build fails on errors.
+
+## 16. Bug-Fix Pass
+
+A dedicated pass over the existing code, not just the redesign. Known candidates from initial review:
+- per-card "open as flashcard" passes a term that is then ignored (dead behavior — should jump to that card);
+- mislabeled handlers (e.g. header "about" toggles favorites-only);
+- first-occurrence-only search highlight;
+- verify RTL arrow-key direction in flashcards, focus management on modal/sheet open/close, and `localStorage` JSON failure handling.
+Full audit performed during implementation; each fix gets a test.
+
+## 17. Scalability ("effective at all scale")
+
+465 terms today; must stay instant as content grows.
+- Precomputed **normalized search index** built once (not per keystroke); **debounced** input.
+- **Virtualized** term list (render only visible rows).
+- Memoized derived data (letter/subject counts, decks).
+- Firestore: **paginated** reads, batched writes, offline persistence; sync diff-based, not full-rewrite.
+- Quiz item generation O(eligible), cached per session.
+
+## 18. Deliverables Tracking
+
+- [x] Design system (tokens, type, spacing) — §3–§5, `design-studio/02-system.html`
+- [x] High-fidelity mockups, 3 modes — `design-studio/03-modes.html`
+- [x] Data audit (duplicates, encoding, fields) — §12
+- [ ] Reusable coded component set — implementation
+- [ ] Subject taxonomy + per-term tagging (with review gate) — §13
+- [ ] Quiz mode with correctness guarantees — §14
+- [ ] Content validator — §15
+- [ ] Bug-fix pass — §16
+- [ ] Scalability hardening — §17
+- [ ] Guest-first Firebase sync — §2

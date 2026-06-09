@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SHLIFIM · שלושת המצבים</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;500;600;700;800&family=Rubik:wght@500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#FBFAF6;--surface:#fff;--surface2:#F4F1E9;--line:#ECE7DA;
+    --ink:#15212C;--ink2:#5A6470;--ink3:#8A93A0;
+    --blue:#3FA9D6;--blue-d:#1B6FA8;--green:#5CB85C;--green-d:#3F8C3F;
+    --coral:#F0654F;--coral-d:#D24B36;--yellow:#F9D85C;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:'Assistant',system-ui,sans-serif;background:#20262e;color:#e9edf2;direction:rtl;padding:30px 18px 80px;-webkit-font-smoothing:antialiased;}
+  .wrap{max-width:1180px;margin:0 auto;}
+  h1.page{font-family:'Rubik',sans-serif;font-weight:800;font-size:28px;text-align:center;letter-spacing:-.5px;}
+  .sub{text-align:center;color:#aab4c0;margin:8px auto 34px;max-width:680px;line-height:1.6;}
+  .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:28px;align-items:start;justify-items:center;}
+  @media(max-width:1000px){.grid{grid-template-columns:1fr;}}
+  .col{text-align:center;}
+  .col .cap{font-family:'Rubik',sans-serif;font-weight:700;font-size:17px;margin-bottom:3px;}
+  .col .capsub{color:#aab4c0;font-size:13px;margin-bottom:16px;}
+
+  .phone{width:320px;border-radius:42px;padding:13px;background:#11151a;box-shadow:0 24px 55px rgba(0,0,0,.5);border:1px solid #333b45;}
+  .screen{border-radius:30px;overflow:hidden;height:660px;display:flex;flex-direction:column;background:var(--bg);color:var(--ink);position:relative;text-align:right;}
+
+  /* ---- shared header ---- */
+  .hd{display:flex;align-items:center;gap:10px;padding:16px 16px 12px;background:linear-gradient(180deg,#fff,var(--bg));}
+  .flask{width:30px;height:30px;flex:0 0 auto;}
+  .bt{display:flex;flex-direction:column;line-height:1.05;}
+  .bname{font-family:'Rubik',sans-serif;font-weight:700;font-size:17px;background:linear-gradient(90deg,#1B6FA8,#3F8C3F);-webkit-background-clip:text;background-clip:text;color:transparent;}
+  .bsub{font-size:10px;color:#8a8270;font-weight:600;}
+  .streak{margin-inline-start:auto;display:flex;align-items:center;gap:5px;background:#fff;border:1px solid var(--line);border-radius:999px;padding:5px 11px;font-size:12px;font-weight:700;color:#C98A00;box-shadow:0 3px 10px rgba(0,0,0,.05);}
+  .body{flex:1;overflow:hidden;padding:6px 16px 0;}
+
+  /* ---- bottom nav ---- */
+  .nav{display:flex;justify-content:space-around;padding:9px 6px 16px;background:#fff;border-top:1px solid var(--line);}
+  .tab{display:flex;flex-direction:column;align-items:center;gap:3px;font-size:11px;font-weight:700;color:var(--ink3);width:64px;padding-top:4px;}
+  .tab .ic{width:23px;height:23px;}
+  .tab.on-blue{color:var(--blue-d);}
+  .tab.on-green{color:var(--green-d);}
+  .tab.on-coral{color:var(--coral-d);}
+  .tab .pipe{height:3px;width:26px;border-radius:999px;margin-top:3px;background:transparent;}
+  .tab.on-blue .pipe{background:var(--blue-d);}
+  .tab.on-green .pipe{background:var(--green-d);}
+  .tab.on-coral .pipe{background:var(--coral-d);}
+
+  /* ================= GLOSSARY ================= */
+  .search{display:flex;align-items:center;gap:8px;background:#fff;border:1px solid var(--line);border-radius:14px;padding:12px 13px;font-size:14px;color:var(--ink3);box-shadow:0 4px 14px rgba(27,111,168,.06);margin:8px 0 12px;}
+  .letters{display:flex;gap:6px;overflow:hidden;margin-bottom:14px;}
+  .let{flex:0 0 auto;width:30px;height:30px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;background:#fff;border:1px solid var(--line);color:var(--ink2);}
+  .let.on{background:linear-gradient(135deg,#3FA9D6,#1B6FA8);color:#fff;border-color:transparent;}
+  .gcard{background:#fff;border:1px solid #f0ebdd;border-radius:18px;padding:14px;margin-bottom:12px;box-shadow:0 6px 18px rgba(27,111,168,.07);position:relative;overflow:hidden;}
+  .gcard::before{content:'';position:absolute;inset-inline-start:0;top:0;bottom:0;width:4px;background:linear-gradient(180deg,#3FA9D6,#5CB85C);}
+  .gcard.studied{background:linear-gradient(180deg,#fff,#f4fbf2);}
+  .gtop{display:flex;justify-content:space-between;align-items:flex-start;}
+  .gt{font-family:'Rubik',sans-serif;font-weight:700;font-size:18px;}
+  .hl{background:linear-gradient(180deg,transparent 62%,#F9D85C 62%);padding:0 2px;}
+  .gen{font-size:12px;color:var(--ink3);}
+  .gdef{font-size:13.5px;line-height:1.6;color:var(--ink2);margin-top:7px;}
+  .gacts{display:flex;gap:6px;}
+  .iconbtn{width:34px;height:34px;border-radius:10px;border:1px solid var(--line);background:#fff;display:flex;align-items:center;justify-content:center;font-size:16px;color:var(--ink3);}
+  .iconbtn.fav{color:#C98A00;border-color:#F9D85C;background:#FFFBEA;}
+  .iconbtn.done{color:#fff;background:var(--green);border-color:var(--green-d);}
+
+  /* ================= FLASHCARDS ================= */
+  .deckchips{display:flex;gap:7px;margin:10px 0 14px;}
+  .chip{flex:1;text-align:center;font-size:12px;font-weight:700;padding:8px 4px;border-radius:11px;background:#fff;border:1px solid var(--line);color:var(--ink2);}
+  .chip.on{background:linear-gradient(135deg,#5CB85C,#3F8C3F);color:#fff;border-color:transparent;}
+  .fprog{display:flex;align-items:center;gap:9px;font-size:12px;font-weight:700;color:var(--green-d);margin-bottom:12px;}
+  .fbar{flex:1;height:7px;border-radius:999px;background:#e7eee2;overflow:hidden;}
+  .fbar i{display:block;height:100%;width:30%;background:linear-gradient(90deg,#5CB85C,#3F8C3F);border-radius:999px;}
+  .fcard{background:#fff;border:1px solid #e6efe2;border-radius:24px;padding:30px 20px;text-align:center;box-shadow:0 14px 34px rgba(63,140,63,.12);position:relative;overflow:hidden;min-height:280px;display:flex;flex-direction:column;align-items:center;justify-content:center;}
+  .fcard::after{content:'';position:absolute;top:0;left:0;right:0;height:5px;background:linear-gradient(90deg,#5CB85C,#3F8C3F);}
+  .fletter{width:42px;height:42px;border-radius:12px;background:#eef7ec;color:var(--green-d);font-family:'Rubik';font-weight:700;font-size:20px;display:flex;align-items:center;justify-content:center;margin-bottom:16px;}
+  .fterm{font-family:'Rubik',sans-serif;font-weight:800;font-size:30px;letter-spacing:-.5px;}
+  .fen{font-size:15px;color:var(--ink3);margin-top:6px;}
+  .fhint{margin-top:20px;font-size:12.5px;color:var(--ink3);display:flex;align-items:center;gap:6px;}
+  .fctrl{display:flex;align-items:center;gap:10px;margin-top:18px;}
+  .fnav{width:48px;height:48px;border-radius:14px;background:#fff;border:1px solid var(--line);display:flex;align-items:center;justify-content:center;font-size:20px;color:var(--ink2);}
+  .fmark{flex:1;height:48px;border-radius:14px;border:none;background:linear-gradient(90deg,#5CB85C,#3F8C3F);color:#fff;font-family:inherit;font-weight:700;font-size:15px;display:flex;align-items:center;justify-content:center;gap:7px;}
+
+  /* ================= QUIZ ================= */
+  .qtop{display:flex;align-items:center;gap:9px;margin:10px 0 6px;font-size:12px;font-weight:700;color:var(--coral-d);}
+  .qbar{flex:1;height:7px;border-radius:999px;background:#f6e0db;overflow:hidden;}
+  .qbar i{display:block;height:100%;width:55%;background:linear-gradient(90deg,#F0654F,#D24B36);border-radius:999px;}
+  .qscore{margin-inline-start:auto;color:var(--green-d);}
+  .qkind{font-size:12px;font-weight:700;color:var(--coral-d);background:#fdeeec;border:1px solid #f8d5cf;border-radius:999px;padding:4px 11px;display:inline-block;margin:8px 0;}
+  .qq{font-family:'Rubik',sans-serif;font-weight:700;font-size:20px;line-height:1.35;margin-bottom:16px;}
+  .qopt{background:#fff;border:1.5px solid var(--line);border-radius:14px;padding:13px 14px;margin-bottom:10px;font-size:14px;line-height:1.5;color:var(--ink);display:flex;gap:10px;align-items:flex-start;}
+  .qopt .mk{flex:0 0 auto;width:22px;height:22px;border-radius:50%;border:2px solid var(--line);font-size:12px;display:flex;align-items:center;justify-content:center;font-weight:700;color:var(--ink3);}
+  .qopt.correct{border-color:var(--green);background:#f3fbf1;}
+  .qopt.correct .mk{background:var(--green);border-color:var(--green);color:#fff;}
+  .qopt.wrong{border-color:#f0c7c0;background:#fdf3f1;opacity:.75;}
+  .qopt.wrong .mk{border-color:var(--coral);color:var(--coral-d);}
+  .qfb{display:flex;align-items:center;gap:8px;background:#f3fbf1;border:1px solid #cdeccb;border-radius:14px;padding:11px 13px;font-size:13px;font-weight:600;color:var(--green-d);margin-top:4px;}
+  .qnext{margin-top:12px;width:100%;height:48px;border:none;border-radius:14px;background:linear-gradient(90deg,#F0654F,#D24B36);color:#fff;font-family:inherit;font-weight:700;font-size:15px;}
+  .spark{position:absolute;font-size:13px;}
+
+  .legend{margin-top:30px;text-align:center;color:#aab4c0;font-size:13px;line-height:1.7;}
+  .legend b{color:#fff;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1 class="page">שלושת המצבים — מובייל, RTL, מצב בהיר</h1>
+  <p class="sub">אותה מערכת עיצוב, שלוש זהויות. שימו לב לפס התחתון: המצב הפעיל צבוע בגוון שלו, כך שתמיד ברור איפה אתם. ה״ניצוץ״ הצהוב מופיע בהדגשות, ברצף לימוד (streak) ובתגמול.</p>
+
+  <div class="grid">
+
+    <!-- ============ GLOSSARY ============ -->
+    <div class="col">
+      <div class="cap" style="color:#7cc7ec">מילון · Glossary</div>
+      <div class="capsub">דפדוף, חיפוש וסינון לפי אות</div>
+      <div class="phone"><div class="screen">
+        <div class="hd">
+          <svg class="flask" viewBox="0 0 40 40"><defs><linearGradient id="g1" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#3FA9D6"/><stop offset="1" stop-color="#5CB85C"/></linearGradient></defs><path d="M16 4h8M18 4v12L9 32a3 3 0 0 0 3 4h16a3 3 0 0 0 3-4l-9-16V4" fill="none" stroke="url(#g1)" stroke-width="2.6" stroke-linejoin="round"/><path d="M13 26h14l3 6a2 2 0 0 1-2 3H12a2 2 0 0 1-2-3z" fill="url(#g1)" opacity=".5"/></svg>
+          <div class="bt"><span class="bname">שליפים</span><span class="bsub">MediLab · ביולוגיה</span></div>
+          <div class="streak">🔥 7</div>
+        </div>
+        <div class="body">
+          <div class="search">🔍 חפשו מושג… (אוסמוזה, אנזים)</div>
+          <div class="letters">
+            <div class="let on">א</div><div class="let">ב</div><div class="let">ג</div><div class="let">ד</div><div class="let">ה</div><div class="let">ו</div><div class="let">ז</div>
+          </div>
+          <div class="gcard">
+            <div class="gtop">
+              <div><div class="gt"><span class="hl">אוסמוזה</span></div><div class="gen">Osmosis</div></div>
+              <div class="gacts"><div class="iconbtn fav">★</div><div class="iconbtn">○</div></div>
+            </div>
+            <div class="gdef">מעבר מים דרך קרום חדיר-בררני מאזור בריכוז מומסים נמוך לאזור בריכוז גבוה.</div>
+          </div>
+          <div class="gcard studied">
+            <div class="gtop">
+              <div><div class="gt">מיטוֹזה</div><div class="gen">Mitosis</div></div>
+              <div class="gacts"><div class="iconbtn">☆</div><div class="iconbtn done">✓</div></div>
+            </div>
+            <div class="gdef">חלוקת תא ליצירת שני תאי-בת זהים גנטית לתא האם.</div>
+          </div>
+        </div>
+        <div class="nav">
+          <div class="tab"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="14" rx="2"/></svg>כרטיסיות<div class="pipe"></div></div>
+          <div class="tab"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="9"/></svg>מבחון<div class="pipe"></div></div>
+          <div class="tab on-blue"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 5h16M4 12h16M4 19h10"/></svg>מילון<div class="pipe"></div></div>
+        </div>
+      </div></div>
+    </div>
+
+    <!-- ============ FLASHCARDS ============ -->
+    <div class="col">
+      <div class="cap" style="color:#86d486">כרטיסיות · Flashcards</div>
+      <div class="capsub">לימוד פעיל, הפיכה, סימון נלמד</div>
+      <div class="phone"><div class="screen">
+        <div class="hd">
+          <svg class="flask" viewBox="0 0 40 40"><path d="M16 4h8M18 4v12L9 32a3 3 0 0 0 3 4h16a3 3 0 0 0 3-4l-9-16V4" fill="none" stroke="url(#g1)" stroke-width="2.6" stroke-linejoin="round"/><path d="M13 26h14l3 6a2 2 0 0 1-2 3H12a2 2 0 0 1-2-3z" fill="url(#g1)" opacity=".5"/></svg>
+          <div class="bt"><span class="bname">שליפים</span><span class="bsub">MediLab · ביולוגיה</span></div>
+          <div class="streak">🔥 7</div>
+        </div>
+        <div class="body">
+          <div class="deckchips">
+            <div class="chip on">הכל · 40</div><div class="chip">לא נלמדו · 28</div><div class="chip">מועדפים · 9</div>
+          </div>
+          <div class="fprog"><span>12 / 40</span><div class="fbar"><i></i></div><span>30%</span></div>
+          <div class="fcard">
+            <div class="fletter">פ</div>
+            <div class="fterm">פוֹטוֹסינתֵזה</div>
+            <div class="fen">Photosynthesis</div>
+            <div class="fhint">↻ הקישו לתשובה · החליקו למעבר</div>
+          </div>
+          <div class="fctrl">
+            <div class="fnav">→</div>
+            <button class="fmark">✓ סמן כנלמד</button>
+            <div class="fnav">←</div>
+          </div>
+        </div>
+        <div class="nav">
+          <div class="tab on-green"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="14" rx="2"/></svg>כרטיסיות<div class="pipe"></div></div>
+          <div class="tab"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="9"/></svg>מבחון<div class="pipe"></div></div>
+          <div class="tab"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 5h16M4 12h16M4 19h10"/></svg>מילון<div class="pipe"></div></div>
+        </div>
+      </div></div>
+    </div>
+
+    <!-- ============ QUIZ ============ -->
+    <div class="col">
+      <div class="cap" style="color:#f0917f">מבחון · Quiz</div>
+      <div class="capsub">בחירה מרובה · רגע התגמול</div>
+      <div class="phone"><div class="screen">
+        <div class="hd">
+          <svg class="flask" viewBox="0 0 40 40"><path d="M16 4h8M18 4v12L9 32a3 3 0 0 0 3 4h16a3 3 0 0 0 3-4l-9-16V4" fill="none" stroke="url(#g1)" stroke-width="2.6" stroke-linejoin="round"/><path d="M13 26h14l3 6a2 2 0 0 1-2 3H12a2 2 0 0 1-2-3z" fill="url(#g1)" opacity=".5"/></svg>
+          <div class="bt"><span class="bname">שליפים</span><span class="bsub">MediLab · ביולוגיה</span></div>
+          <div class="streak">🔥 7</div>
+        </div>
+        <div class="body">
+          <div class="qtop"><span>שאלה 6 / 10</span><div class="qbar"><i></i></div><span class="qscore">5 ✓</span></div>
+          <span class="qkind">בחרו את ההגדרה הנכונה</span>
+          <div class="qq">מהי <span class="hl">אוסמוזה</span>?</div>
+          <div class="qopt correct"><span class="mk">✓</span><span>מעבר מים דרך קרום חדיר-בררני מאזור בריכוז מומסים נמוך לגבוה.</span></div>
+          <div class="qopt"><span class="mk">ב</span><span>פירוק גלוקוז לקבלת אנרגיה בנוכחות חמצן.</span></div>
+          <div class="qopt wrong"><span class="mk">ג</span><span>מעבר חומרים כנגד מפל הריכוזים תוך השקעת אנרגיה.</span></div>
+          <div class="qfb">🎉 כל הכבוד! תשובה נכונה</div>
+          <button class="qnext">לשאלה הבאה ←</button>
+        </div>
+        <div class="nav">
+          <div class="tab"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="14" rx="2"/></svg>כרטיסיות<div class="pipe"></div></div>
+          <div class="tab on-coral"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="9"/></svg>מבחון<div class="pipe"></div></div>
+          <div class="tab"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 5h16M4 12h16M4 19h10"/></svg>מילון<div class="pipe"></div></div>
+        </div>
+      </div></div>
+    </div>
+
+  </div>
+
+  <p class="legend">
+    <b>חיפוש מהיר</b> במילון · <b>הפיכה והחלקה</b> בכרטיסיות · <b>משוב מיידי</b> במבחון (ירוק=נכון, קורל=שגוי).<br>
+    כל המסכים תומכים גם ב<b>מצב כהה</b>. תנועה עדינה: הכרטיסייה מתהפכת ב-3D, תשובה נכונה נותנת ניצוץ קצר, ופס ההתקדמות זוחל בעדינות.
+  </p>
+</div>
+</body>
+</html>
