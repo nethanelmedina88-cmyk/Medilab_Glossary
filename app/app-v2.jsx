@@ -62,7 +62,10 @@ function TopicChips({value,onPick}){
 function Header({studiedCount, dark, setDark, user, onProfile}){
   return (
     <header className="hdr">
-      <Flask/>
+      <div className="logo-wrap">
+        <img className="logo-mark" src="logo.jpg" alt="MediLab"/>
+        <span className="bub b1"></span><span className="bub b2"></span><span className="bub b3"></span>
+      </div>
       <div className="brand"><b>שליפים</b><span>MediLab · ביולוגיה</span></div>
       <div className="hdr-spacer"></div>
       <div className="streak" title="מושגים שנלמדו">🔥 {studiedCount}</div>
@@ -223,6 +226,7 @@ const WA='https://wa.me/972524295838';
 function About(){
   return (<>
     <div className="hero"><h1>אודות</h1><p>נתנאל יוחאי מדינה · מורה לביולוגיה ולביוטכנולוגיה</p></div>
+    <img className="about-logo" src="logo.jpg" alt="MediLab"/>
     <div className="about-hero">
       <img className="portrait" src="portrait.jpg" alt="נתנאל מדינה"/>
       <div><div className="about-kicker">שיעורים פרטיים · 5 יח״ל · ביוטכנולוגיה 10 יח״ל</div>
@@ -360,11 +364,13 @@ function App(){
     <div className="app" data-mode={dm}>
       <Header studiedCount={studied.length} dark={dark} setDark={setDark} user={user} onProfile={()=>setMode('profile')}/>
       <div className="scroll">
-        {mode==='glossary' && <Glossary favorites={favorites} studied={studied} toggleFav={toggleFav} toggleStudied={toggleStudied}/>}
-        {mode==='flashcards' && <Flashcards favorites={favorites} studied={studied} toggleFav={toggleFav} toggleStudied={toggleStudied}/>}
-        {mode==='quiz' && <Quiz studied={studied} toggleStudied={toggleStudied}/>}
-        {mode==='about' && <About/>}
-        {mode==='profile' && <Profile user={user} studied={studied} favorites={favorites} sync={sync} signIn={signIn} signOut={signOut}/>}
+        <div className="view" key={mode}>
+          {mode==='glossary' && <Glossary favorites={favorites} studied={studied} toggleFav={toggleFav} toggleStudied={toggleStudied}/>}
+          {mode==='flashcards' && <Flashcards favorites={favorites} studied={studied} toggleFav={toggleFav} toggleStudied={toggleStudied}/>}
+          {mode==='quiz' && <Quiz studied={studied} toggleStudied={toggleStudied}/>}
+          {mode==='about' && <About/>}
+          {mode==='profile' && <Profile user={user} studied={studied} favorites={favorites} sync={sync} signIn={signIn} signOut={signOut}/>}
+        </div>
       </div>
       <Nav mode={mode} setMode={setMode}/>
     </div>
