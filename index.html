@@ -1,25 +1,32 @@
 <!DOCTYPE html>
 <html lang="he" dir="rtl">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>MediLab · מנוע חיפוש מושגים בביולוגיה</title>
-<meta name="description" content="מנוע חיפוש 465 מושגים בביולוגיה לתלמידי תיכון הניגשים לבגרות. כרטיסיות פלאש, מועדפים, מצב לילה." />
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#FBFAF6">
+<title>שליפים · SHLIFIM — מושגי ביולוגיה</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;500;600;700;800&family=Caveat:wght@500;700&family=Fredoka:wght@500;600;700&family=Rubik:wght@500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="styles.css" />
-<link rel="icon" href="logo.jpg" />
+<link href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;500;600;700;800&family=Rubik:wght@600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="app/styles-v2.css">
 </head>
 <body>
 <div id="root"></div>
-
-<script src="https://unpkg.com/react@18.3.1/umd/react.production.min.js" crossorigin="anonymous"></script>
-<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.production.min.js" crossorigin="anonymous"></script>
-<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" crossorigin="anonymous"></script>
-
+<script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+<script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore-compat.js"></script>
 <script src="glossary.js"></script>
-<script type="text/babel" src="doodles.jsx"></script>
-<script type="text/babel" src="app.jsx"></script>
+<script src="data/subjects.js"></script>
+<script src="data/topics.js"></script>
+<script src="lib/normalize.js"></script>
+<script src="lib/aliases.js"></script>
+<script src="lib/search.js"></script>
+<script src="lib/quiz.js"></script>
+<script src="lib/validate.js"></script>
+<script type="text/babel" src="app/app-v2.jsx" data-presets="react"></script>
+<script>if('serviceWorker' in navigator){window.addEventListener('load',function(){navigator.serviceWorker.register('service-worker.js');});}</script>
 </body>
 </html>
