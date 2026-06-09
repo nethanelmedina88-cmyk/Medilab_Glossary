@@ -22,12 +22,11 @@ T.suite('quiz', function () {
 
   T.test('checkAnswer(type-answer) accepts a synonym', function () {
     var withSyn = pool.filter(function (e) { return SL.synonymsOf(e.hebrew, maps).length; })[0];
-    if (withSyn) {
-      var item = { kind: 'type-answer', term: withSyn };
-      var syn = SL.synonymsOf(withSyn.hebrew, maps)[0];
-      T.ok(SL.checkAnswer(item, syn, maps));
-      T.ok(SL.checkAnswer(item, withSyn.hebrew, maps));
-      T.notOk(SL.checkAnswer(item, 'תשובה שגויה לגמרי', maps));
-    }
+    T.ok(withSyn, 'expected at least one eligible term with synonyms (test must not vacuously pass)');
+    var item = { kind: 'type-answer', term: withSyn };
+    var syn = SL.synonymsOf(withSyn.hebrew, maps)[0];
+    T.ok(SL.checkAnswer(item, syn, maps));
+    T.ok(SL.checkAnswer(item, withSyn.hebrew, maps));
+    T.notOk(SL.checkAnswer(item, 'תשובה שגויה לגמרי', maps));
   });
 });

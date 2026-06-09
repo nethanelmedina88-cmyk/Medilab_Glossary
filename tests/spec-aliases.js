@@ -10,7 +10,8 @@ T.suite('alias-data', function () {
   });
   T.test('disambiguated pair NOT linked as synonyms', function () {
     var a = byHeb['גורם מגביל (אנזימים)'] || byHeb['גורם מגביל (אקולוגיה)'];
-    if (a) T.notOk((a.synonyms || []).some(function (s) { return /גורם מגביל/.test(s); }));
+    T.ok(a, 'expected the disambiguated גורם מגביל entry to exist');
+    T.notOk((a.synonyms || []).some(function (s) { return /גורם מגביל/.test(s); }));
   });
 });
 
