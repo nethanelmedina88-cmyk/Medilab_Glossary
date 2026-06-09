@@ -1,9 +1,9 @@
-/* SHLIFIM v2 — Modern + Brand Spark. Reuses window.SL (logic), window.GLOSSARY, window.SUBJECTS. */
+/* SHLIFIM v2 — Modern + Brand Spark. Reuses window.SL (logic), window.GLOSSARY, window.TOPICS. */
 const { useState, useEffect, useMemo, useRef, useCallback } = React;
 
 const GLOSSARY = window.GLOSSARY || [];
-const SUBJECTS = window.SUBJECTS || { core: [], depth: [] };
-const ALL_SUBJECTS = SUBJECTS.core.concat(SUBJECTS.depth);
+const TOPICS = window.TOPICS || [];
+const TBK = window.TOPIC_BY_KEY || {};
 const maps = SL.buildAliasMaps(GLOSSARY);
 const searchIndex = SL.buildSearchIndex(GLOSSARY);
 const HEB = ['א','ב','ג','ד','ה','ו','ז','ח','ט','י','כ','ל','מ','נ','ס','ע','פ','צ','ק','ר','ש','ת'];
@@ -14,7 +14,7 @@ function useLocal(key, init){
   return [v,setV];
 }
 function highlight(text, q){
-  if(!q) return text; const i = (text||'').toLowerCase().indexOf(q.toLowerCase());
+  if(!q) return text; const i=(text||'').toLowerCase().indexOf(q.toLowerCase());
   if(i<0) return text;
   return <>{text.slice(0,i)}<mark className="hl">{text.slice(i,i+q.length)}</mark>{text.slice(i+q.length)}</>;
 }
@@ -27,19 +27,39 @@ const IcCards=()=> <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" st
 const IcQuiz=()=> <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="9"/></svg>;
 const IcList=()=> <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M4 5h16M4 12h16M4 19h10"/></svg>;
 
-/* ---------- HEADER ---------- */
+/* topic pill on a card */
+function TopicTag({topicKey}){
+  const tp = TBK[topicKey]; if(!tp) return null;
+  return <span className="subj" style={{background:'transparent',border:'1px solid '+tp.accent,color:'var(--text-2)'}}>
+    <span style={{width:8,height:8,borderRadius:'50%',background:tp.accent,display:'inline-block',marginInlineEnd:3}}></span>
+    {tp.emoji} {tp.label}</span>;
+}
+/* horizontal topic filter chips; multi=false single-select. value=key or '' */
+function TopicChips({value,onPick}){
+  return (
+    <div className="chips">
+      <button className={`chip ${!value?'on':''}`} onClick={()=>onPick('')}>הכל</button>
+      {TOPICS.map(t=>{
+        const on=value===t.key;
+        return <button key={t.key} className="chip" onClick={()=>onPick(on?'':t.key)}
+          style={on?{background:t.primary,color:'#fff',borderColor:t.primary}:undefined}>{t.emoji} {t.label}</button>;
+      })}
+    </div>
+  );
+}
+
+/* ---------- HEADER / NAV ---------- */
 function Header({streak, dark, setDark}){
   return (
     <header className="hdr">
       <Flask/>
       <div className="brand"><b>שליפים</b><span>MediLab · ביולוגיה</span></div>
       <div className="hdr-spacer"></div>
-      <div className="streak" title="רצף לימוד">🔥 {streak}</div>
+      <div className="streak" title="מושגים שנלמדו">🔥 {streak}</div>
       <button className="icon-toggle" onClick={()=>setDark(d=>!d)} aria-label="מצב כהה">{dark?'☀️':'🌙'}</button>
     </header>
   );
 }
-/* ---------- NAV ---------- */
 function Nav({mode,setMode}){
   const T=[['glossary','מילון',IcList,'g'],['flashcards','כרטיסיות',IcCards,'f'],['quiz','מבחון',IcQuiz,'q']];
   return (
@@ -56,11 +76,11 @@ function Nav({mode,setMode}){
 /* ---------- GLOSSARY ---------- */
 function TermCard({t, q, fav, studied, onFav, onStudied}){
   const [open,setOpen]=useState(false);
-  const isAlias = !!t.aliasOf;
-  const canon = isAlias ? SL.resolveEntry(t.hebrew, maps) : t;
-  const def = canon ? canon.definition : t.definition;
-  const long = (def||'').length>170;
-  const shown = long && !open ? def.slice(0,170)+'…' : def;
+  const isAlias=!!t.aliasOf;
+  const canon=isAlias?SL.resolveEntry(t.hebrew,maps):t;
+  const def=canon?canon.definition:t.definition;
+  const long=(def||'').length>170;
+  const shown=long&&!open?def.slice(0,170)+'…':def;
   return (
     <article className={`card ${studied?'studied':''}`}>
       <div className="card-top">
@@ -73,24 +93,23 @@ function TermCard({t, q, fav, studied, onFav, onStudied}){
           <button className={`ibtn ${studied?'done':''}`} onClick={onStudied} aria-label="נלמד">{studied?'✓':'○'}</button>
         </div>
       </div>
-      {t.subject && <span className="subj">🏷️ {t.subject}{t.subtopic?` · ${t.subtopic}`:''}</span>}
-      {isAlias && canon
-        ? <div className="alias-note">ראו: <b>{t.aliasOf}</b></div>
-        : null}
+      {t.topic && <TopicTag topicKey={t.topic}/>}
+      {isAlias && canon && <div className="alias-note">ראו: <b>{t.aliasOf}</b></div>}
       <p className="def">{highlight(shown,q)}</p>
       {long && <button className="more" onClick={()=>setOpen(o=>!o)}>{open?'הצג פחות':'קרא עוד'}</button>}
     </article>
   );
 }
 function Glossary({favorites,studied,toggleFav,toggleStudied}){
-  const [q,setQ]=useState(''); const [letter,setLetter]=useState(''); const [subj,setSubj]=useState('');
+  const [q,setQ]=useState(''); const [letter,setLetter]=useState(''); const [topic,setTopic]=useState('');
   const letterCounts=useMemo(()=>{const c={};GLOSSARY.forEach(t=>c[t.letter]=(c[t.letter]||0)+1);return c;},[]);
   const results=useMemo(()=>{
-    let items = SL.search(searchIndex, q);
+    let items=SL.search(searchIndex,q);
     if(letter) items=items.filter(t=>t.letter===letter);
-    if(subj) items=items.filter(t=>t.subject===subj || t.subjectAlso===subj);
+    if(topic) items=items.filter(t=>t.topic===topic);
     return items;
-  },[q,letter,subj]);
+  },[q,letter,topic]);
+  const tp=topic?TBK[topic]:null;
   return (
     <>
       <div className="hero"><h1>מילון מושגים</h1><p>{GLOSSARY.length} מושגים · חיפוש, סינון לפי אות ונושא</p></div>
@@ -99,17 +118,12 @@ function Glossary({favorites,studied,toggleFav,toggleStudied}){
         <input value={q} onChange={e=>setQ(e.target.value)} placeholder="חפשו מושג… (אוסמוזה, PCR, אקסון)"/>
         {q && <button className="x" onClick={()=>setQ('')} aria-label="נקה">×</button>}
       </div>
-      <div className="chips">
-        <button className={`chip ${!subj?'on':''}`} onClick={()=>setSubj('')}>כל הנושאים</button>
-        {ALL_SUBJECTS.map(s=>(
-          <button key={s.name} className={`chip ${subj===s.name?'on':''}`} onClick={()=>setSubj(subj===s.name?'':s.name)}>{s.name}</button>
-        ))}
-      </div>
+      <TopicChips value={topic} onPick={setTopic}/>
       <div className="letters">
         <button className={`let ${!letter?'on':''}`} style={{width:'auto',padding:'0 10px'}} onClick={()=>setLetter('')}>הכל</button>
         {HEB.map(l=>(<button key={l} className={`let ${letter===l?'on':''}`} disabled={!letterCounts[l]} onClick={()=>setLetter(letter===l?'':l)}>{l}</button>))}
       </div>
-      <div className="meta">{results.length} מושגים</div>
+      <div className="meta">{tp?`${tp.emoji} ${tp.label} · `:''}{results.length} מושגים</div>
       {results.length===0
         ? <div className="empty"><div style={{fontSize:46}}>🔬</div><h3>לא נמצאו תוצאות</h3><p>נסו מושג אחר או נקו את הסינון.</p></div>
         : results.map(t=>(
@@ -123,16 +137,16 @@ function Glossary({favorites,studied,toggleFav,toggleStudied}){
 
 /* ---------- FLASHCARDS ---------- */
 function Flashcards({favorites,studied,toggleFav,toggleStudied}){
-  const [deck,setDeck]=useState('all'); const [subj,setSubj]=useState('');
+  const [deck,setDeck]=useState('all'); const [topic,setTopic]=useState('');
   const [i,setI]=useState(0); const [flip,setFlip]=useState(false);
   const cards=useMemo(()=>{
     let items=GLOSSARY.filter(t=>!t.aliasOf && !/^\s*ראה:/.test(t.definition));
-    if(subj) items=items.filter(t=>t.subject===subj||t.subjectAlso===subj);
+    if(topic) items=items.filter(t=>t.topic===topic);
     if(deck==='unstudied') items=items.filter(t=>!studied.includes(t.hebrew));
     if(deck==='favorites') items=items.filter(t=>favorites.includes(t.hebrew));
     return items;
-  },[deck,subj,studied,favorites]);
-  useEffect(()=>{setI(0);setFlip(false);},[deck,subj]);
+  },[deck,topic,studied,favorites]);
+  useEffect(()=>{setI(0);setFlip(false);},[deck,topic]);
   const card=cards[i];
   const next=useCallback(()=>{setFlip(false);setI(x=>(x+1)%Math.max(1,cards.length));},[cards.length]);
   const prev=useCallback(()=>{setFlip(false);setI(x=>(x-1+cards.length)%Math.max(1,cards.length));},[cards.length]);
@@ -147,22 +161,18 @@ function Flashcards({favorites,studied,toggleFav,toggleStudied}){
         <button className={`chip ${deck==='unstudied'?'on':''}`} onClick={()=>setDeck('unstudied')}>לא נלמדו</button>
         <button className={`chip ${deck==='favorites'?'on':''}`} onClick={()=>setDeck('favorites')}>מועדפים</button>
       </div>
-      <div className="chips">
-        <button className={`chip ${!subj?'on':''}`} onClick={()=>setSubj('')}>כל הנושאים</button>
-        {ALL_SUBJECTS.map(s=>(<button key={s.name} className={`chip ${subj===s.name?'on':''}`} onClick={()=>setSubj(subj===s.name?'':s.name)}>{s.name}</button>))}
-      </div>
+      <TopicChips value={topic} onPick={setTopic}/>
       {cards.length===0
         ? <div className="empty"><div style={{fontSize:46}}>🎴</div><h3>אין כרטיסיות בערימה הזו</h3></div>
         : (<>
             <div className="prog"><span>{i+1} / {cards.length}</span><div className="bar"><i style={{width:`${((i+1)/cards.length)*100}%`}}></i></div></div>
-            <div className={`fc ${flip?'flip':''}`} onClick={()=>setFlip(f=>!f)}
-              onTouchStart={e=>tref.current=e.touches[0].clientX} onTouchEnd={onTouchEnd}>
+            <div className={`fc ${flip?'flip':''}`} onClick={()=>setFlip(f=>!f)} onTouchStart={e=>tref.current=e.touches[0].clientX} onTouchEnd={onTouchEnd}>
               <div className="fc-inner">
                 <div className="fc-face">
                   <div className="fc-badge">{card.letter}</div>
                   <div className="fc-term">{card.hebrew}</div>
                   {card.english && <div className="fc-en">{card.english}</div>}
-                  {card.subject && <span className="subj" style={{marginTop:12}}>🏷️ {card.subject}</span>}
+                  {card.topic && <div style={{marginTop:12}}><TopicTag topicKey={card.topic}/></div>}
                   <div className="fc-hint">↻ הקישו לתשובה</div>
                 </div>
                 <div className="fc-face fc-back">
@@ -174,7 +184,7 @@ function Flashcards({favorites,studied,toggleFav,toggleStudied}){
             <div className="fc-ctrl">
               <button className="fc-nav" onClick={prev} aria-label="הקודם">→</button>
               <button className="btn btn-accent" style={{flex:1}} onClick={()=>toggleStudied(card.hebrew)}>{studied.includes(card.hebrew)?'✓ נלמד':'סמן כנלמד'}</button>
-              <button className={`fc-nav ${favorites.includes(card.hebrew)?'':''}`} onClick={()=>toggleFav(card.hebrew)} aria-label="מועדף">{favorites.includes(card.hebrew)?'★':'☆'}</button>
+              <button className="fc-nav" onClick={()=>toggleFav(card.hebrew)} aria-label="מועדף">{favorites.includes(card.hebrew)?'★':'☆'}</button>
               <button className="fc-nav" onClick={next} aria-label="הבא">←</button>
             </div>
           </>)}
@@ -198,14 +208,14 @@ function buildQuiz(pool, n){
   return items;
 }
 function Quiz({studied,toggleStudied}){
-  const [subj,setSubj]=useState(''); const [len,setLen]=useState(10);
+  const [topic,setTopic]=useState(''); const [len,setLen]=useState(10);
   const [quiz,setQuiz]=useState(null); const [qi,setQi]=useState(0);
   const [answered,setAnswered]=useState(false); const [chosen,setChosen]=useState(null);
   const [typed,setTyped]=useState(''); const [score,setScore]=useState(0); const [spark,setSpark]=useState(false);
-  const pool=useMemo(()=>{ let p=SL.eligibleTerms(GLOSSARY,maps); if(subj)p=p.filter(t=>t.subject===subj||t.subjectAlso===subj); return p; },[subj]);
+  const pool=useMemo(()=>{ let p=SL.eligibleTerms(GLOSSARY,maps); if(topic)p=p.filter(t=>t.topic===topic); return p; },[topic]);
   const start=()=>{ setQuiz(buildQuiz(pool,Math.min(len,pool.length))); setQi(0);setAnswered(false);setChosen(null);setTyped('');setScore(0); };
   const item=quiz&&quiz[qi];
-  const reward=ok=>{ if(ok){ setScore(s=>s+1); setSpark(true); setTimeout(()=>setSpark(false),700); toggleStudied&&!studied.includes(item.term.hebrew)&&toggleStudied(item.term.hebrew);} };
+  const reward=ok=>{ if(ok){ setScore(s=>s+1); setSpark(true); setTimeout(()=>setSpark(false),700); if(toggleStudied&&!studied.includes(item.term.hebrew))toggleStudied(item.term.hebrew);} };
   const answerMC=opt=>{ if(answered)return; setChosen(opt); setAnswered(true); reward(opt.correct); };
   const answerType=()=>{ if(answered)return; const ok=SL.checkAnswer(item,typed,maps); setAnswered(true); setChosen({correct:ok}); reward(ok); };
   const nextQ=()=>{ if(qi+1>=quiz.length){ setQi(quiz.length); return; } setQi(qi+1);setAnswered(false);setChosen(null);setTyped(''); };
@@ -215,13 +225,10 @@ function Quiz({studied,toggleStudied}){
       <div className="hero"><h1>מבחון</h1><p>בחירה מרובה · השלמת מושג · בדיקה עצמית</p></div>
       <div className="setup">
         <h2>בחרו נושא</h2>
-        <div className="seg">
-          <button className={`chip ${!subj?'on':''}`} onClick={()=>setSubj('')}>הכל</button>
-          {ALL_SUBJECTS.map(s=>(<button key={s.name} className={`chip ${subj===s.name?'on':''}`} onClick={()=>setSubj(s.name)}>{s.name}</button>))}
-        </div>
-        <h2>מספר שאלות</h2>
+        <TopicChips value={topic} onPick={setTopic}/>
+        <h2 style={{marginTop:14}}>מספר שאלות</h2>
         <div className="seg">{[5,10,15,20].map(n=>(<button key={n} className={`chip ${len===n?'on':''}`} onClick={()=>setLen(n)}>{n}</button>))}</div>
-        <button className="btn btn-accent" style={{width:'100%'}} onClick={start}>התחילו מבחון ←</button>
+        <button className="btn btn-accent" style={{width:'100%'}} onClick={start} disabled={pool.length<3}>התחילו מבחון ({pool.length} מושגים) ←</button>
       </div>
     </>
   );
@@ -250,9 +257,7 @@ function Quiz({studied,toggleStudied}){
               <input value={typed} onChange={e=>setTyped(e.target.value)} disabled={answered} placeholder="הקלידו את המושג…" onKeyDown={e=>e.key==='Enter'&&answerType()}/>
               {!answered && <button className="btn btn-accent" onClick={answerType}>בדיקה</button>}
             </div>
-            {answered && (chosen.correct
-              ? <div className="fb ok">🎉 נכון! {item.term.hebrew}</div>
-              : <div className="fb no">✗ התשובה: {item.term.hebrew}</div>)}
+            {answered && (chosen.correct ? <div className="fb ok">🎉 נכון! {item.term.hebrew}</div> : <div className="fb no">✗ התשובה: {item.term.hebrew}</div>)}
           </>)
         : item.options.map((o,idx)=>{
             let cls='opt'; if(answered){ if(o.correct)cls+=' correct'; else if(chosen===o)cls+=' wrong'; }
@@ -275,10 +280,9 @@ function App(){
   useEffect(()=>{document.documentElement.classList.toggle('dark',dark);},[dark]);
   const toggleFav=h=>setFav(f=>f.includes(h)?f.filter(x=>x!==h):[...f,h]);
   const toggleStudied=h=>setStudied(f=>f.includes(h)?f.filter(x=>x!==h):[...f,h]);
-  const streak=studied.length; // simple proxy for now
   return (
     <div className="app" data-mode={mode}>
-      <Header streak={streak} dark={dark} setDark={setDark}/>
+      <Header streak={studied.length} dark={dark} setDark={setDark}/>
       <div className="scroll">
         {mode==='glossary' && <Glossary favorites={favorites} studied={studied} toggleFav={toggleFav} toggleStudied={toggleStudied}/>}
         {mode==='flashcards' && <Flashcards favorites={favorites} studied={studied} toggleFav={toggleFav} toggleStudied={toggleStudied}/>}
