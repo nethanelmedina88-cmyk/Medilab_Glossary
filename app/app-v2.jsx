@@ -287,13 +287,11 @@ function TermQuiz({hebrew,onClose,onResult}){
   const t=maps.byHeb[hebrew];
   const [sel,setSel]=useState(null); const done=useRef(false);
   useEffect(()=>{ const k=e=>{ if(e.key==='Escape')onClose(); }; window.addEventListener('keydown',k); return()=>window.removeEventListener('keydown',k); },[onClose]);
-  const def=t&&(t.aliasOf?(SL.resolveEntry(t.hebrew,maps)||t).definition:t.definition);
-  const opts=useMemo(()=>{ if(!t) return [];
-    const ban={}; SL.synonymsOf(t.hebrew,maps).concat([t.hebrew]).forEach(h=>ban[h]=1);
-    let pool=GLOSSARY.filter(e=>!e.aliasOf&&!ban[e.hebrew]&&e.definition&&e.definition.length>=20&&e.definition!==def);
-    let same=pool.filter(e=>e.topic===t.topic);
-    let base=(same.length>=2?same:pool).slice().sort(()=>Math.random()-0.5).slice(0,2);
-    return [{text:def,correct:true}].concat(base.map(d=>({text:d.definition,correct:false}))).sort(()=>Math.random()-0.5);
+  const ct=t&&(t.aliasOf?(SL.resolveEntry(t.hebrew,maps)||t):t);
+  const def=ct&&ct.definition;
+  const opts=useMemo(()=>{ if(!ct) return [];
+    const dis=SL.pickDistractors(GLOSSARY, ct, maps, 2, 'definition');
+    return [{text:def,correct:true}].concat(dis.map(d=>({text:d.definition,correct:false}))).sort(()=>Math.random()-0.5);
   },[hebrew]); // eslint-disable-line
   if(!t) return null;
   const answer=o=>{ if(sel)return; setSel(o); o.correct?Snd.success():Snd.wrong(); if(!done.current){ done.current=true; if(onResult)onResult(o.correct); } };
