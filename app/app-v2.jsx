@@ -50,9 +50,9 @@ function Confetti(){ const cols=['#3FA9D6','#5CB85C','#F0654F','#F9D85C','#9B59B
   return <div className="confetti">{p}</div>; }
 
 /* ---------- HEADER / NAV ---------- */
-function Header({pinCount,dark,setDark,muted,toggleSound,user,onProfile,onReview}){
+function Header({pinCount,dark,setDark,muted,toggleSound,user,onProfile,onReview,onLogo}){
   return (<header className="hdr">
-    <div className="logo-wrap"><img className="logo-mark" src="logo.jpg" alt="MediLab"/><span className="bub b1"></span><span className="bub b2"></span><span className="bub b3"></span></div>
+    <div className="logo-wrap" onClick={onLogo} style={{cursor:'pointer'}} title="אודות" role="button" aria-label="אודות"><img className="logo-mark" src="logo.jpg" alt="MediLab"/><span className="bub b1"></span><span className="bub b2"></span><span className="bub b3"></span></div>
     <div className="brand"><b>שליפים</b><span>נתנאל יוחאי מדינה</span></div>
     <div className="hdr-spacer"></div>
     <button className="streak" onClick={onReview} title="מושגים לחזרה" style={pinCount?{color:'var(--coral-700)',borderColor:'var(--coral-500)'}:undefined}>📌 {pinCount||0}</button>
@@ -217,7 +217,7 @@ function About(){
     <div className="degrees">
       <div className="degree"><span className="tag">B.Sc</span><div><b>תואר ראשון בביולוגיה</b><span>אוניברסיטת חיפה</span></div></div>
       <div className="degree"><span className="tag">M.Teach</span><div><b>תואר שני בהוראת המדעים</b><span>מכללת אורנים</span></div></div>
-      <div className="degree"><span className="tag">M.Sc</span><div><b>תואר שני במדעים</b><span>מכון ויצמן למדע</span></div></div>
+      <div className="degree"><span className="tag">M.Sc</span><div><b>תואר שני בביוטכנולוגיה</b><span>מכון ויצמן למדע</span></div></div>
     </div>
     <h2 className="sec-title">שלושת הספרים שכתבתי 📚</h2><p className="sec-sub">מותאמים לתוכנית הלימודים תשפ״ו · מנוקדים, מאוירים, נגישים</p>
     <div className="books">
@@ -336,7 +336,7 @@ function App(){
     <div className="app" data-mode={dm}>
       {confetti && <Confetti/>}
       {newAch && <div className="ach-toast"><span className="em">{newAch.emoji}</span><div><b>הישג חדש! {newAch.title}</b><span>{newAch.desc}</span></div></div>}
-      <Header pinCount={favorites.length} dark={dark} setDark={setDark} muted={muted} toggleSound={toggleSound} user={user} onProfile={()=>setMode('profile')} onReview={()=>setMode('review')}/>
+      <Header pinCount={favorites.length} dark={dark} setDark={setDark} muted={muted} toggleSound={toggleSound} user={user} onProfile={()=>setMode('profile')} onReview={()=>setMode('review')} onLogo={()=>setMode('about')}/>
       <div className="scroll">
         <div className="view" key={mode}>
           {mode==='glossary' && <Glossary key={glossaryTopic} initialTopic={glossaryTopic} favorites={favorites} studied={studied} toggleFav={toggleFav} toggleStudied={toggleStudied}/>}
