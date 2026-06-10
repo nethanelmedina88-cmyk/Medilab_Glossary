@@ -6,6 +6,7 @@ const TOPICS = window.TOPICS || [];
 const TBK = window.TOPIC_BY_KEY || {};
 const ACH = window.ACHIEVEMENTS || [];
 const Snd = window.SLSound || { success(){},wrong(){},ding(){},pop(){},fanfare(){},setMuted(){},isMuted(){return false;} };
+const Speak = window.SLSpeak || function(){};
 const maps = SL.buildAliasMaps(GLOSSARY);
 const searchIndex = SL.buildSearchIndex(GLOSSARY);
 const HEB = ['א','ב','ג','ד','ה','ו','ז','ח','ט','י','כ','ל','מ','נ','ס','ע','פ','צ','ק','ר','ש','ת'];
@@ -71,6 +72,7 @@ function TermCard({t,q,fav,studied,onFav,onStudied}){
     <div className="card-top">
       <div><div className="term">{highlight(t.hebrew,q)}</div>{t.english&&<div className="en">{t.english}</div>}</div>
       <div className="acts">
+        <button className="ibtn" onClick={()=>Speak(t.hebrew + '. ' + def)} title="הקראה" aria-label="הקראה">🔊</button>
         <button className={`ibtn ${fav?'pin':''}`} onClick={onFav} title={fav?'הסר מרשימת החזרה':'סמן כמושג לחזרה (קשה לזכור)'} aria-label="לחזרה"><span className={fav?'':'pin-off'}>📌</span></button>
         <button className={`ibtn ${studied?'done':''}`} onClick={()=>{ if(!studied)Snd.ding(); onStudied(); }} title={studied?'בטל נלמד':'סמן כנלמד'} aria-label="נלמד">{studied?'✓':'○'}</button>
       </div>
@@ -81,8 +83,8 @@ function TermCard({t,q,fav,studied,onFav,onStudied}){
     {long && <button className="more" onClick={()=>setOpen(o=>!o)}>{open?'הצג פחות':'קרא עוד'}</button>}
   </article>);
 }
-function Glossary({favorites,studied,toggleFav,toggleStudied}){
-  const [q,setQ]=useState(''); const [letter,setLetter]=useState(''); const [topic,setTopic]=useState('');
+function Glossary({favorites,studied,toggleFav,toggleStudied,initialTopic}){
+  const [q,setQ]=useState(''); const [letter,setLetter]=useState(''); const [topic,setTopic]=useState(initialTopic||'');
   const letterCounts=useMemo(()=>{const c={};GLOSSARY.forEach(t=>c[t.letter]=(c[t.letter]||0)+1);return c;},[]);
   const results=useMemo(()=>{let items=SL.search(searchIndex,q); if(letter)items=items.filter(t=>t.letter===letter); if(topic)items=items.filter(t=>t.topic===topic); return items;},[q,letter,topic]);
   const tp=topic?TBK[topic]:null;
@@ -145,6 +147,7 @@ function Flashcards({favorites,studied,toggleFav,toggleStudied}){
         </div>
         <div className="fc-ctrl">
           <button className="fc-nav" onClick={prev} aria-label="הקודם">→</button>
+          <button className="fc-nav" onClick={()=>Speak(flip?card.definition:card.hebrew)} aria-label="הקראה" title="הקראה">🔊</button>
           <button className="btn btn-accent" style={{flex:1}} onClick={()=>{ if(!studied.includes(card.hebrew))Snd.ding(); toggleStudied(card.hebrew); }}>{studied.includes(card.hebrew)?'✓ נלמד':'סמן כנלמד'}</button>
           <button className={`fc-nav`} style={favorites.includes(card.hebrew)?{color:'#fff',background:'var(--coral-500)',borderColor:'var(--coral-700)'}:undefined} onClick={()=>toggleFav(card.hebrew)} aria-label="לחזרה" title="מושג לחזרה">📌</button>
           <button className="fc-nav" onClick={next} aria-label="הבא">←</button>
@@ -237,7 +240,7 @@ function About(){
 /* ---------- PROFILE / STATS / ACHIEVEMENTS ---------- */
 function Ring({pct,color}){ const r=34,c=2*Math.PI*r,off=c*(1-pct/100);
   return (<svg width="84" height="84" viewBox="0 0 84 84" className="ring"><circle cx="42" cy="42" r={r} fill="none" stroke="var(--surface-2)" strokeWidth="9"/><circle cx="42" cy="42" r={r} fill="none" stroke={color} strokeWidth="9" strokeLinecap="round" strokeDasharray={c} strokeDashoffset={off} transform="rotate(-90 42 42)"/><text x="42" y="48" textAnchor="middle" fontFamily="Rubik" fontWeight="800" fontSize="20" fill="var(--text)">{pct}%</text></svg>); }
-function Profile({user,studied,favorites,stats,sync,signIn,signOut}){
+function Profile({user,studied,favorites,stats,sync,signIn,signOut,onTopic}){
   const m=metrics(studied,favorites,stats);
   const earned=earnedIds(m); const earnedSet={}; earned.forEach(id=>earnedSet[id]=1);
   const pct=Math.round(m.studied/TOTAL*100); const acc=Math.round(m.accuracy*100);
@@ -266,17 +269,21 @@ function Profile({user,studied,favorites,stats,sync,signIn,signOut}){
       <div className="stat-box"><b>{m.dayStreak}</b><span>🔥 ימים ברצף</span></div>
       <div className="stat-box"><b>{m.maxDayStreak}</b><span>שיא רצף</span></div>
     </div>
+    <h2 className="sec-title">התקדמות לפי נושא</h2>
+    <p className="sec-sub">הקישו על נושא כדי לראות את כל המושגים שלו</p>
+    <div style={{marginTop:6}}>{perTopic.map(({t,total,done})=>{const p=Math.round(done/total*100);
+      return (<div className="topic-prog click" key={t.key} onClick={()=>onTopic(t.key)}><div className="lab"><span>{t.emoji} {t.label} ›</span><span>{done}/{total}</span></div><div className="tbar"><i style={{width:p+'%',background:t.primary}}></i></div></div>);})}</div>
     <div className="ach-head"><h2>הישגים 🏆</h2><span className="cnt">{earned.length}/{ACH.length}</span></div>
     <div className="ach-grid">{ACH.map(a=>(<div key={a.id} className={`ach ${earnedSet[a.id]?'on':''}`} title={a.desc}><span className="em">{a.emoji}</span><span className="t">{a.title}</span></div>))}</div>
-    <h2 className="sec-title">התקדמות לפי נושא</h2>
-    <div style={{marginTop:8}}>{perTopic.map(({t,total,done})=>{const p=Math.round(done/total*100);
-      return (<div className="topic-prog" key={t.key}><div className="lab"><span>{t.emoji} {t.label}</span><span>{done}/{total}</span></div><div className="tbar"><i style={{width:p+'%',background:t.primary}}></i></div></div>);})}</div>
   </>);
 }
 
 /* ---------- APP ---------- */
 function App(){
   const [mode,setMode]=useState('glossary');
+  const [glossaryTopic,setGlossaryTopic]=useState('');
+  const changeMode=m=>{ if(m==='glossary')setGlossaryTopic(''); setMode(m); };
+  const openTopic=key=>{ setGlossaryTopic(key); setMode('glossary'); };
   const [dark,setDark]=useLocal('ml-dark',false);
   const [favorites,setFav]=useLocal('ml-favorites',[]);
   const [studied,setStudied]=useLocal('ml-studied',[]);
@@ -332,15 +339,15 @@ function App(){
       <Header pinCount={favorites.length} dark={dark} setDark={setDark} muted={muted} toggleSound={toggleSound} user={user} onProfile={()=>setMode('profile')} onReview={()=>setMode('review')}/>
       <div className="scroll">
         <div className="view" key={mode}>
-          {mode==='glossary' && <Glossary favorites={favorites} studied={studied} toggleFav={toggleFav} toggleStudied={toggleStudied}/>}
+          {mode==='glossary' && <Glossary key={glossaryTopic} initialTopic={glossaryTopic} favorites={favorites} studied={studied} toggleFav={toggleFav} toggleStudied={toggleStudied}/>}
           {mode==='flashcards' && <Flashcards favorites={favorites} studied={studied} toggleFav={toggleFav} toggleStudied={toggleStudied}/>}
           {mode==='quiz' && <Quiz studied={studied} toggleStudied={toggleStudied} favorites={favorites} recordAnswer={recordAnswer} recordQuiz={recordQuiz} fireConfetti={fireConfetti}/>}
           {mode==='review' && <ReviewList favorites={favorites} studied={studied} toggleFav={toggleFav} toggleStudied={toggleStudied} goQuiz={()=>setMode('quiz')}/>}
           {mode==='about' && <About/>}
-          {mode==='profile' && <Profile user={user} studied={studied} favorites={favorites} stats={stats} sync={sync} signIn={signIn} signOut={signOut}/>}
+          {mode==='profile' && <Profile user={user} studied={studied} favorites={favorites} stats={stats} sync={sync} signIn={signIn} signOut={signOut} onTopic={openTopic}/>}
         </div>
       </div>
-      <Nav mode={mode} setMode={setMode}/>
+      <Nav mode={mode} setMode={changeMode}/>
     </div>
   );
 }
