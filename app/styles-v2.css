@@ -347,3 +347,8 @@ html.dark .term .hl, html.dark .q-q .hl, html.dark .fc-term .hl{
 .confetti{position:fixed;inset:0;pointer-events:none;z-index:55;overflow:hidden}
 .confetti i{position:absolute;top:-12px;width:9px;height:14px;border-radius:2px;animation:fall linear forwards}
 @keyframes fall{0%{transform:translateY(-10px) rotate(0);opacity:1}100%{transform:translateY(105vh) rotate(540deg);opacity:.9}}
+
+/* tappable topic rows in profile */
+.topic-prog.click{cursor:pointer;border-radius:var(--r-sm);padding:6px 8px;margin:2px -8px;transition:background var(--fast)}
+.topic-prog.click:active{background:var(--surface-2)}
+@media (hover:hover){ .topic-prog.click:hover{background:var(--surface-2)} }

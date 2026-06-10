@@ -17,3 +17,18 @@ window.SLSound = (function(){
     isMuted:function(){ return muted; }
   };
 })();
+
+/* Hebrew text-to-speech (Web Speech API) */
+window.SLSpeak = function(text){
+  try{
+    if(!window.speechSynthesis || !text) return;
+    var u = new SpeechSynthesisUtterance(String(text));
+    u.lang = 'he-IL'; u.rate = 0.95; u.pitch = 1;
+    var vs = window.speechSynthesis.getVoices() || [];
+    var he = vs.filter(function(v){ return /he|iw/i.test(v.lang); })[0];
+    if(he) u.voice = he;
+    window.speechSynthesis.cancel();
+    window.speechSynthesis.speak(u);
+  }catch(e){}
+};
+try{ if(window.speechSynthesis){ window.speechSynthesis.getVoices(); window.speechSynthesis.onvoiceschanged = function(){ window.speechSynthesis.getVoices(); }; } }catch(e){}
