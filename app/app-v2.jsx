@@ -208,10 +208,10 @@ const WA='https://wa.me/972524295838';
 function About(){
   return (<>
     <div className="hero"><h1>אודות</h1><p>נתנאל יוחאי מדינה · מורה לביולוגיה ולביוטכנולוגיה</p></div>
-    <img className="about-logo" src="logo.jpg" alt="MediLab"/>
     <div className="about-hero"><img className="portrait" src="portrait.jpg" alt="נתנאל מדינה"/>
       <div><div className="about-kicker">שיעורים פרטיים · 5 יח״ל · ביוטכנולוגיה 10 יח״ל</div><div className="about-name">נעים להכיר — נתנאל 👋</div></div></div>
-    <p className="about-body">מורה לביולוגיה ולביוטכנולוגיה עם <b>10 שנות ניסיון בתיכון</b>, מגיש תלמידים לבגרויות בביולוגיה (5 יח״ל) ובביוטכנולוגיה (10 יח״ל). שיעורים פרטיים אחד-על-אחד או בקבוצות קטנות — מקוון בזום או פרונטלי במרכז ״כיוונים״ באשדוד.</p>
+    <p className="about-body">מורה לביולוגיה ולביוטכנולוגיה עם <b>10 שנות ניסיון בתיכון</b>, מגיש תלמידים לבגרות בביולוגיה (5 יח״ל) ובביוטכנולוגיה (10 יח״ל).</p>
+    <p className="about-body"><b>מעביר שיעורים פרטיים — יחידניים (אחד-על-אחד) ובקבוצות קטנות</b>, בזום או פרונטלי במרכז למידה. ליווי אישי, מותאם לרמה ולקצב של כל תלמיד — עד הבגרות. 📈</p>
     <div className="quote">״אני מאמין שלכל תלמיד יש דרך משלו להבין, והתפקיד שלי הוא למצוא אותה.״</div>
     <div className="stat-row"><div className="stat-box"><b>10</b><span>שנות הוראה</span></div><div className="stat-box"><b>1,600+</b><span>שאלות בגרות</span></div><div className="stat-box"><b>3</b><span>ספרי עזר</span></div></div>
     <div className="degrees">
