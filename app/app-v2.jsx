@@ -158,7 +158,7 @@ function Flashcards({favorites,studied,toggleFav,toggleStudied,onKnow}){
 /* ---------- QUIZ ---------- */
 function buildQuiz(pool,n){ const kinds=['pick-definition','pick-term','type-answer']; const items=[]; const used={}; let g=0;
   while(items.length<n && g<n*25){ g++; const kind=kinds[items.length%3];
-    if(kind==='type-answer'){const t=pool[Math.floor(Math.random()*pool.length)];if(used[t.hebrew])continue;used[t.hebrew]=1;items.push({kind,term:t,prompt:t.definition,options:[]});}
+    if(kind==='type-answer'){const t=pool[Math.floor(Math.random()*pool.length)];if(used[t.hebrew])continue;used[t.hebrew]=1;items.push({kind,term:t,prompt:SL.defText(t),options:[]});}
     else{const it=SL.generateItem(pool,maps,kind,Math.floor(Math.random()*1e6));if(used[it.term.hebrew])continue;used[it.term.hebrew]=1;items.push(it);} }
   return items; }
 function Quiz({studied,toggleStudied,favorites,recordAnswer,recordQuiz,fireConfetti}){
@@ -288,10 +288,10 @@ function TermQuiz({hebrew,onClose,onResult}){
   const [sel,setSel]=useState(null); const done=useRef(false);
   useEffect(()=>{ const k=e=>{ if(e.key==='Escape')onClose(); }; window.addEventListener('keydown',k); return()=>window.removeEventListener('keydown',k); },[onClose]);
   const ct=t&&(t.aliasOf?(SL.resolveEntry(t.hebrew,maps)||t):t);
-  const def=ct&&ct.definition;
+  const def=ct&&SL.defText(ct);
   const opts=useMemo(()=>{ if(!ct) return [];
-    const dis=SL.pickDistractors(GLOSSARY, ct, maps, 2, 'definition');
-    return [{text:def,correct:true}].concat(dis.map(d=>({text:d.definition,correct:false}))).sort(()=>Math.random()-0.5);
+    const dis=SL.pickDistractors(GLOSSARY, ct, maps, 2, 'paraphrase');
+    return [{text:def,correct:true}].concat(dis.map(d=>({text:SL.defText(d),correct:false}))).sort(()=>Math.random()-0.5);
   },[hebrew]); // eslint-disable-line
   if(!t) return null;
   const answer=o=>{ if(sel)return; setSel(o); o.correct?Snd.success():Snd.wrong(); if(!done.current){ done.current=true; if(onResult)onResult(o.correct); } };
