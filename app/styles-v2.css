@@ -288,3 +288,62 @@ html.dark .fb.ok{background:#15301c} html.dark .fb.no{background:#371a15}
 .logo-wrap .bub.b1{left:8px;animation:bubble 2.6s ease-in-out infinite}
 .logo-wrap .bub.b2{left:16px;animation:bubble 2.6s ease-in-out .9s infinite}
 .logo-wrap .bub.b3{left:24px;animation:bubble 2.6s ease-in-out 1.7s infinite}
+
+/* ============ v3: marker, pin, achievements, sounds, motion ============ */
+/* #3 dark-mode marker -> purple so white term text stays readable */
+html.dark .term .hl, html.dark .q-q .hl, html.dark .fc-term .hl{
+  background:linear-gradient(180deg,transparent 52%, #7B4FB0 52%);
+  color:#fff; border-radius:3px;
+}
+
+/* #2 pin button (replaces star). active = needs-review (coral) */
+.ibtn.pin{color:#fff;background:var(--coral-500);border-color:var(--coral-700)}
+.ibtn .pin-off{opacity:.45}
+
+/* header: logo full (contain) + full name */
+.logo-mark{object-fit:contain;object-position:center;background:#fff;padding:2px}
+
+/* sound toggle reuses .icon-toggle */
+
+/* #1/#4 achievements */
+.ach-head{display:flex;align-items:baseline;gap:8px;margin:22px 0 4px}
+.ach-head h2{font-family:'Rubik';font-weight:700;font-size:19px}
+.ach-head .cnt{font-size:13px;color:var(--text-3);font-weight:700;margin-inline-start:auto}
+.ach-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:8px}
+.ach{aspect-ratio:1/1.05;border-radius:var(--r-md);background:var(--surface);border:1px solid var(--border);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;padding:5px 4px;text-align:center;box-shadow:var(--e1);position:relative}
+.ach .em{font-size:23px;filter:grayscale(1);opacity:.38;transition:.2s}
+.ach .t{font-size:8.5px;font-weight:700;line-height:1.12;color:var(--text-3)}
+.ach.on{background:linear-gradient(180deg,var(--accent-soft),var(--surface));border-color:var(--accent)}
+.ach.on .em{filter:none;opacity:1;animation:popIn .4s var(--ease) backwards}
+.ach.on .t{color:var(--text)}
+.ach.on::after{content:"✓";position:absolute;top:3px;left:4px;font-size:9px;font-weight:800;color:var(--green-700)}
+
+/* performance grid */
+.perf{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}
+.perf .stat-box b{font-size:20px}
+
+/* achievement unlock toast */
+.ach-toast{position:fixed;left:50%;bottom:88px;transform:translateX(-50%);z-index:60;background:var(--surface);
+  border:1.5px solid var(--accent);border-radius:var(--r-lg);padding:11px 16px;box-shadow:var(--e3);display:flex;align-items:center;gap:11px;animation:toastIn .45s var(--ease)}
+.ach-toast .em{font-size:30px;animation:popIn .5s var(--ease)}
+.ach-toast b{font-family:'Rubik';font-size:14px;display:block} .ach-toast span{font-size:12px;color:var(--text-3)}
+@keyframes toastIn{0%{opacity:0;transform:translate(-50%,24px)}100%{opacity:1;transform:translate(-50%,0)}}
+
+/* #6 extra motion */
+@keyframes flame{0%,100%{transform:scale(1)}50%{transform:scale(1.18) rotate(-4deg)}}
+.streak .fl{display:inline-block;animation:flame 1.6s ease-in-out infinite}
+@media (hover:hover){
+  .card{transition:transform var(--fast),box-shadow var(--fast)}
+  .card:hover{transform:translateY(-2px);box-shadow:var(--e3)}
+  .ach:hover{transform:translateY(-2px)}
+  .book:hover{transform:translateY(-2px);box-shadow:var(--e3);transition:.15s}
+  .chip:hover{filter:brightness(.98)}
+}
+.btn{transition:transform var(--fast),filter var(--fast)}
+.btn:active{transform:scale(.96)}
+.tab:active{transform:scale(.9)}
+/* confetti burst */
+.confetti{position:fixed;inset:0;pointer-events:none;z-index:55;overflow:hidden}
+.confetti i{position:absolute;top:-12px;width:9px;height:14px;border-radius:2px;animation:fall linear forwards}
+@keyframes fall{0%{transform:translateY(-10px) rotate(0);opacity:1}100%{transform:translateY(105vh) rotate(540deg);opacity:.9}}
