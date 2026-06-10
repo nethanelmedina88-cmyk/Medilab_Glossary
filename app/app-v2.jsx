@@ -49,12 +49,12 @@ function Confetti(){ const cols=['#3FA9D6','#5CB85C','#F0654F','#F9D85C','#9B59B
   return <div className="confetti">{p}</div>; }
 
 /* ---------- HEADER / NAV ---------- */
-function Header({dayStreak,dark,setDark,muted,toggleSound,user,onProfile}){
+function Header({pinCount,dark,setDark,muted,toggleSound,user,onProfile,onReview}){
   return (<header className="hdr">
     <div className="logo-wrap"><img className="logo-mark" src="logo.jpg" alt="MediLab"/><span className="bub b1"></span><span className="bub b2"></span><span className="bub b3"></span></div>
     <div className="brand"><b>שליפים</b><span>נתנאל יוחאי מדינה</span></div>
     <div className="hdr-spacer"></div>
-    <div className="streak" title="ימים ברצף"><span className="fl">🔥</span> {dayStreak||0}</div>
+    <button className="streak" onClick={onReview} title="מושגים לחזרה" style={pinCount?{color:'var(--coral-700)',borderColor:'var(--coral-500)'}:undefined}>📌 {pinCount||0}</button>
     <button className="icon-toggle" onClick={toggleSound} aria-label="צליל">{muted?'🔇':'🔊'}</button>
     <button className="icon-toggle" onClick={()=>setDark(d=>!d)} aria-label="מצב כהה">{dark?'☀️':'🌙'}</button>
     <button className="avatar" onClick={onProfile} aria-label="אזור אישי">{user&&user.photoURL?<img src={user.photoURL} referrerPolicy="no-referrer" alt=""/>:'👤'}</button>
@@ -96,6 +96,20 @@ function Glossary({favorites,studied,toggleFav,toggleStudied}){
     {results.length===0
       ? <div className="empty"><div style={{fontSize:46}}>🔬</div><h3>לא נמצאו תוצאות</h3><p>נסו מושג אחר או נקו את הסינון.</p></div>
       : results.map(t=>(<TermCard key={t.hebrew+t.letter} t={t} q={q.trim()} fav={favorites.includes(t.hebrew)} studied={studied.includes(t.hebrew)} onFav={()=>toggleFav(t.hebrew)} onStudied={()=>toggleStudied(t.hebrew)}/>))}
+  </>);
+}
+
+/* ---------- REVIEW LIST (pinned terms) ---------- */
+function ReviewList({favorites,studied,toggleFav,toggleStudied,goQuiz}){
+  const items=GLOSSARY.filter(t=>favorites.includes(t.hebrew));
+  return (<>
+    <div className="hero"><h1>📌 מושגים לחזרה</h1><p>{items.length} מושגים שסימנת לחזור אליהם</p></div>
+    {items.length===0
+      ? <div className="empty"><div style={{fontSize:46}}>📌</div><h3>הרשימה ריקה</h3><p>סמנו מושג ב-📌 (במילון או בכרטיסיות) כדי לאסוף אותו לכאן, ולהיבחן רק על מה שקשה לכם.</p></div>
+      : (<>
+          <button className="btn btn-accent" style={{width:'100%',marginBottom:14}} onClick={goQuiz}>🎯 בחנו אותי על המושגים האלה ←</button>
+          {items.map(t=>(<TermCard key={t.hebrew+t.letter} t={t} q="" fav={true} studied={studied.includes(t.hebrew)} onFav={()=>toggleFav(t.hebrew)} onStudied={()=>toggleStudied(t.hebrew)}/>))}
+        </>)}
   </>);
 }
 
@@ -199,7 +213,7 @@ function About(){
     <div className="stat-row"><div className="stat-box"><b>10</b><span>שנות הוראה</span></div><div className="stat-box"><b>1,600+</b><span>שאלות בגרות</span></div><div className="stat-box"><b>3</b><span>ספרי עזר</span></div></div>
     <div className="degrees">
       <div className="degree"><span className="tag">B.Sc</span><div><b>תואר ראשון בביולוגיה</b><span>אוניברסיטת חיפה</span></div></div>
-      <div className="degree"><span className="tag">M.Teach</span><div><b>תואר שני בהוראת המדעים</b><span>מכון ויצמן למדע</span></div></div>
+      <div className="degree"><span className="tag">M.Teach</span><div><b>תואר שני בהוראת המדעים</b><span>מכללת אורנים</span></div></div>
       <div className="degree"><span className="tag">M.Sc</span><div><b>תואר שני במדעים</b><span>מכון ויצמן למדע</span></div></div>
     </div>
     <h2 className="sec-title">שלושת הספרים שכתבתי 📚</h2><p className="sec-sub">מותאמים לתוכנית הלימודים תשפ״ו · מנוקדים, מאוירים, נגישים</p>
@@ -315,12 +329,13 @@ function App(){
     <div className="app" data-mode={dm}>
       {confetti && <Confetti/>}
       {newAch && <div className="ach-toast"><span className="em">{newAch.emoji}</span><div><b>הישג חדש! {newAch.title}</b><span>{newAch.desc}</span></div></div>}
-      <Header dayStreak={stats.dayStreak} dark={dark} setDark={setDark} muted={muted} toggleSound={toggleSound} user={user} onProfile={()=>setMode('profile')}/>
+      <Header pinCount={favorites.length} dark={dark} setDark={setDark} muted={muted} toggleSound={toggleSound} user={user} onProfile={()=>setMode('profile')} onReview={()=>setMode('review')}/>
       <div className="scroll">
         <div className="view" key={mode}>
           {mode==='glossary' && <Glossary favorites={favorites} studied={studied} toggleFav={toggleFav} toggleStudied={toggleStudied}/>}
           {mode==='flashcards' && <Flashcards favorites={favorites} studied={studied} toggleFav={toggleFav} toggleStudied={toggleStudied}/>}
           {mode==='quiz' && <Quiz studied={studied} toggleStudied={toggleStudied} favorites={favorites} recordAnswer={recordAnswer} recordQuiz={recordQuiz} fireConfetti={fireConfetti}/>}
+          {mode==='review' && <ReviewList favorites={favorites} studied={studied} toggleFav={toggleFav} toggleStudied={toggleStudied} goQuiz={()=>setMode('quiz')}/>}
           {mode==='about' && <About/>}
           {mode==='profile' && <Profile user={user} studied={studied} favorites={favorites} stats={stats} sync={sync} signIn={signIn} signOut={signOut}/>}
         </div>
