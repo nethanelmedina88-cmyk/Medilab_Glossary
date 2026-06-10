@@ -50,13 +50,12 @@ function Confetti(){ const cols=['#3FA9D6','#5CB85C','#F0654F','#F9D85C','#9B59B
   return <div className="confetti">{p}</div>; }
 
 /* ---------- HEADER / NAV ---------- */
-function Header({pinCount,dark,setDark,muted,toggleSound,user,onProfile,onReview,onLogo}){
+function Header({pinCount,dark,setDark,user,onProfile,onReview,onLogo}){
   return (<header className="hdr">
     <div className="logo-wrap" onClick={onLogo} style={{cursor:'pointer'}} title="אודות" role="button" aria-label="אודות"><img className="logo-mark" src="logo.jpg" alt="MediLab"/><span className="bub b1"></span><span className="bub b2"></span><span className="bub b3"></span></div>
     <div className="brand"><b>שליפים</b><span>נתנאל יוחאי מדינה</span></div>
     <div className="hdr-spacer"></div>
     <button className="streak" onClick={onReview} title="מושגים לחזרה" style={pinCount?{color:'var(--coral-700)',borderColor:'var(--coral-500)'}:undefined}>📌 {pinCount||0}</button>
-    <button className="icon-toggle" onClick={toggleSound} aria-label="צליל">{muted?'🔇':'🔊'}</button>
     <button className="icon-toggle" onClick={()=>setDark(d=>!d)} aria-label="מצב כהה">{dark?'☀️':'🌙'}</button>
     <button className="avatar" onClick={onProfile} aria-label="אזור אישי">{user&&user.photoURL?<img src={user.photoURL} referrerPolicy="no-referrer" alt=""/>:'👤'}</button>
   </header>); }
@@ -193,6 +192,7 @@ function Quiz({studied,toggleStudied,favorites,recordAnswer,recordQuiz,fireConfe
     <div className="q-top"><span>שאלה {qi+1} / {quiz.length}</span><div className="bar"><i style={{width:`${(qi/quiz.length)*100}%`}}></i></div><span className="q-score">{score} ✓</span></div>
     <span className="q-kind">{item.kind==='pick-definition'?'בחרו את ההגדרה הנכונה':item.kind==='pick-term'?'בחרו את המושג הנכון':'הקלידו את המושג'}</span>
     <div className="q-q">{item.kind==='pick-definition'?<>מהי <span className="hl">{item.term.hebrew}</span>?</>:item.prompt}</div>
+    <button className="chip" onClick={()=>Speak(item.kind==='pick-definition'?item.term.hebrew:item.prompt)} style={{marginBottom:10}} aria-label="הקראה">🔊 הקראה</button>
     {item.kind==='type-answer'
       ? (<><div className="q-type-in"><input value={typed} onChange={e=>setTyped(e.target.value)} disabled={answered} placeholder="הקלידו את המושג…" onKeyDown={e=>e.key==='Enter'&&answerType()}/>{!answered&&<button className="btn btn-accent" onClick={answerType}>בדיקה</button>}</div>
         {answered && (chosen.correct?<div className="fb ok">🎉 נכון! {item.term.hebrew}</div>:<div className="fb no">✗ התשובה: {item.term.hebrew}</div>)}</>)
@@ -240,7 +240,7 @@ function About(){
 /* ---------- PROFILE / STATS / ACHIEVEMENTS ---------- */
 function Ring({pct,color}){ const r=34,c=2*Math.PI*r,off=c*(1-pct/100);
   return (<svg width="84" height="84" viewBox="0 0 84 84" className="ring"><circle cx="42" cy="42" r={r} fill="none" stroke="var(--surface-2)" strokeWidth="9"/><circle cx="42" cy="42" r={r} fill="none" stroke={color} strokeWidth="9" strokeLinecap="round" strokeDasharray={c} strokeDashoffset={off} transform="rotate(-90 42 42)"/><text x="42" y="48" textAnchor="middle" fontFamily="Rubik" fontWeight="800" fontSize="20" fill="var(--text)">{pct}%</text></svg>); }
-function Profile({user,studied,favorites,stats,sync,signIn,signOut,onTopic}){
+function Profile({user,studied,favorites,stats,sync,signIn,signOut,onTopic,muted,toggleSound}){
   const m=metrics(studied,favorites,stats);
   const earned=earnedIds(m); const earnedSet={}; earned.forEach(id=>earnedSet[id]=1);
   const pct=Math.round(m.studied/TOTAL*100); const acc=Math.round(m.accuracy*100);
@@ -256,6 +256,10 @@ function Profile({user,studied,favorites,stats,sync,signIn,signOut,onTopic}){
           <button className="google-btn" style={{marginTop:12}} onClick={signIn}>
             <svg width="18" height="18" viewBox="0 0 48 48"><path fill="#4285F4" d="M45 24c0-1.6-.1-3.1-.4-4.5H24v9h11.8c-.5 2.7-2 5-4.4 6.6v5.5h7.1C42.7 36.8 45 31 45 24z"/><path fill="#34A853" d="M24 46c5.9 0 10.9-2 14.5-5.4l-7.1-5.5c-2 1.3-4.5 2.1-7.4 2.1-5.7 0-10.5-3.8-12.2-9H4.5v5.7C8.1 41.1 15.4 46 24 46z"/><path fill="#FBBC05" d="M11.8 28.2c-.4-1.3-.7-2.7-.7-4.2s.2-2.9.7-4.2v-5.7H4.5C3 17 2 20.4 2 24s1 7 2.5 9.9l7.3-5.7z"/><path fill="#EA4335" d="M24 11.5c3.2 0 6 1.1 8.3 3.2l6.2-6.2C34.9 5 29.9 3 24 3 15.4 3 8.1 7.9 4.5 14.1l7.3 5.7c1.7-5.2 6.5-9 12.2-9z"/></svg>
             התחברות עם Google</button></>)}
+    </div>
+    <div className="prof-card" style={{display:'flex',alignItems:'center',justifyContent:'space-between',textAlign:'right',padding:'14px 16px'}}>
+      <span style={{fontWeight:700}}>🔊 צלילי משוב</span>
+      <button className="chip" onClick={toggleSound} style={muted?undefined:{background:'var(--green-500)',color:'#fff',borderColor:'var(--green-700)'}}>{muted?'כבוי 🔇':'דלוק 🔊'}</button>
     </div>
     <div className="ring-wrap"><Ring pct={pct} color="#3FA9D6"/><div className="mini-stats">
       <div className="stat-box"><b>{m.studied}</b><span>נלמדו / {TOTAL}</span></div>
@@ -336,7 +340,7 @@ function App(){
     <div className="app" data-mode={dm}>
       {confetti && <Confetti/>}
       {newAch && <div className="ach-toast"><span className="em">{newAch.emoji}</span><div><b>הישג חדש! {newAch.title}</b><span>{newAch.desc}</span></div></div>}
-      <Header pinCount={favorites.length} dark={dark} setDark={setDark} muted={muted} toggleSound={toggleSound} user={user} onProfile={()=>setMode('profile')} onReview={()=>setMode('review')} onLogo={()=>setMode('about')}/>
+      <Header pinCount={favorites.length} dark={dark} setDark={setDark} user={user} onProfile={()=>setMode('profile')} onReview={()=>setMode('review')} onLogo={()=>setMode('about')}/>
       <div className="scroll">
         <div className="view" key={mode}>
           {mode==='glossary' && <Glossary key={glossaryTopic} initialTopic={glossaryTopic} favorites={favorites} studied={studied} toggleFav={toggleFav} toggleStudied={toggleStudied}/>}
@@ -344,7 +348,7 @@ function App(){
           {mode==='quiz' && <Quiz studied={studied} toggleStudied={toggleStudied} favorites={favorites} recordAnswer={recordAnswer} recordQuiz={recordQuiz} fireConfetti={fireConfetti}/>}
           {mode==='review' && <ReviewList favorites={favorites} studied={studied} toggleFav={toggleFav} toggleStudied={toggleStudied} goQuiz={()=>setMode('quiz')}/>}
           {mode==='about' && <About/>}
-          {mode==='profile' && <Profile user={user} studied={studied} favorites={favorites} stats={stats} sync={sync} signIn={signIn} signOut={signOut} onTopic={openTopic}/>}
+          {mode==='profile' && <Profile user={user} studied={studied} favorites={favorites} stats={stats} sync={sync} signIn={signIn} signOut={signOut} onTopic={openTopic} muted={muted} toggleSound={toggleSound}/>}
         </div>
       </div>
       <Nav mode={mode} setMode={changeMode}/>
