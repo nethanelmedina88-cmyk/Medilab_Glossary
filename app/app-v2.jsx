@@ -9,8 +9,6 @@ const Snd = window.SLSound || { success(){},wrong(){},ding(){},pop(){},fanfare()
 const Speak = window.SLSpeak || function(){};
 const maps = SL.buildAliasMaps(GLOSSARY);
 const searchIndex = SL.buildSearchIndex(GLOSSARY);
-const RELATED = SL.buildRelated(GLOSSARY);
-const relatedMap = RELATED.related; const relByHeb = RELATED.byHeb;
 const HEB = ['א','ב','ג','ד','ה','ו','ז','ח','ט','י','כ','ל','מ','נ','ס','ע','פ','צ','ק','ר','ש','ת'];
 const TOTAL = GLOSSARY.length;
 const topicTotals=(function(){const m={};GLOSSARY.forEach(t=>{if(t.topic)m[t.topic]=(m[t.topic]||0)+1;});return m;})();
@@ -117,57 +115,42 @@ function ReviewList({favorites,studied,toggleFav,toggleStudied,goQuiz,onOpenTerm
 }
 
 /* ---------- FLASHCARDS ---------- */
-function Flashcards({favorites,studied,toggleFav,toggleStudied,srsMap,onRate,dueCount}){
+function Flashcards({favorites,studied,toggleFav,toggleStudied,onKnow}){
   const [deck,setDeck]=useState('all'); const [topic,setTopic]=useState(''); const [i,setI]=useState(0); const [flip,setFlip]=useState(false);
-  const [srsCards,setSrsCards]=useState([]);
-  const baseItems=useMemo(()=>{let items=GLOSSARY.filter(t=>!t.aliasOf&&!/^\s*ראה:/.test(t.definition)); if(topic)items=items.filter(t=>t.topic===topic); return items;},[topic]);
-  useEffect(()=>{ if(deck==='srs')setSrsCards(SL.srsQueue(baseItems,srsMap,20)); setI(0); setFlip(false); },[deck,topic]); // eslint-disable-line
-  const isSrs=deck==='srs';
-  const cards=isSrs?srsCards:(deck==='unstudied'?baseItems.filter(t=>!studied.includes(t.hebrew)):deck==='review'?baseItems.filter(t=>favorites.includes(t.hebrew)):baseItems);
+  const cards=useMemo(()=>{let items=GLOSSARY.filter(t=>!t.aliasOf&&!/^\s*ראה:/.test(t.definition));
+    if(topic)items=items.filter(t=>t.topic===topic); if(deck==='unstudied')items=items.filter(t=>!studied.includes(t.hebrew)); if(deck==='review')items=items.filter(t=>favorites.includes(t.hebrew)); return items;},[deck,topic,studied,favorites]);
+  useEffect(()=>{setI(0);setFlip(false);},[deck,topic]);
   const card=cards[i];
   const next=useCallback(()=>{setFlip(false);setI(x=>(x+1)%Math.max(1,cards.length));},[cards.length]);
   const prev=useCallback(()=>{setFlip(false);setI(x=>(x-1+cards.length)%Math.max(1,cards.length));},[cards.length]);
-  useEffect(()=>{const k=e=>{if(isSrs)return;if(e.key==='ArrowLeft')next();if(e.key==='ArrowRight')prev();if(e.key===' '){e.preventDefault();setFlip(f=>!f);}};window.addEventListener('keydown',k);return()=>window.removeEventListener('keydown',k);},[next,prev,isSrs]);
+  useEffect(()=>{const k=e=>{if(e.key==='ArrowLeft')next();if(e.key==='ArrowRight')prev();if(e.key===' '){e.preventDefault();setFlip(f=>!f);}};window.addEventListener('keydown',k);return()=>window.removeEventListener('keydown',k);},[next,prev]);
   const tref=useRef(null);
-  const onTouchEnd=e=>{if(isSrs||tref.current==null)return;const dx=e.changedTouches[0].clientX-tref.current;if(Math.abs(dx)>50){dx<0?next():prev();}tref.current=null;};
-  const rate=grade=>{ onRate(card.hebrew,grade); if(grade>=2&&!studied.includes(card.hebrew))toggleStudied(card.hebrew); grade===0?Snd.wrong():Snd.ding(); setFlip(false); setI(x=>x+1); };
+  const onTouchEnd=e=>{if(tref.current==null)return;const dx=e.changedTouches[0].clientX-tref.current;if(Math.abs(dx)>50){dx<0?next():prev();}tref.current=null;};
   return (<>
-    <div className="hero"><h1>כרטיסיות</h1><p>{isSrs?'חזרה מרווחת — שלפו מהזיכרון, ואז דרגו':'לימוד פעיל · הקישו להפיכה, החליקו למעבר'}</p></div>
+    <div className="hero"><h1>כרטיסיות</h1><p>לימוד פעיל · הקישו להפיכה, החליקו למעבר</p></div>
     <div className="deck">
       <button className={`chip ${deck==='all'?'on':''}`} onClick={()=>setDeck('all')}>הכל</button>
       <button className={`chip ${deck==='unstudied'?'on':''}`} onClick={()=>setDeck('unstudied')}>לא נלמדו</button>
       <button className={`chip ${deck==='review'?'on':''}`} onClick={()=>setDeck('review')}>📌 לחזרה</button>
-      <button className={`chip ${deck==='srs'?'on':''}`} onClick={()=>setDeck('srs')}>🧠 חזרה חכמה{dueCount?` (${dueCount})`:''}</button>
     </div>
-    {!isSrs && <TopicChips value={topic} onPick={setTopic}/>}
-    {isSrs && cards.length>0 && i>=cards.length
-      ? <div className="empty"><div style={{fontSize:46}}>🎉</div><h3>סיימת את החזרה להיום!</h3><p>חזרו מחר — המערכת תתזמן את המושגים לפי דעיכת הזיכרון.</p></div>
-      : cards.length===0
-      ? <div className="empty"><div style={{fontSize:46}}>{isSrs?'🧠':'🎴'}</div><h3>{isSrs?'אין מושגים לחזרה כרגע':'אין כרטיסיות בערימה הזו'}</h3></div>
+    <TopicChips value={topic} onPick={setTopic}/>
+    {cards.length===0
+      ? <div className="empty"><div style={{fontSize:46}}>🎴</div><h3>אין כרטיסיות בערימה הזו</h3></div>
       : (<>
         <div className="prog"><span>{i+1} / {cards.length}</span><div className="bar"><i style={{width:`${((i+1)/cards.length)*100}%`}}></i></div></div>
         <div className={`fc ${flip?'flip':''}`} onClick={()=>setFlip(f=>!f)} onTouchStart={e=>tref.current=e.touches[0].clientX} onTouchEnd={onTouchEnd}>
           <div className="fc-inner">
-            <div className="fc-face"><div className="fc-badge">{card.letter}</div><div className="fc-term">{card.hebrew}</div>{card.english&&<div className="fc-en">{card.english}</div>}{card.topic&&<div style={{marginTop:12}}><TopicTag topicKey={card.topic}/></div>}<div className="fc-hint">{isSrs?'↻ נסו לשלוף את ההגדרה, ואז גלו':'↻ הקישו לתשובה'}</div></div>
+            <div className="fc-face"><div className="fc-badge">{card.letter}</div><div className="fc-term">{card.hebrew}</div>{card.english&&<div className="fc-en">{card.english}</div>}{card.topic&&<div style={{marginTop:12}}><TopicTag topicKey={card.topic}/></div>}<div className="fc-hint">↻ הקישו לתשובה</div></div>
             <div className="fc-face fc-back"><div className="fc-def">{card.definition}</div><div className="fc-hint">↻ הקישו לחזרה</div></div>
           </div>
         </div>
-        {isSrs
-          ? (flip
-              ? <div className="rate-row">
-                  <button className="rate again" onClick={()=>rate(0)}>שכחתי<small>שוב</small></button>
-                  <button className="rate hard" onClick={()=>rate(1)}>קשה<small>~יום</small></button>
-                  <button className="rate good" onClick={()=>rate(2)}>טוב<small>כמה ימים</small></button>
-                  <button className="rate easy" onClick={()=>rate(3)}>קל<small>הרבה ימים</small></button>
-                </div>
-              : <div className="fc-ctrl"><button className="fc-nav" onClick={e=>{e.stopPropagation();Speak(card.hebrew);}} aria-label="הקראה">🔊</button><button className="btn btn-accent" style={{flex:1}} onClick={()=>setFlip(true)}>גלו את ההגדרה</button></div>)
-          : <div className="fc-ctrl">
-              <button className="fc-nav" onClick={prev} aria-label="הקודם">→</button>
-              <button className="fc-nav" onClick={()=>Speak(flip?card.definition:card.hebrew)} aria-label="הקראה" title="הקראה">🔊</button>
-              <button className="btn btn-accent" style={{flex:1}} onClick={()=>{ if(!studied.includes(card.hebrew))Snd.ding(); toggleStudied(card.hebrew); }}>{studied.includes(card.hebrew)?'✓ נלמד':'סמן כנלמד'}</button>
-              <button className="fc-nav" style={favorites.includes(card.hebrew)?{color:'#fff',background:'var(--coral-500)',borderColor:'var(--coral-700)'}:undefined} onClick={()=>toggleFav(card.hebrew)} aria-label="לחזרה" title="מושג לחזרה">📌</button>
-              <button className="fc-nav" onClick={next} aria-label="הבא">←</button>
-            </div>}
+        <div className="fc-ctrl">
+          <button className="fc-nav" onClick={prev} aria-label="הקודם">→</button>
+          <button className="fc-nav" onClick={()=>Speak(flip?card.definition:card.hebrew)} aria-label="הקראה" title="הקראה">🔊</button>
+          <button className="btn btn-accent" style={{flex:1}} onClick={()=> studied.includes(card.hebrew)?toggleStudied(card.hebrew):onKnow(card.hebrew)}>{studied.includes(card.hebrew)?'✓ נלמד':'אני יודע — בדקו אותי'}</button>
+          <button className="fc-nav" style={favorites.includes(card.hebrew)?{color:'#fff',background:'var(--coral-500)',borderColor:'var(--coral-700)'}:undefined} onClick={()=>toggleFav(card.hebrew)} aria-label="לחזרה" title="מושג לחזרה">📌</button>
+          <button className="fc-nav" onClick={next} aria-label="הבא">←</button>
+        </div>
       </>)}
   </>);
 }
@@ -299,49 +282,32 @@ function Profile({user,studied,favorites,stats,sync,signIn,signOut,onTopic,muted
   </>);
 }
 
-/* ---------- KNOWLEDGE GRAPH + MICRO-ASSESSMENT (term detail overlay) ---------- */
-function GraphMap({hebrew,onOpen}){
-  const rel=(relatedMap[hebrew]||[]).slice(0,6);
-  const W=300,H=300,cx=150,cy=150,R=112;
-  const nodes=rel.map((h,i)=>{ const a=-Math.PI/2 + i/rel.length*2*Math.PI; return {h,x:cx+R*Math.cos(a),y:cy+R*Math.sin(a)}; });
-  return (<div className="gmap">
-    <svg viewBox={`0 0 ${W} ${H}`} preserveAspectRatio="none">{nodes.map((n,i)=><line key={i} x1={cx} y1={cy} x2={n.x} y2={n.y} stroke="var(--border)" strokeWidth="2"/>)}</svg>
-    {nodes.map((n,i)=>{ const tp=relByHeb[n.h]&&TBK[relByHeb[n.h].topic]; return <button key={i} className="gnode" style={{left:(n.x/W*100)+'%',top:(n.y/H*100)+'%',borderColor:tp?tp.accent:'var(--accent)'}} onClick={()=>onOpen(n.h)}>{tp?tp.emoji+' ':''}{n.h}</button>; })}
-    <button className="gcenter" onClick={()=>Speak(hebrew)} title="הקראה">{hebrew}</button>
-  </div>);
-}
-function MicroMC({term}){
-  const [sel,setSel]=useState(null);
-  const opts=useMemo(()=>{
-    const ban={}; SL.synonymsOf(term.hebrew,maps).concat([term.hebrew]).forEach(h=>ban[h]=1);
-    let pool=GLOSSARY.filter(e=>!e.aliasOf&&!ban[e.hebrew]&&e.definition&&e.definition.length>=20);
-    let same=pool.filter(e=>e.topic===term.topic);
-    let base=(same.length>=2?same:pool).slice().sort(()=>Math.random()-0.5).slice(0,2);
-    return [{h:term.hebrew,correct:true}].concat(base.map(d=>({h:d.hebrew,correct:false}))).sort(()=>Math.random()-0.5);
-  },[term.hebrew]);
-  return (<>
-    <div className="od-sec">🧠 בדקו את עצמכם — איזה מושג מתאים להגדרה?</div>
-    {opts.map((o,i)=>{ let cls='opt'; if(sel){ if(o.correct)cls+=' correct'; else if(sel===o)cls+=' wrong'; }
-      return <button key={i} className={cls} disabled={!!sel} onClick={()=>{ setSel(o); o.correct?Snd.success():Snd.wrong(); }}>
-        <span className="mk">{sel&&o.correct?'✓':String.fromCharCode(1488+i)}</span><span>{o.h}</span></button>; })}
-    {sel && <div className={`fb ${sel.correct?'ok':'no'}`}>{sel.correct?'🎉 נכון!':('התשובה הנכונה: '+term.hebrew)}</div>}
-  </>);
-}
-function TermDetail({hebrew,onClose,onOpen}){
-  const t=relByHeb[hebrew]||maps.byHeb[hebrew];
+/* ---------- TERM QUESTION (active recall on a single term) ---------- */
+function TermQuiz({hebrew,onClose,onResult}){
+  const t=maps.byHeb[hebrew];
+  const [sel,setSel]=useState(null); const done=useRef(false);
   useEffect(()=>{ const k=e=>{ if(e.key==='Escape')onClose(); }; window.addEventListener('keydown',k); return()=>window.removeEventListener('keydown',k); },[onClose]);
+  const def=t&&(t.aliasOf?(SL.resolveEntry(t.hebrew,maps)||t).definition:t.definition);
+  const opts=useMemo(()=>{ if(!t) return [];
+    const ban={}; SL.synonymsOf(t.hebrew,maps).concat([t.hebrew]).forEach(h=>ban[h]=1);
+    let pool=GLOSSARY.filter(e=>!e.aliasOf&&!ban[e.hebrew]&&e.definition&&e.definition.length>=20&&e.definition!==def);
+    let same=pool.filter(e=>e.topic===t.topic);
+    let base=(same.length>=2?same:pool).slice().sort(()=>Math.random()-0.5).slice(0,2);
+    return [{text:def,correct:true}].concat(base.map(d=>({text:d.definition,correct:false}))).sort(()=>Math.random()-0.5);
+  },[hebrew]); // eslint-disable-line
   if(!t) return null;
-  const def=t.aliasOf?(SL.resolveEntry(t.hebrew,maps)||t).definition:t.definition;
+  const answer=o=>{ if(sel)return; setSel(o); o.correct?Snd.success():Snd.wrong(); if(!done.current){ done.current=true; if(onResult)onResult(o.correct); } };
   return (<div className="overlay" onClick={onClose}>
     <div className="sheet-card" onClick={e=>e.stopPropagation()}>
       <button className="od-x" onClick={onClose} aria-label="סגור">×</button>
-      <div className="od-term">{t.hebrew} <button className="ibtn" style={{display:'inline-flex',width:34,height:34,verticalAlign:'middle'}} onClick={()=>Speak(t.hebrew+'. '+def)} aria-label="הקראה">🔊</button></div>
+      <div className="od-term">{t.hebrew} <button className="ibtn" style={{display:'inline-flex',width:34,height:34,verticalAlign:'middle'}} onClick={()=>Speak(t.hebrew)} aria-label="הקראה">🔊</button></div>
       {t.english&&<div className="en">{t.english}</div>}
       {t.topic&&<div style={{marginTop:6}}><TopicTag topicKey={t.topic}/></div>}
-      <p className="od-def">{def}</p>
-      <div className="od-sec">🕸️ מושגים קשורים — הקישו לניווט</div>
-      <GraphMap hebrew={t.hebrew} onOpen={onOpen}/>
-      <MicroMC term={t} key={t.hebrew}/>
+      <div className="od-sec">מהי <b>{t.hebrew}</b>? בחרו את ההגדרה הנכונה:</div>
+      {opts.map((o,i)=>{ let cls='opt'; if(sel){ if(o.correct)cls+=' correct'; else if(sel===o)cls+=' wrong'; }
+        return <button key={i} className={cls} disabled={!!sel} onClick={()=>answer(o)}><span className="mk">{sel&&o.correct?'✓':String.fromCharCode(1488+i)}</span><span>{o.text}</span></button>; })}
+      {sel && <div className={`fb ${sel.correct?'ok':'no'}`}>{sel.correct?'🎉 כל הכבוד! ידעת את המושג':'אל דאגה — ההגדרה הנכונה מסומנת בירוק'}</div>}
+      {sel && <button className="btn btn-accent" style={{width:'100%',marginTop:12}} onClick={onClose}>סגירה</button>}
     </div>
   </div>);
 }
@@ -357,12 +323,9 @@ function App(){
   const [studied,setStudied]=useLocal('ml-studied',[]);
   const [stats,setStats]=useLocal('ml-stats',{});
   const [achieved,setAchieved]=useLocal('ml-achieved',[]);
-  const [srs,setSrs]=useLocal('ml-srs',{});
-  const [detail,setDetail]=useState(null);
-  const openTerm=h=>setDetail(h);
-  const rateSrs=(h,grade)=>setSrs(m=>{ const n={}; for(var k in m)n[k]=m[k]; n[h]=SL.srsRate(m[h],grade); return n; });
-  const srsEligible=useMemo(()=>GLOSSARY.filter(t=>!t.aliasOf&&!/^\s*ראה:/.test(t.definition)),[]);
-  const dueCount=useMemo(()=>SL.srsDueCount(srsEligible,srs),[srs,srsEligible]);
+  const [qTerm,setQTerm]=useState(null); // {hebrew, verify}
+  const openTerm=h=>setQTerm({hebrew:h,verify:false});
+  const openVerify=h=>setQTerm({hebrew:h,verify:true});
   const [muted,setMutedState]=useState(Snd.isMuted());
   const [user,setUser]=useState(null); const [sync,setSync]=useState('');
   const [newAch,setNewAch]=useState(null); const [confetti,setConfetti]=useState(false);
@@ -376,6 +339,7 @@ function App(){
 
   const toggleFav=h=>setFav(f=>f.includes(h)?f.filter(x=>x!==h):[...f,h]);
   const toggleStudied=h=>setStudied(f=>f.includes(h)?f.filter(x=>x!==h):[...f,h]);
+  const onQResult=ok=>{ if(qTerm&&qTerm.verify){ if(ok){ setStudied(f=>f.includes(qTerm.hebrew)?f:[...f,qTerm.hebrew]); } else { setFav(f=>f.includes(qTerm.hebrew)?f:[...f,qTerm.hebrew]); } } };
   const recordAnswer=ok=>setStats(s=>({...s,answered:(s.answered||0)+1,correct:(s.correct||0)+(ok?1:0)}));
   const recordQuiz=(score,len)=>setStats(s=>({...s,quizzes:(s.quizzes||0)+1,perfect:(s.perfect||0)+((score===len&&len>0)?1:0)}));
   const fireConfetti=()=>{ setConfetti(true); setTimeout(()=>setConfetti(false),1900); };
@@ -391,16 +355,16 @@ function App(){
 
   // firebase sync
   const saveUserData=useCallback(async(uid)=>{ if(!db||!auth.currentUser)return; setSync('syncing');
-    try{ await db.collection('users').doc(uid).set({displayName:auth.currentUser.displayName,email:auth.currentUser.email,photoURL:auth.currentUser.photoURL,favorites,studied,stats,srs,lastSync:firebase.firestore.FieldValue.serverTimestamp()},{merge:true}); setSync('synced'); setTimeout(()=>setSync(''),1500); }
-    catch(e){ console.error(e); setSync('error'); } },[favorites,studied,stats,srs]);
+    try{ await db.collection('users').doc(uid).set({displayName:auth.currentUser.displayName,email:auth.currentUser.email,photoURL:auth.currentUser.photoURL,favorites,studied,stats,lastSync:firebase.firestore.FieldValue.serverTimestamp()},{merge:true}); setSync('synced'); setTimeout(()=>setSync(''),1500); }
+    catch(e){ console.error(e); setSync('error'); } },[favorites,studied,stats]);
   useEffect(()=>{ if(!auth)return; const unsub=auth.onAuthStateChanged(async(u)=>{ setUser(u);
     if(u&&db){ setSync('syncing');
       try{ const doc=await db.collection('users').doc(u.uid).get();
-        if(doc.exists){ const d=doc.data(); loadingRef.current=true; setFav(d.favorites||[]); setStudied(d.studied||[]); if(d.stats)setStats(s=>({...s,...d.stats})); if(d.srs)setSrs(d.srs); setTimeout(()=>{loadingRef.current=false;},90); setSync('synced'); setTimeout(()=>setSync(''),1500); }
-        else { await db.collection('users').doc(u.uid).set({displayName:u.displayName,email:u.email,photoURL:u.photoURL,favorites,studied,stats,srs,lastSync:firebase.firestore.FieldValue.serverTimestamp()},{merge:true}); setSync('synced'); setTimeout(()=>setSync(''),1500); }
+        if(doc.exists){ const d=doc.data(); loadingRef.current=true; setFav(d.favorites||[]); setStudied(d.studied||[]); if(d.stats)setStats(s=>({...s,...d.stats})); setTimeout(()=>{loadingRef.current=false;},90); setSync('synced'); setTimeout(()=>setSync(''),1500); }
+        else { await db.collection('users').doc(u.uid).set({displayName:u.displayName,email:u.email,photoURL:u.photoURL,favorites,studied,stats,lastSync:firebase.firestore.FieldValue.serverTimestamp()},{merge:true}); setSync('synced'); setTimeout(()=>setSync(''),1500); }
       }catch(e){ console.error(e); setSync('error'); } }
   }); return unsub; },[]);
-  useEffect(()=>{ if(user&&!loadingRef.current)saveUserData(user.uid); },[favorites,studied,stats,srs]); // eslint-disable-line
+  useEffect(()=>{ if(user&&!loadingRef.current)saveUserData(user.uid); },[favorites,studied,stats]); // eslint-disable-line
 
   const signIn=async()=>{ if(!auth){alert('אין חיבור');return;} try{ await auth.signInWithPopup(googleProvider); }catch(e){ alert('שגיאת התחברות: '+e.message); } };
   const signOut=async()=>{ loadingRef.current=true; try{ await auth.signOut(); }catch(e){} setUser(null); setTimeout(()=>{loadingRef.current=false;},90); };
@@ -414,7 +378,7 @@ function App(){
       <div className="scroll">
         <div className="view" key={mode}>
           {mode==='glossary' && <Glossary key={glossaryTopic} initialTopic={glossaryTopic} favorites={favorites} studied={studied} toggleFav={toggleFav} toggleStudied={toggleStudied} onOpenTerm={openTerm}/>}
-          {mode==='flashcards' && <Flashcards favorites={favorites} studied={studied} toggleFav={toggleFav} toggleStudied={toggleStudied} srsMap={srs} onRate={rateSrs} dueCount={dueCount}/>}
+          {mode==='flashcards' && <Flashcards favorites={favorites} studied={studied} toggleFav={toggleFav} toggleStudied={toggleStudied} onKnow={openVerify}/>}
           {mode==='quiz' && <Quiz studied={studied} toggleStudied={toggleStudied} favorites={favorites} recordAnswer={recordAnswer} recordQuiz={recordQuiz} fireConfetti={fireConfetti}/>}
           {mode==='review' && <ReviewList favorites={favorites} studied={studied} toggleFav={toggleFav} toggleStudied={toggleStudied} goQuiz={()=>setMode('quiz')} onOpenTerm={openTerm}/>}
           {mode==='about' && <About/>}
@@ -422,7 +386,7 @@ function App(){
         </div>
       </div>
       <Nav mode={mode} setMode={changeMode}/>
-      {detail && <TermDetail key={detail} hebrew={detail} onClose={()=>setDetail(null)} onOpen={openTerm}/>}
+      {qTerm && <TermQuiz key={qTerm.hebrew+(qTerm.verify?'v':'e')} hebrew={qTerm.hebrew} onClose={()=>setQTerm(null)} onResult={onQResult}/>}
     </div>
   );
 }
