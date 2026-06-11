@@ -401,6 +401,19 @@ html.dark .install-card{background-image:none}
 @keyframes ig-bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-2px)}}
 .install-go svg{animation:ig-bob 1.4s ease-in-out infinite}
 
+/* permanent install block in About */
+.install-about{display:flex;flex-direction:column;align-items:center;text-align:center;gap:6px;
+  background:var(--surface);border:1px solid var(--border);border-radius:var(--r-lg);padding:18px 16px;margin:18px 0;box-shadow:var(--e2);
+  background-image:linear-gradient(135deg,color-mix(in srgb,var(--blue-50) 55%,var(--surface)),var(--surface))}
+html.dark .install-about{background-image:none}
+.install-about img{width:56px;height:56px;border-radius:14px;box-shadow:var(--e1)}
+.install-about h4{font-family:'Rubik';font-weight:700;font-size:16px;margin:6px 0 0}
+.install-about p{font-size:13px;color:var(--text-2);margin:0 0 8px;max-width:300px}
+.install-btn-about{min-width:200px}
+.install-done{font-size:13.5px;font-weight:700;color:var(--success);background:var(--green-50);
+  border:1px solid var(--green-100);border-radius:var(--r-pill);padding:9px 16px}
+html.dark .install-done{background:#15301c;border-color:#1f4429}
+
 /* iOS install instructions sheet */
 .ios-sheet{text-align:center;padding-top:24px}
 .ios-sheet h3{font-family:'Rubik';font-weight:800;font-size:19px;margin:10px 0 14px}
