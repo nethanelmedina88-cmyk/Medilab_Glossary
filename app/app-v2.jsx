@@ -395,9 +395,11 @@ function App(){
   const fireConfetti=()=>{ setConfetti(true); setTimeout(()=>setConfetti(false),1900); };
   const toggleSound=()=>{ const n=!muted; setMutedState(n); Snd.setMuted(n); if(!n)Snd.pop(); };
 
-  // achievement detection
+  // achievement detection — celebrate ONLY on a genuine new unlock.
+  // Never on first mount, and never while remote data is loading (sign-in/refresh), so the
+  // streak/achievement toast + confetti don't replay every time the app opens.
   useEffect(()=>{ const m=metrics(studied,favorites,stats); const earned=earnedIds(m);
-    if(!achInit.current){ achInit.current=true; setAchieved(earned); return; }
+    if(!achInit.current || loadingRef.current){ achInit.current=true; setAchieved(earned); return; }
     const fresh=earned.filter(id=>!achieved.includes(id));
     if(fresh.length){ const a=ACH.find(x=>x.id===fresh[0]); if(a){ setNewAch(a); setConfetti(true); Snd.fanfare();
       setTimeout(()=>setNewAch(null),3600); setTimeout(()=>setConfetti(false),1900); } setAchieved(earned); }
@@ -410,14 +412,14 @@ function App(){
   useEffect(()=>{ if(!auth)return; const unsub=auth.onAuthStateChanged(async(u)=>{ setUser(u);
     if(u&&db){ setSync('syncing');
       try{ const doc=await db.collection('users').doc(u.uid).get();
-        if(doc.exists){ const d=doc.data(); loadingRef.current=true; setFav(d.favorites||[]); setStudied(d.studied||[]); if(d.stats)setStats(s=>({...s,...d.stats})); setTimeout(()=>{loadingRef.current=false;},90); setSync('synced'); setTimeout(()=>setSync(''),1500); }
+        if(doc.exists){ const d=doc.data(); loadingRef.current=true; setFav(d.favorites||[]); setStudied(d.studied||[]); if(d.stats)setStats(s=>({...s,...d.stats})); setTimeout(()=>{loadingRef.current=false;},600); setSync('synced'); setTimeout(()=>setSync(''),1500); }
         else { await db.collection('users').doc(u.uid).set({displayName:u.displayName,email:u.email,photoURL:u.photoURL,favorites,studied,stats,lastSync:firebase.firestore.FieldValue.serverTimestamp()},{merge:true}); setSync('synced'); setTimeout(()=>setSync(''),1500); }
       }catch(e){ console.error(e); setSync('error'); } }
   }); return unsub; },[]);
   useEffect(()=>{ if(user&&!loadingRef.current)saveUserData(user.uid); },[favorites,studied,stats]); // eslint-disable-line
 
   const signIn=async()=>{ if(!auth){alert('אין חיבור');return;} try{ await auth.signInWithPopup(googleProvider); }catch(e){ alert('שגיאת התחברות: '+e.message); } };
-  const signOut=async()=>{ loadingRef.current=true; try{ await auth.signOut(); }catch(e){} setUser(null); setTimeout(()=>{loadingRef.current=false;},90); };
+  const signOut=async()=>{ loadingRef.current=true; try{ await auth.signOut(); }catch(e){} setUser(null); setTimeout(()=>{loadingRef.current=false;},600); };
 
   const dm=(mode==='glossary'||mode==='flashcards'||mode==='quiz')?mode:'glossary';
   return (
