@@ -1,4 +1,4 @@
-const CACHE_NAME = 'shlifim-v16';
+const CACHE_NAME = 'shlifim-v17';
 const FILES_TO_CACHE = [
   './',
   './index.html',
@@ -37,35 +37,48 @@ self.addEventListener('activate', (event) => {
   self.clients.claim();
 });
 
-// Fetch: network-first for HTML (instant updates), cache-first for assets, bypass Firebase
+// Allow the page to tell a waiting SW to take over immediately
+self.addEventListener('message', (event) => {
+  if (event.data === 'SKIP_WAITING') self.skipWaiting();
+});
+
+// Network-first for our own HTML + app code (so deploys show up on the next reload),
+// cache-first only for static media (icons/images/fonts). Firebase is bypassed.
 self.addEventListener('fetch', (event) => {
-  const url = event.request.url;
+  const req = event.request;
+  const url = req.url;
+  if (req.method !== 'GET') return;
 
   if (url.includes('firebaseio.com') || url.includes('googleapis.com') ||
       url.includes('firebase') || url.includes('gstatic.com/firebasejs')) {
     return; // let the browser handle auth/firestore normally
   }
 
-  if (event.request.mode === 'navigate' || url.endsWith('.html')) {
+  const sameOrigin = url.startsWith(self.location.origin);
+  const isCode = req.mode === 'navigate' || /\.(html|js|jsx|css|json)(\?|$)/i.test(url);
+
+  // App shell + code → network-first (always fresh when online, cache fallback offline)
+  if (sameOrigin && isCode) {
     event.respondWith(
-      fetch(event.request).then((response) => {
-        const clone = response.clone();
-        caches.open(CACHE_NAME).then(cache => cache.put(event.request, clone));
+      fetch(req).then((response) => {
+        if (response && response.status === 200) {
+          const clone = response.clone();
+          caches.open(CACHE_NAME).then(cache => cache.put(req, clone));
+        }
         return response;
-      }).catch(() => caches.match(event.request).then(c => c || caches.match('./index.html')))
+      }).catch(() => caches.match(req).then(c => c || (req.mode === 'navigate' ? caches.match('./index.html') : undefined)))
     );
     return;
   }
 
+  // Everything else (images, icons, fonts) → cache-first
   event.respondWith(
-    caches.match(event.request).then((cached) => cached || fetch(event.request).then((response) => {
-      if (event.request.method === 'GET' && response.status === 200) {
+    caches.match(req).then((cached) => cached || fetch(req).then((response) => {
+      if (response && response.status === 200) {
         const clone = response.clone();
-        caches.open(CACHE_NAME).then(cache => cache.put(event.request, clone));
+        caches.open(CACHE_NAME).then(cache => cache.put(req, clone));
       }
       return response;
-    }).catch(() => {
-      if (event.request.mode === 'navigate') return caches.match('./index.html');
-    }))
+    }).catch(() => undefined))
   );
 });
