@@ -67,59 +67,73 @@ function useInstall(){
   const promptInstall=async()=>{ if(!deferred)return; deferred.prompt(); try{ await deferred.userChoice; }catch(e){} setDeferred(null); };
   return { canInstall:!!deferred, isIOS, isStandalone, installed, promptInstall };
 }
+// instructions overlay shared by the home banner and the About button
+function InstallSheets({sheet,onClose}){
+  if(!sheet) return null;
+  const ua=navigator.userAgent||''; const isFirefox=/firefox|fxios/i.test(ua); const isAndroid=/android/i.test(ua);
+  return (<div className="overlay" onClick={onClose}>
+    <div className="sheet-card ios-sheet" onClick={e=>e.stopPropagation()}>
+      <button className="od-x" onClick={onClose} aria-label="סגור">×</button>
+      <img src="icon-192.png" alt="" style={{width:54,height:54,borderRadius:14}}/>
+      {sheet==='ios'
+        ? <><h3>התקנה ל-iPhone / iPad</h3>
+            <ol>
+              <li>הקישו על כפתור השיתוף <b>⬆️</b> בתחתית הדפדפן (Safari)</li>
+              <li>גללו ובחרו <b>הוסף למסך הבית</b> (Add to Home Screen)</li>
+              <li>הקישו <b>הוסף</b> — והאייקון של שליפים יופיע במסך הבית 🎉</li>
+            </ol></>
+        : <><h3>התקנת האפליקציה</h3>
+            {isFirefox
+              ? <ol>
+                  <li><b>Firefox במחשב</b> אינו תומך בהתקנה אוטומטית.</li>
+                  <li>להתקנה מלאה — פתחו את האתר ב-<b>Google Chrome</b> או ב-<b>Microsoft Edge</b>, וכאן יופיע כפתור התקנה אוטומטי.</li>
+                  <li>ב-Firefox בטלפון: תפריט <b>⋮</b> ← <b>התקן</b> / <b>הוספה למסך הבית</b>.</li>
+                </ol>
+              : <ol>
+                  <li>פתחו את תפריט הדפדפן ({isAndroid?'⋮ בפינה העליונה':'⋮ או ☰ בפינה'}).</li>
+                  <li>בחרו <b>{isAndroid?'התקנת אפליקציה / הוספה למסך הבית':'התקן את שליפים… (Install app)'}</b>.</li>
+                  <li>אשרו — והאייקון יתווסף למסך הבית / לשולחן העבודה 🎉</li>
+                </ol>}
+            <p style={{fontSize:13,color:'var(--text-3)',margin:'4px 0 12px'}}>אפשר תמיד להשתמש באתר ישירות בדפדפן, בלי להתקין.</p></>}
+      <button className="btn btn-accent" style={{width:'100%'}} onClick={onClose}>הבנתי</button>
+    </div>
+  </div>);
+}
+// shared click behaviour: native prompt if available, else iOS / manual instructions
+function useInstallAction(){
+  const inst=useInstall();
+  const [sheet,setSheet]=useState('');
+  const act=async()=>{ if(inst.canInstall){ await inst.promptInstall(); } else if(inst.isIOS){ setSheet('ios'); } else { setSheet('manual'); } };
+  return { ...inst, sheet, setSheet, act };
+}
+// dismissible banner at the top of the glossary
 function InstallCard(){
-  const {canInstall,isIOS,isStandalone,installed,promptInstall}=useInstall();
+  const {isStandalone,installed,sheet,setSheet,act}=useInstallAction();
   const [dismissed,setDismissed]=useLocal('ml-install-x',false);
-  const [sheet,setSheet]=useState(''); // '', 'ios', 'manual'
   if(installed||isStandalone||dismissed) return null;
-  const ua=navigator.userAgent||'';
-  const isFirefox=/firefox|fxios/i.test(ua);
-  const isAndroid=/android/i.test(ua);
-  const onClick=async()=>{ if(canInstall){ await promptInstall(); } else if(isIOS){ setSheet('ios'); } else { setSheet('manual'); } };
-  const close=()=>setSheet('');
   return (<>
     <div className="install-card">
       <img className="install-icon" src="icon-192.png" alt="" aria-hidden="true"/>
       <div className="install-txt"><b>התקינו את שליפים</b><span>אפליקציה מלאה במסך הבית — עובדת גם לא מקוון</span></div>
-      <button className="install-go" onClick={onClick}>
+      <button className="install-go" onClick={act}>
         <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 3v12"/><path d="M7 11l5 5 5-5"/><path d="M5 20h14"/></svg>
         התקנה
       </button>
       <button className="install-close" onClick={()=>setDismissed(true)} aria-label="סגור">×</button>
     </div>
-    {sheet==='ios' && <div className="overlay" onClick={close}>
-      <div className="sheet-card ios-sheet" onClick={e=>e.stopPropagation()}>
-        <button className="od-x" onClick={close} aria-label="סגור">×</button>
-        <img src="icon-192.png" alt="" style={{width:54,height:54,borderRadius:14}}/>
-        <h3>התקנה ל-iPhone / iPad</h3>
-        <ol>
-          <li>הקישו על כפתור השיתוף <b>⬆️</b> בתחתית הדפדפן (Safari)</li>
-          <li>גללו ובחרו <b>הוסף למסך הבית</b> (Add to Home Screen)</li>
-          <li>הקישו <b>הוסף</b> — והאייקון של שליפים יופיע במסך הבית 🎉</li>
-        </ol>
-        <button className="btn btn-accent" style={{width:'100%'}} onClick={close}>הבנתי</button>
-      </div>
-    </div>}
-    {sheet==='manual' && <div className="overlay" onClick={close}>
-      <div className="sheet-card ios-sheet" onClick={e=>e.stopPropagation()}>
-        <button className="od-x" onClick={close} aria-label="סגור">×</button>
-        <img src="icon-192.png" alt="" style={{width:54,height:54,borderRadius:14}}/>
-        <h3>התקנת האפליקציה</h3>
-        {isFirefox
-          ? <ol>
-              <li><b>Firefox במחשב</b> אינו תומך בהתקנה אוטומטית.</li>
-              <li>להתקנה מלאה — פתחו את האתר ב-<b>Google Chrome</b> או ב-<b>Microsoft Edge</b>, וכאן יופיע כפתור התקנה אוטומטי.</li>
-              <li>ב-Firefox בטלפון: תפריט <b>⋮</b> ← <b>התקן</b> / <b>הוספה למסך הבית</b>.</li>
-            </ol>
-          : <ol>
-              <li>פתחו את תפריט הדפדפן ({isAndroid?'⋮ בפינה העליונה':'⋮ או ☰ בפינה'}).</li>
-              <li>בחרו <b>{isAndroid?'התקנת אפליקציה / הוספה למסך הבית':'התקן את שליפים… (Install app)'}</b>.</li>
-              <li>אשרו — והאייקון יתווסף למסך הבית / לשולחן העבודה 🎉</li>
-            </ol>}
-        <p style={{fontSize:13,color:'var(--text-3)',margin:'4px 0 12px'}}>אפשר תמיד להשתמש באתר ישירות בדפדפן, בלי להתקין.</p>
-        <button className="btn btn-accent" style={{width:'100%'}} onClick={close}>הבנתי</button>
-      </div>
-    </div>}
+    <InstallSheets sheet={sheet} onClose={()=>setSheet('')}/>
+  </>);
+}
+// permanent button for the About page
+function InstallButton(){
+  const {isStandalone,installed,sheet,setSheet,act}=useInstallAction();
+  if(installed||isStandalone) return (<div className="install-done">✓ האפליקציה כבר מותקנת אצלך</div>);
+  return (<>
+    <button className="btn btn-pri install-btn-about" onClick={act}>
+      <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 3v12"/><path d="M7 11l5 5 5-5"/><path d="M5 20h14"/></svg>
+      התקנת האפליקציה
+    </button>
+    <InstallSheets sheet={sheet} onClose={()=>setSheet('')}/>
   </>);
 }
 
@@ -301,6 +315,11 @@ function About(){
       <a className="book" href={WA} target="_blank" rel="noopener"><img src="book-glossary.png" alt="מונחון"/><div><span className="tag">תשפ״ו · 2026</span><h4>מונחון</h4><p>מילון מודפס של 452 מושגים, מנוקד ומאויר.</p><span className="price">₪69</span></div></a>
     </div>
     <div className="bundle"><h4>שלושת הספרים יחד 🎁</h4><p>כל הארגז לבגרות</p><div className="prices"><span className="old">₪313</span><span className="new">₪249</span><span className="save">חוסכים ₪64</span></div><a href={WA} target="_blank" rel="noopener">לרכישת החבילה →</a></div>
+    <div className="install-about">
+      <img src="icon-192.png" alt="" aria-hidden="true"/>
+      <div><h4>התקינו את שליפים למסך הבית</h4><p>גישה מהירה כמו אפליקציה אמיתית — עובדת גם ללא אינטרנט.</p></div>
+      <InstallButton/>
+    </div>
     <h2 className="sec-title">דברו איתי 📩</h2>
     <div className="contact">
       <a href={WA} target="_blank" rel="noopener"><span className="em">💬</span> WhatsApp</a>
