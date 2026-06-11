@@ -29,6 +29,27 @@
 <script src="app/achievements.js"></script>
 <script src="app/sound.js"></script>
 <script type="text/babel" src="app/app-v2.jsx" data-presets="react"></script>
-<script>if('serviceWorker' in navigator){window.addEventListener('load',function(){navigator.serviceWorker.register('service-worker.js');});}</script>
+<script>
+if('serviceWorker' in navigator){
+  window.addEventListener('load',function(){
+    navigator.serviceWorker.register('service-worker.js').then(function(reg){
+      reg.update();
+      // when a new version is found, ask it to activate as soon as it's installed
+      reg.addEventListener('updatefound',function(){
+        var sw=reg.installing;
+        if(!sw)return;
+        sw.addEventListener('statechange',function(){
+          if(sw.state==='installed' && navigator.serviceWorker.controller){ sw.postMessage('SKIP_WAITING'); }
+        });
+      });
+    }).catch(function(){});
+    // reload once when the new service worker takes control, so fresh code is shown immediately
+    var refreshed=false;
+    navigator.serviceWorker.addEventListener('controllerchange',function(){
+      if(refreshed)return; refreshed=true; window.location.reload();
+    });
+  });
+}
+</script>
 </body>
 </html>
