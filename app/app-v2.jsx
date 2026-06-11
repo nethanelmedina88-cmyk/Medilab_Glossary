@@ -24,6 +24,20 @@ function metrics(studied,favorites,stats){
     topicsCompleted:tc, topicDone, usedDark:!!stats.usedDark };
 }
 const earnedIds=m=>ACH.filter(a=>{try{return a.check(m);}catch(e){return false;}}).map(a=>a.id);
+const uniq=arr=>Array.from(new Set(arr));
+// merge cloud stats into local WITHOUT clobbering progress: counters only grow, and the
+// most-recently-visited side keeps its day-streak (local mount may have advanced today's).
+function mergeStats(local,cloud){
+  local=local||{}; if(!cloud) return local;
+  const out={...local,...cloud};
+  ['answered','correct','quizzes','perfect','maxDayStreak'].forEach(k=>{ out[k]=Math.max(local[k]||0,cloud[k]||0); });
+  out.usedDark=!!(local.usedDark||cloud.usedDark);
+  const ll=local.lastVisit||'', cl=cloud.lastVisit||'';
+  if(ll>=cl){ out.lastVisit=ll||cl; out.dayStreak=local.dayStreak||cloud.dayStreak||0; }
+  else { out.lastVisit=cl; out.dayStreak=cloud.dayStreak||0; }
+  out.maxDayStreak=Math.max(out.maxDayStreak||0,out.dayStreak||0);
+  return out;
+}
 
 /* ---------- Firebase ---------- */
 const FB_CONFIG={apiKey:"AIzaSyCffeHkYj2rY6odXD2MZbmArGNjh-nxuGA",authDomain:"shlifim-medilab.firebaseapp.com",projectId:"shlifim-medilab",storageBucket:"shlifim-medilab.firebasestorage.app",messagingSenderId:"378600944240",appId:"1:378600944240:web:eb8815afb165fb4d28fab5",measurementId:"G-HM38FMZ72X"};
@@ -441,24 +455,25 @@ function App(){
   // Never on first mount, and never while remote data is loading (sign-in/refresh), so the
   // streak/achievement toast + confetti don't replay every time the app opens.
   useEffect(()=>{ const m=metrics(studied,favorites,stats); const earned=earnedIds(m);
-    if(!achInit.current || loadingRef.current){ achInit.current=true; setAchieved(earned); return; }
+    // achieved is monotonic — once earned, always earned (never re-celebrate, never drop on a transient stats dip).
+    if(!achInit.current || loadingRef.current){ achInit.current=true; setAchieved(prev=>uniq([...prev,...earned])); return; }
     const fresh=earned.filter(id=>!achieved.includes(id));
     if(fresh.length){ const a=ACH.find(x=>x.id===fresh[0]); if(a){ setNewAch(a); setConfetti(true); Snd.fanfare();
-      setTimeout(()=>setNewAch(null),3600); setTimeout(()=>setConfetti(false),1900); } setAchieved(earned); }
+      setTimeout(()=>setNewAch(null),3600); setTimeout(()=>setConfetti(false),1900); } setAchieved(prev=>uniq([...prev,...earned])); }
   },[studied,favorites,stats]); // eslint-disable-line
 
   // firebase sync
   const saveUserData=useCallback(async(uid)=>{ if(!db||!auth.currentUser)return; setSync('syncing');
-    try{ await db.collection('users').doc(uid).set({displayName:auth.currentUser.displayName,email:auth.currentUser.email,photoURL:auth.currentUser.photoURL,favorites,studied,stats,lastSync:firebase.firestore.FieldValue.serverTimestamp()},{merge:true}); setSync('synced'); setTimeout(()=>setSync(''),1500); }
-    catch(e){ console.error(e); setSync('error'); } },[favorites,studied,stats]);
+    try{ await db.collection('users').doc(uid).set({displayName:auth.currentUser.displayName,email:auth.currentUser.email,photoURL:auth.currentUser.photoURL,favorites,studied,stats,achieved,lastSync:firebase.firestore.FieldValue.serverTimestamp()},{merge:true}); setSync('synced'); setTimeout(()=>setSync(''),1500); }
+    catch(e){ console.error(e); setSync('error'); } },[favorites,studied,stats,achieved]);
   useEffect(()=>{ if(!auth)return; const unsub=auth.onAuthStateChanged(async(u)=>{ setUser(u);
     if(u&&db){ setSync('syncing');
       try{ const doc=await db.collection('users').doc(u.uid).get();
-        if(doc.exists){ const d=doc.data(); loadingRef.current=true; setFav(d.favorites||[]); setStudied(d.studied||[]); if(d.stats)setStats(s=>({...s,...d.stats})); setTimeout(()=>{loadingRef.current=false;},600); setSync('synced'); setTimeout(()=>setSync(''),1500); }
-        else { await db.collection('users').doc(u.uid).set({displayName:u.displayName,email:u.email,photoURL:u.photoURL,favorites,studied,stats,lastSync:firebase.firestore.FieldValue.serverTimestamp()},{merge:true}); setSync('synced'); setTimeout(()=>setSync(''),1500); }
+        if(doc.exists){ const d=doc.data(); loadingRef.current=true; setFav(d.favorites||[]); setStudied(d.studied||[]); if(d.stats)setStats(s=>mergeStats(s,d.stats)); if(d.achieved)setAchieved(prev=>uniq([...prev,...d.achieved])); setTimeout(()=>{loadingRef.current=false;},600); setSync('synced'); setTimeout(()=>setSync(''),1500); }
+        else { await db.collection('users').doc(u.uid).set({displayName:u.displayName,email:u.email,photoURL:u.photoURL,favorites,studied,stats,achieved,lastSync:firebase.firestore.FieldValue.serverTimestamp()},{merge:true}); setSync('synced'); setTimeout(()=>setSync(''),1500); }
       }catch(e){ console.error(e); setSync('error'); } }
   }); return unsub; },[]);
-  useEffect(()=>{ if(user&&!loadingRef.current)saveUserData(user.uid); },[favorites,studied,stats]); // eslint-disable-line
+  useEffect(()=>{ if(user&&!loadingRef.current)saveUserData(user.uid); },[favorites,studied,stats,achieved]); // eslint-disable-line
 
   const signIn=async()=>{ if(!auth){alert('אין חיבור');return;} try{ await auth.signInWithPopup(googleProvider); }catch(e){ alert('שגיאת התחברות: '+e.message); } };
   const signOut=async()=>{ loadingRef.current=true; try{ await auth.signOut(); }catch(e){} setUser(null); setTimeout(()=>{loadingRef.current=false;},600); };
