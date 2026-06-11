@@ -70,10 +70,13 @@ function useInstall(){
 function InstallCard(){
   const {canInstall,isIOS,isStandalone,installed,promptInstall}=useInstall();
   const [dismissed,setDismissed]=useLocal('ml-install-x',false);
-  const [showIOS,setShowIOS]=useState(false);
+  const [sheet,setSheet]=useState(''); // '', 'ios', 'manual'
   if(installed||isStandalone||dismissed) return null;
-  if(!canInstall&&!isIOS) return null;
-  const onClick=()=>{ if(isIOS){ setShowIOS(true); } else { promptInstall(); } };
+  const ua=navigator.userAgent||'';
+  const isFirefox=/firefox|fxios/i.test(ua);
+  const isAndroid=/android/i.test(ua);
+  const onClick=async()=>{ if(canInstall){ await promptInstall(); } else if(isIOS){ setSheet('ios'); } else { setSheet('manual'); } };
+  const close=()=>setSheet('');
   return (<>
     <div className="install-card">
       <img className="install-icon" src="icon-192.png" alt="" aria-hidden="true"/>
@@ -84,9 +87,9 @@ function InstallCard(){
       </button>
       <button className="install-close" onClick={()=>setDismissed(true)} aria-label="סגור">×</button>
     </div>
-    {showIOS && <div className="overlay" onClick={()=>setShowIOS(false)}>
+    {sheet==='ios' && <div className="overlay" onClick={close}>
       <div className="sheet-card ios-sheet" onClick={e=>e.stopPropagation()}>
-        <button className="od-x" onClick={()=>setShowIOS(false)} aria-label="סגור">×</button>
+        <button className="od-x" onClick={close} aria-label="סגור">×</button>
         <img src="icon-192.png" alt="" style={{width:54,height:54,borderRadius:14}}/>
         <h3>התקנה ל-iPhone / iPad</h3>
         <ol>
@@ -94,7 +97,27 @@ function InstallCard(){
           <li>גללו ובחרו <b>הוסף למסך הבית</b> (Add to Home Screen)</li>
           <li>הקישו <b>הוסף</b> — והאייקון של שליפים יופיע במסך הבית 🎉</li>
         </ol>
-        <button className="btn btn-accent" style={{width:'100%'}} onClick={()=>setShowIOS(false)}>הבנתי</button>
+        <button className="btn btn-accent" style={{width:'100%'}} onClick={close}>הבנתי</button>
+      </div>
+    </div>}
+    {sheet==='manual' && <div className="overlay" onClick={close}>
+      <div className="sheet-card ios-sheet" onClick={e=>e.stopPropagation()}>
+        <button className="od-x" onClick={close} aria-label="סגור">×</button>
+        <img src="icon-192.png" alt="" style={{width:54,height:54,borderRadius:14}}/>
+        <h3>התקנת האפליקציה</h3>
+        {isFirefox
+          ? <ol>
+              <li><b>Firefox במחשב</b> אינו תומך בהתקנה אוטומטית.</li>
+              <li>להתקנה מלאה — פתחו את האתר ב-<b>Google Chrome</b> או ב-<b>Microsoft Edge</b>, וכאן יופיע כפתור התקנה אוטומטי.</li>
+              <li>ב-Firefox בטלפון: תפריט <b>⋮</b> ← <b>התקן</b> / <b>הוספה למסך הבית</b>.</li>
+            </ol>
+          : <ol>
+              <li>פתחו את תפריט הדפדפן ({isAndroid?'⋮ בפינה העליונה':'⋮ או ☰ בפינה'}).</li>
+              <li>בחרו <b>{isAndroid?'התקנת אפליקציה / הוספה למסך הבית':'התקן את שליפים… (Install app)'}</b>.</li>
+              <li>אשרו — והאייקון יתווסף למסך הבית / לשולחן העבודה 🎉</li>
+            </ol>}
+        <p style={{fontSize:13,color:'var(--text-3)',margin:'4px 0 12px'}}>אפשר תמיד להשתמש באתר ישירות בדפדפן, בלי להתקין.</p>
+        <button className="btn btn-accent" style={{width:'100%'}} onClick={close}>הבנתי</button>
       </div>
     </div>}
   </>);
