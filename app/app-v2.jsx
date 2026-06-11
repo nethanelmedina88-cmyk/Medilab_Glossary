@@ -49,6 +49,57 @@ function Confetti(){ const cols=['#3FA9D6','#5CB85C','#F0654F','#F9D85C','#9B59B
   for(let i=0;i<42;i++){ p.push(<i key={i} style={{left:(Math.random()*100)+'%',background:cols[i%cols.length],animationDuration:(1+Math.random()*1.1)+'s',animationDelay:(Math.random()*0.3)+'s'}}/>); }
   return <div className="confetti">{p}</div>; }
 
+/* ---------- PWA INSTALL ---------- */
+function useInstall(){
+  const [deferred,setDeferred]=useState(null);
+  const [installed,setInstalled]=useState(false);
+  useEffect(()=>{
+    const onBIP=e=>{ e.preventDefault(); setDeferred(e); };
+    const onInstalled=()=>{ setInstalled(true); setDeferred(null); };
+    window.addEventListener('beforeinstallprompt',onBIP);
+    window.addEventListener('appinstalled',onInstalled);
+    return ()=>{ window.removeEventListener('beforeinstallprompt',onBIP); window.removeEventListener('appinstalled',onInstalled); };
+  },[]);
+  const mm=window.matchMedia&&window.matchMedia('(display-mode: standalone)');
+  const isStandalone=(mm&&mm.matches)||window.navigator.standalone===true;
+  const ua=navigator.userAgent||'';
+  const isIOS=/iphone|ipad|ipod/i.test(ua)&&!window.MSStream;
+  const promptInstall=async()=>{ if(!deferred)return; deferred.prompt(); try{ await deferred.userChoice; }catch(e){} setDeferred(null); };
+  return { canInstall:!!deferred, isIOS, isStandalone, installed, promptInstall };
+}
+function InstallCard(){
+  const {canInstall,isIOS,isStandalone,installed,promptInstall}=useInstall();
+  const [dismissed,setDismissed]=useLocal('ml-install-x',false);
+  const [showIOS,setShowIOS]=useState(false);
+  if(installed||isStandalone||dismissed) return null;
+  if(!canInstall&&!isIOS) return null;
+  const onClick=()=>{ if(isIOS){ setShowIOS(true); } else { promptInstall(); } };
+  return (<>
+    <div className="install-card">
+      <img className="install-icon" src="icon-192.png" alt="" aria-hidden="true"/>
+      <div className="install-txt"><b>התקינו את שליפים</b><span>אפליקציה מלאה במסך הבית — עובדת גם לא מקוון</span></div>
+      <button className="install-go" onClick={onClick}>
+        <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 3v12"/><path d="M7 11l5 5 5-5"/><path d="M5 20h14"/></svg>
+        התקנה
+      </button>
+      <button className="install-close" onClick={()=>setDismissed(true)} aria-label="סגור">×</button>
+    </div>
+    {showIOS && <div className="overlay" onClick={()=>setShowIOS(false)}>
+      <div className="sheet-card ios-sheet" onClick={e=>e.stopPropagation()}>
+        <button className="od-x" onClick={()=>setShowIOS(false)} aria-label="סגור">×</button>
+        <img src="icon-192.png" alt="" style={{width:54,height:54,borderRadius:14}}/>
+        <h3>התקנה ל-iPhone / iPad</h3>
+        <ol>
+          <li>הקישו על כפתור השיתוף <b>⬆️</b> בתחתית הדפדפן (Safari)</li>
+          <li>גללו ובחרו <b>הוסף למסך הבית</b> (Add to Home Screen)</li>
+          <li>הקישו <b>הוסף</b> — והאייקון של שליפים יופיע במסך הבית 🎉</li>
+        </ol>
+        <button className="btn btn-accent" style={{width:'100%'}} onClick={()=>setShowIOS(false)}>הבנתי</button>
+      </div>
+    </div>}
+  </>);
+}
+
 /* ---------- HEADER / NAV ---------- */
 function Header({pinCount,dark,setDark,user,onProfile,onReview,onLogo}){
   return (<header className="hdr">
@@ -89,6 +140,7 @@ function Glossary({favorites,studied,toggleFav,toggleStudied,initialTopic,onOpen
   const tp=topic?TBK[topic]:null;
   return (<>
     <div className="hero"><h1>מילון מושגים</h1><p>{TOTAL} מושגים · חיפוש, סינון לפי אות ונושא</p></div>
+    <InstallCard/>
     <div className="search"><span aria-hidden="true">🔍</span><input value={q} onChange={e=>setQ(e.target.value)} placeholder="חפשו מושג… (אוסמוזה, PCR, אקסון)"/>{q&&<button className="x" onClick={()=>setQ('')} aria-label="נקה">×</button>}</div>
     <TopicChips value={topic} onPick={setTopic}/>
     <div className="letters"><button className={`let ${!letter?'on':''}`} style={{width:'auto',padding:'0 10px'}} onClick={()=>setLetter('')}>הכל</button>
