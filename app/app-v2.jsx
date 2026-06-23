@@ -1,3 +1,6 @@
+/* @jsxRuntime classic */
+/* ^ keep classic JSX (React.createElement) — we load React via global <script>, not as a module,
+   so the automatic runtime's `import "react/jsx-runtime"` would crash the in-browser Babel build. */
 /* SHLIFIM v2 — Modern + Brand Spark. Logic: window.SL. Data: window.GLOSSARY/TOPICS. Auth/sync: Firebase. */
 const { useState, useEffect, useMemo, useRef, useCallback } = React;
 
