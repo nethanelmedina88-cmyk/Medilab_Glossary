@@ -99,6 +99,13 @@
   var GLOSSARY = window.GLOSSARY || [];
   var FINALS={'ך':'כ','ם':'מ','ן':'נ','ף':'פ','ץ':'צ'};
   function norm(s){ return String(s||'').replace(/[ךםןףץ]/g,function(c){return FINALS[c];}).replace(/[^א-ת]/g,''); }
+  function shortClue(e){
+    var t=String(e.definition||e.paraphrase||'').trim();
+    t=t.split(/[.;]/)[0].trim();                 // first clause/sentence
+    t=t.replace(/\s*\([^)]*\)\s*/g,' ').trim();   // drop parentheticals
+    if(t.length>46) t=t.slice(0,44).trim()+'…';   // keep it short
+    return t;
+  }
 
   function poolFor(topic){
     var seen={}, out=[];
@@ -109,69 +116,93 @@
       var ans=norm(clean);
       if(ans.length<3 || ans.length>11) return;
       if(seen[ans]) return; seen[ans]=1;
-      var clue=(e.paraphrase||e.definition||'').trim();
-      out.push({raw:clean, ans:ans, clue:clue, en:e.english});
+      out.push({raw:clean, ans:ans, clue:shortClue(e), en:e.english});
     });
     return out;
   }
 
   function shuffle(a){ a=a.slice(); for(var i=a.length-1;i>0;i--){ var j=Math.floor(Math.random()*(i+1)); var t=a[i];a[i]=a[j];a[j]=t; } return a; }
 
-  // greedy open-crossword generator
-  function generate(words){
-    words = words.slice().sort(function(a,b){ return b.ans.length-a.ans.length; });
-    var cells={}, placements=[];
+  // best-fit open-crossword generator: each round places the word whose best legal
+  // placement adds the MOST crossings and the LEAST footprint → tight, compact grid.
+  function generate(words, target){
+    target = target || 12;
+    words = words.slice(); // shuffled order preserved (first word = random seed → variety)
+    var cells={}, placements=[], B=null;
     function key(r,c){ return r+','+c; }
-    function fits(ans,r,c,dir){
-      var touch=false, i, rr, cc;
+    function fits(ans,r,c,dir){ // returns #crossings, or -1 if illegal
+      var touch=0,i,rr,cc;
       for(i=0;i<ans.length;i++){
-        rr = dir==='V'? r+i : r; cc = dir==='H'? c+i : c;
+        rr=dir==='V'?r+i:r; cc=dir==='H'?c+i:c;
         var cur=cells[key(rr,cc)];
-        if(cur!==undefined){ if(cur!==ans[i]) return null; touch=true; }
-        else {
-          var perp = dir==='H'? [[rr-1,cc],[rr+1,cc]] : [[rr,cc-1],[rr,cc+1]];
-          for(var p=0;p<2;p++){ if(cells[key(perp[p][0],perp[p][1])]!==undefined) return null; }
-        }
+        if(cur!==undefined){ if(cur!==ans[i]) return -1; touch++; }
+        else { var perp = dir==='H'? [[rr-1,cc],[rr+1,cc]] : [[rr,cc-1],[rr,cc+1]];
+          for(var p=0;p<2;p++){ if(cells[key(perp[p][0],perp[p][1])]!==undefined) return -1; } }
       }
-      var bR = dir==='V'? r-1 : r, bC = dir==='H'? c-1 : c;
-      var aR = dir==='V'? r+ans.length : r, aC = dir==='H'? c+ans.length : c;
-      if(cells[key(bR,bC)]!==undefined) return null;
-      if(cells[key(aR,aC)]!==undefined) return null;
+      var bR=dir==='V'?r-1:r,bC=dir==='H'?c-1:c, aR=dir==='V'?r+ans.length:r,aC=dir==='H'?c+ans.length:c;
+      if(cells[key(bR,bC)]!==undefined) return -1;
+      if(cells[key(aR,aC)]!==undefined) return -1;
       return touch;
     }
-    function place(w,r,c,dir){ for(var i=0;i<w.ans.length;i++){ var rr=dir==='V'?r+i:r, cc=dir==='H'?c+i:c; cells[key(rr,cc)]=w.ans[i]; } placements.push({word:w,r:r,c:c,dir:dir}); }
+    function areaWith(r,c,dir,len){
+      var eR=dir==='V'?r+len-1:r, eC=dir==='H'?c+len-1:c;
+      var mnR=Math.min(B.minR,r),mnC=Math.min(B.minC,c),mxR=Math.max(B.maxR,eR),mxC=Math.max(B.maxC,eC);
+      return (mxR-mnR+1)*(mxC-mnC+1);
+    }
+    function place(w,r,c,dir){
+      for(var i=0;i<w.ans.length;i++){ var rr=dir==='V'?r+i:r, cc=dir==='H'?c+i:c; cells[key(rr,cc)]=w.ans[i];
+        if(!B){ B={minR:rr,minC:cc,maxR:rr,maxC:cc}; }
+        else { if(rr<B.minR)B.minR=rr; if(rr>B.maxR)B.maxR=rr; if(cc<B.minC)B.minC=cc; if(cc>B.maxC)B.maxC=cc; } }
+      placements.push({word:w,r:r,c:c,dir:dir});
+    }
     if(!words.length) return [];
-    place(words[0],0,0,'H');
-    var remaining=words.slice(1), progress=true;
-    while(progress){
-      progress=false;
-      for(var wi=0; wi<remaining.length; wi++){
-        var w=remaining[wi], done=false;
-        for(var pIdx=0; pIdx<placements.length && !done; pIdx++){
+    // seed with a longer word from the front for a good backbone
+    var seed=0; for(var s=0;s<Math.min(words.length,4);s++){ if(words[s].ans.length>words[seed].ans.length) seed=s; }
+    place(words[seed],0,0,'H'); var used={}; used[words[seed].ans]=1;
+    while(placements.length<target){
+      var best=null;
+      for(var wi=0; wi<words.length; wi++){
+        var w=words[wi]; if(used[w.ans]) continue;
+        for(var pIdx=0; pIdx<placements.length; pIdx++){
           var pl=placements[pIdx];
-          for(var pi=0; pi<pl.word.ans.length && !done; pi++){
-            for(var i=0;i<w.ans.length && !done;i++){
+          for(var pi=0; pi<pl.word.ans.length; pi++){
+            for(var i=0;i<w.ans.length;i++){
               if(w.ans[i]!==pl.word.ans[pi]) continue;
               var pr = pl.dir==='V'? pl.r+pi : pl.r;
               var pc = pl.dir==='H'? pl.c+pi : pl.c;
               var dir = pl.dir==='H'? 'V':'H';
               var r = dir==='V'? pr - i : pr;
               var c = dir==='H'? pc - i : pc;
-              if(fits(w.ans,r,c,dir)===true){ place(w,r,c,dir); remaining.splice(wi,1); wi--; done=true; progress=true; }
+              var cross=fits(w.ans,r,c,dir);
+              if(cross<1) continue;
+              var area=areaWith(r,c,dir,w.ans.length);
+              if(!best || cross>best.cross || (cross===best.cross && area<best.area)){
+                best={w:w,r:r,c:c,dir:dir,cross:cross,area:area};
+              }
             }
           }
         }
       }
+      if(!best) break;
+      place(best.w,best.r,best.c,best.dir); used[best.w.ans]=1;
     }
     return placements;
   }
 
-  function bestLayout(words){
-    var best=[];
-    for(var t=0;t<24;t++){
-      var p=generate(shuffle(words));
-      if(p.length>best.length) best=p;
-      if(best.length>=Math.min(words.length,14) && best.length>=10) break;
+  function bbox(p){ if(!p.length) return {area:1e9,rows:1e6,cols:1e6}; var minR=1e9,minC=1e9,maxR=-1e9,maxC=-1e9;
+    p.forEach(function(pl){ for(var i=0;i<pl.word.ans.length;i++){ var r=pl.dir==='V'?pl.r+i:pl.r,c=pl.dir==='H'?pl.c+i:pl.c;
+      if(r<minR)minR=r;if(r>maxR)maxR=r;if(c<minC)minC=c;if(c>maxC)maxC=c; } });
+    var rows=maxR-minR+1, cols=maxC-minC+1; return {area:rows*cols, rows:rows, cols:cols}; }
+  // most words placed, then the smallest LONGER side (punish long thin strips), then smallest area
+  function score(p){ var b=bbox(p); return p.length*1e7 - Math.max(b.rows,b.cols)*1000 - b.area; }
+  function bestLayout(words, target){
+    var best=[], bestScore=-1e12;
+    for(var t=0;t<60;t++){
+      var p=generate(shuffle(words), target);
+      var s=score(p);
+      if(s>bestScore){ bestScore=s; best=p; }
+      var b=bbox(p);
+      if(p.length>=target && Math.max(b.rows,b.cols)<=10) break; // square & compact enough
     }
     return best;
   }
@@ -350,8 +381,8 @@
   }
   function buildPuzzle(topic){
     var pool=poolFor(topic);
-    pool=shuffle(pool).slice(0,14); // cap for a clean, playable grid
-    var placements=bestLayout(pool);
+    // feed the whole topic; the generator selects up to 12 that interlock most compactly
+    var placements=bestLayout(pool, 12);
     model=buildModel(placements); sel={dir:'H',cells:[],clueId:null};
     render();
   }
