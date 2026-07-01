@@ -158,10 +158,12 @@
     if(t.length>60) t=t.slice(0,58).trim()+'…';
     return t;
   }
-  function poolFor(topic){
-    var seen={}, out=[];
+  // topics = array of topic names, or null/undefined for ALL topics (mixed)
+  function poolFor(topics){
+    var seen={}, out=[], all=!topics;
     GLOSSARY.forEach(function(e){
-      if(e.aliasOf || e.topic!==topic) return;
+      if(e.aliasOf) return;
+      if(!all && topics.indexOf(e.topic)<0) return;
       var clean=String(e.hebrew||'').trim();
       if(!/^[א-ת]{3,11}$/.test(clean)) return;
       var ans=norm(clean); if(ans.length<3||ans.length>11) return;
@@ -169,6 +171,19 @@
       out.push({raw:clean, ans:ans, clue:shortClue(e)});
     });
     return out;
+  }
+  // build the selector options: per-topic (>=6 words) + combined small topics + mixed-all
+  function buildOptions(){
+    var m={}; GLOSSARY.forEach(function(e){ if(e.aliasOf||!e.topic) return; var c=String(e.hebrew||'').trim();
+      if(/^[א-ת]{3,11}$/.test(c)){ (m[e.topic]=m[e.topic]||{})[norm(c)]=1; } });
+    var counts=Object.keys(m).map(function(t){return {t:t,n:Object.keys(m[t]).length};});
+    var per=counts.filter(function(x){return x.n>=6;}).sort(function(a,b){return b.n-a.n;});
+    var small=counts.filter(function(x){return x.n<6;}).sort(function(a,b){return b.n-a.n;});
+    var opts=per.map(function(o){return {label:o.t+' ('+o.n+')', topics:[o.t]};});
+    if(small.length){ var st=small.map(function(s){return s.t;}); var cnt=small.reduce(function(a,b){return a+b.n;},0);
+      opts.push({label:'➕ מושגים נוספים ('+cnt+')', topics:st}); }
+    opts.push({label:'🔀 מעורב — כל המושגים', topics:null});
+    return opts;
   }
   function shuffle(a){ a=a.slice(); for(var i=a.length-1;i>0;i--){ var j=Math.floor(Math.random()*(i+1)); var t=a[i];a[i]=a[j];a[j]=t; } return a; }
 
@@ -382,7 +397,7 @@
     document.getElementById('whints').textContent=hints;
     document.getElementById('wwords').textContent=model.entries.length;
     document.getElementById('win').classList.add('on'); confetti(); try{ ding(); }catch(e){}
-    if(window.parent && window.parent!==window){ try{ window.parent.postMessage({type:'ml-cw-solved', seconds:timer.t, hints:hints, words:model.entries.length, topic:document.getElementById('topic').value}, '*'); }catch(e){} } }
+    if(window.parent && window.parent!==window){ try{ window.parent.postMessage({type:'ml-cw-solved', seconds:timer.t, hints:hints, words:model.entries.length, topic:(OPTS[+document.getElementById('topic').value]||{}).label}, '*'); }catch(e){} } }
   function confetti(){ var cols=['#3FA9D6','#5CB85C','#F0654F','#F9D85C','#9B59B6'],w=document.createElement('div');w.className='confetti';
     for(var i=0;i<48;i++){ var p=document.createElement('i');p.style.left=(Math.random()*100)+'%';p.style.background=cols[i%cols.length];p.style.animationDuration=(1+Math.random()*1.1)+'s';p.style.animationDelay=(Math.random()*0.3)+'s';w.appendChild(p);} document.body.appendChild(w); setTimeout(function(){w.remove();},2200); }
   function ding(){ var a=new (window.AudioContext||window.webkitAudioContext)(); [523,659,784,1046].forEach(function(f,i){ var o=a.createOscillator(),g=a.createGain();o.type='triangle';o.frequency.value=f;o.connect(g);g.connect(a.destination);var t=a.currentTime+i*0.09;g.gain.setValueAtTime(0.0001,t);g.gain.exponentialRampToValueAtTime(0.16,t+0.01);g.gain.exponentialRampToValueAtTime(0.0001,t+0.22);o.start(t);o.stop(t+0.24);}); }
@@ -403,12 +418,12 @@
     if(inp.value){ inp.value=''; inp.parentNode.classList.remove('ok','bad'); } else advance(-1); markDone(); }
   function keepFocus(){ if(!sel.entry) return; var p=sel.entry.cells[sel.cellIdx]; if(p){ var inp=inputs[ck(p[0],p[1])]; if(inp) inp.focus(); } }
 
-  // topics + boot
-  function topics(){ var m={}; GLOSSARY.forEach(function(e){ if(e.aliasOf||!e.topic) return; var c=String(e.hebrew||'').trim(); if(/^[א-ת]{3,11}$/.test(c)) m[e.topic]=(m[e.topic]||0)+1; });
-    return Object.keys(m).map(function(k){return {t:k,n:m[k]};}).filter(function(x){return x.n>=6;}).sort(function(a,b){return b.n-a.n;}); }
+  // boot
+  var OPTS=[];
   function buildPuzzle(){
-    var topic=document.getElementById('topic').value, target=+document.getElementById('diff').value;
-    var pool=poolFor(topic); target=Math.min(target,pool.length);
+    var idx=+document.getElementById('topic').value; var opt=OPTS[idx]||OPTS[0]||{topics:null};
+    var target=+document.getElementById('diff').value;
+    var pool=poolFor(opt.topics); target=Math.min(target,pool.length);
     model=buildModel(bestLayout(pool,target)); sel={entry:null,cellIdx:0};
     if(timer.iv){clearInterval(timer.iv);timer.iv=null;} timer={t:0,iv:null,started:false}; document.getElementById('timer').textContent='⏱️ 0:00';
     hints=0; document.getElementById('hints').textContent='💡 0';
@@ -420,9 +435,10 @@
       if(pr.get('dark')==='1') localStorage.setItem('ml-cw-dark','1');
       else if(pr.get('dark')==='0') localStorage.setItem('ml-cw-dark','0');
     }catch(e){}
-    var sel2=document.getElementById('topic'), list=topics();
-    list.forEach(function(x){ var o=document.createElement('option'); o.value=x.t; o.textContent=x.t+' ('+x.n+')'; sel2.appendChild(o); });
-    sel2.value=(list.filter(function(x){return x.t==='אקולוגיה';})[0]?'אקולוגיה':(list[0]&&list[0].t));
+    var sel2=document.getElementById('topic'); OPTS=buildOptions();
+    OPTS.forEach(function(o,i){ var opt=document.createElement('option'); opt.value=String(i); opt.textContent=o.label; sel2.appendChild(opt); });
+    var defIdx=OPTS.findIndex(function(o){return o.topics&&o.topics.length===1&&o.topics[0]==='אקולוגיה';});
+    sel2.value=String(defIdx>=0?defIdx:0);
     document.getElementById('new').addEventListener('click',buildPuzzle);
     document.getElementById('wnew').addEventListener('click',function(){ document.getElementById('win').classList.remove('on'); buildPuzzle(); });
     sel2.addEventListener('change',buildPuzzle);
