@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
+<title>תשבץ ביולוגיה — MediLab (אב-טיפוס)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;500;600;700;800&family=Rubik:wght@600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#FBFAF6; --surface:#fff; --surface-2:#F4F1E9; --border:#ECE7DA;
+    --text:#15212C; --text-2:#5A6470; --text-3:#8A93A0;
+    --blue:#3FA9D6; --blue-strong:#1B6FA8; --green:#5CB85C; --green-strong:#3F8C3F;
+    --coral:#F0654F; --spark:#F9D85C;
+    --grad:linear-gradient(135deg,#3FA9D6,#5CB85C);
+    --r:14px; --e2:0 6px 18px rgba(27,111,168,.08); --e1:0 1px 2px rgba(20,30,45,.05);
+    --cell:min(9vw,40px);
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:'Assistant',system-ui,sans-serif;background:var(--bg);color:var(--text);direction:rtl;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:560px;margin:0 auto;padding:14px 14px 60px}
+  header.hd{display:flex;align-items:center;gap:10px;margin:4px 2px 14px}
+  header.hd .logo{width:34px;height:34px;border-radius:9px;object-fit:contain;box-shadow:var(--e1)}
+  header.hd b{font-family:'Rubik';font-size:19px;background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+  header.hd span{display:block;font-size:11px;color:var(--text-3);font-weight:600}
+  .bar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:12px}
+  select,.btn{font-family:inherit;font-weight:700;font-size:14px;border-radius:10px;border:1px solid var(--border);background:var(--surface);color:var(--text);padding:9px 12px;cursor:pointer;box-shadow:var(--e1)}
+  .btn.pri{background:var(--grad);color:#fff;border:none}
+  .btn.g{background:linear-gradient(135deg,var(--green),var(--green-strong));color:#fff;border:none}
+  .btn:active{transform:scale(.97)}
+  .meta{font-size:12.5px;color:var(--text-3);font-weight:600;margin:0 2px 10px}
+  .gridwrap{overflow:auto;padding:6px;background:var(--surface);border:1px solid var(--border);border-radius:var(--r);box-shadow:var(--e2);margin-bottom:16px}
+  .grid{display:grid;direction:rtl;gap:0;margin:0 auto;width:max-content}
+  .cell{position:relative;width:var(--cell);height:var(--cell);border:1px solid #cfd8dd;background:#fff}
+  .cell.block{border:none;background:transparent}
+  .cell input{width:100%;height:100%;border:none;background:transparent;text-align:center;font-family:'Rubik';font-weight:700;
+    font-size:calc(var(--cell)*.5);color:var(--text);outline:none;padding:0;caret-color:var(--blue)}
+  .cell .num{position:absolute;top:1px;right:2px;font-size:calc(var(--cell)*.26);color:var(--text-3);font-weight:700;line-height:1}
+  .cell.sel{background:#EAF6FB}
+  .cell.selword{background:#F3FAF2}
+  .cell.ok input{color:var(--green-strong)}
+  .cell.bad input{color:var(--coral)}
+  .cell.ok{background:#EEF7EC}
+  .cell.bad{background:#FDEEEC}
+  h3.sec{font-family:'Rubik';font-size:15px;margin:14px 2px 8px;display:flex;align-items:center;gap:6px}
+  .clues{display:grid;grid-template-columns:1fr;gap:6px}
+  .clue{display:flex;gap:8px;font-size:13.5px;line-height:1.5;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:8px 10px;cursor:pointer}
+  .clue:active{background:var(--surface-2)}
+  .clue.active{border-color:var(--blue);background:#EAF6FB}
+  .clue b{color:var(--blue-strong);font-family:'Rubik';flex:0 0 auto;min-width:20px}
+  .clue.done b{color:var(--green-strong)}
+  .win{position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:rgba(10,15,22,.5);z-index:50}
+  .win.on{display:flex}
+  .win .card{background:#fff;border-radius:20px;padding:26px 22px;text-align:center;max-width:320px;box-shadow:0 20px 50px rgba(0,0,0,.3)}
+  .win .card .em{font-size:52px}
+  .win .card h2{font-family:'Rubik';margin:6px 0 4px}
+  .win .card p{color:var(--text-2);margin:0 0 16px}
+  .confetti{position:fixed;inset:0;pointer-events:none;z-index:60;overflow:hidden}
+  .confetti i{position:absolute;top:-12px;width:9px;height:14px;border-radius:2px;animation:fall linear forwards}
+  @keyframes fall{0%{transform:translateY(-10px) rotate(0);opacity:1}100%{transform:translateY(105vh) rotate(540deg);opacity:.9}}
+  .note{font-size:12px;color:var(--text-3);background:var(--surface-2);border-radius:10px;padding:10px 12px;margin-top:14px;line-height:1.6}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="hd">
+    <img class="logo" src="logo.jpg" alt="MediLab" onerror="this.style.display='none'">
+    <div><b>תשבץ ביולוגיה</b><span>אב-טיפוס · MediLab</span></div>
+  </header>
+
+  <div class="bar">
+    <select id="topic" aria-label="נושא"></select>
+    <button class="btn pri" id="new">🧩 תשבץ חדש</button>
+    <button class="btn g" id="check">בדיקה</button>
+    <button class="btn" id="reveal">גילוי</button>
+    <button class="btn" id="clear">ניקוי</button>
+  </div>
+  <div class="meta" id="meta"></div>
+
+  <div class="gridwrap"><div class="grid" id="grid"></div></div>
+
+  <h3 class="sec">↔️ מאוזן</h3>
+  <div class="clues" id="across"></div>
+  <h3 class="sec">↕️ מאונך</h3>
+  <div class="clues" id="down"></div>
+
+  <div class="note">
+    אב-טיפוס לבדיקה. התשבץ מחולל אוטומטית מתוך מאגר המושגים (מילים בעברית בלבד, ללא רווחים).
+    אותיות סופיות מנורמלות (כ=ך). לחיצה על הגדרה מדגישה את המילה; מקלידים אותיות והמערכת מתקדמת לאות הבאה.
+  </div>
+</div>
+
+<div class="win" id="win"><div class="card"><div class="em">🎉</div><h2>כל הכבוד!</h2><p>פתרת את התשבץ</p><button class="btn pri" onclick="document.getElementById('win').classList.remove('on')">מעולה</button></div></div>
+
+<script src="glossary.js"></script>
+<script>
+(function(){
+  var GLOSSARY = window.GLOSSARY || [];
+  var FINALS={'ך':'כ','ם':'מ','ן':'נ','ף':'פ','ץ':'צ'};
+  function norm(s){ return String(s||'').replace(/[ךםןףץ]/g,function(c){return FINALS[c];}).replace(/[^א-ת]/g,''); }
+
+  function poolFor(topic){
+    var seen={}, out=[];
+    GLOSSARY.forEach(function(e){
+      if(e.aliasOf || e.topic!==topic) return;
+      var clean=String(e.hebrew||'').trim();
+      if(!/^[א-ת]{3,11}$/.test(clean)) return; // single Hebrew word only (no spaces / latin)
+      var ans=norm(clean);
+      if(ans.length<3 || ans.length>11) return;
+      if(seen[ans]) return; seen[ans]=1;
+      var clue=(e.paraphrase||e.definition||'').trim();
+      out.push({raw:clean, ans:ans, clue:clue, en:e.english});
+    });
+    return out;
+  }
+
+  function shuffle(a){ a=a.slice(); for(var i=a.length-1;i>0;i--){ var j=Math.floor(Math.random()*(i+1)); var t=a[i];a[i]=a[j];a[j]=t; } return a; }
+
+  // greedy open-crossword generator
+  function generate(words){
+    words = words.slice().sort(function(a,b){ return b.ans.length-a.ans.length; });
+    var cells={}, placements=[];
+    function key(r,c){ return r+','+c; }
+    function fits(ans,r,c,dir){
+      var touch=false, i, rr, cc;
+      for(i=0;i<ans.length;i++){
+        rr = dir==='V'? r+i : r; cc = dir==='H'? c+i : c;
+        var cur=cells[key(rr,cc)];
+        if(cur!==undefined){ if(cur!==ans[i]) return null; touch=true; }
+        else {
+          var perp = dir==='H'? [[rr-1,cc],[rr+1,cc]] : [[rr,cc-1],[rr,cc+1]];
+          for(var p=0;p<2;p++){ if(cells[key(perp[p][0],perp[p][1])]!==undefined) return null; }
+        }
+      }
+      var bR = dir==='V'? r-1 : r, bC = dir==='H'? c-1 : c;
+      var aR = dir==='V'? r+ans.length : r, aC = dir==='H'? c+ans.length : c;
+      if(cells[key(bR,bC)]!==undefined) return null;
+      if(cells[key(aR,aC)]!==undefined) return null;
+      return touch;
+    }
+    function place(w,r,c,dir){ for(var i=0;i<w.ans.length;i++){ var rr=dir==='V'?r+i:r, cc=dir==='H'?c+i:c; cells[key(rr,cc)]=w.ans[i]; } placements.push({word:w,r:r,c:c,dir:dir}); }
+    if(!words.length) return [];
+    place(words[0],0,0,'H');
+    var remaining=words.slice(1), progress=true;
+    while(progress){
+      progress=false;
+      for(var wi=0; wi<remaining.length; wi++){
+        var w=remaining[wi], done=false;
+        for(var pIdx=0; pIdx<placements.length && !done; pIdx++){
+          var pl=placements[pIdx];
+          for(var pi=0; pi<pl.word.ans.length && !done; pi++){
+            for(var i=0;i<w.ans.length && !done;i++){
+              if(w.ans[i]!==pl.word.ans[pi]) continue;
+              var pr = pl.dir==='V'? pl.r+pi : pl.r;
+              var pc = pl.dir==='H'? pl.c+pi : pl.c;
+              var dir = pl.dir==='H'? 'V':'H';
+              var r = dir==='V'? pr - i : pr;
+              var c = dir==='H'? pc - i : pc;
+              if(fits(w.ans,r,c,dir)===true){ place(w,r,c,dir); remaining.splice(wi,1); wi--; done=true; progress=true; }
+            }
+          }
+        }
+      }
+    }
+    return placements;
+  }
+
+  function bestLayout(words){
+    var best=[];
+    for(var t=0;t<24;t++){
+      var p=generate(shuffle(words));
+      if(p.length>best.length) best=p;
+      if(best.length>=Math.min(words.length,14) && best.length>=10) break;
+    }
+    return best;
+  }
+
+  // ---- state / rendering ----
+  var model=null; // {cells:{}, rows, cols, minR, minC, entries:[], numAt:{}}
+  var sel={dir:'H', cells:[], clueId:null};
+
+  function buildModel(placements){
+    var minR=1e9,minC=1e9,maxR=-1e9,maxC=-1e9, cells={}, i;
+    placements.forEach(function(pl){
+      for(i=0;i<pl.word.ans.length;i++){
+        var r=pl.dir==='V'?pl.r+i:pl.r, c=pl.dir==='H'?pl.c+i:pl.c;
+        cells[r+','+c]={ans:pl.word.ans[i]};
+        if(r<minR)minR=r; if(r>maxR)maxR=r; if(c<minC)minC=c; if(c>maxC)maxC=c;
+      }
+    });
+    // shift to 0-based
+    var normCells={};
+    Object.keys(cells).forEach(function(k){ var p=k.split(','); var r=+p[0]-minR, c=+p[1]-minC; normCells[r+','+c]=cells[k]; });
+    var rows=maxR-minR+1, cols=maxC-minC+1;
+    function filled(r,c){ return normCells[r+','+c]!==undefined; }
+    // numbering + entries
+    var num=0, numAt={}, entries=[];
+    var clueByAns={}; placements.forEach(function(pl){ clueByAns[pl.word.ans]=pl.word; });
+    for(var r=0;r<rows;r++){
+      for(var c=0;c<cols;c++){
+        if(!filled(r,c)) continue;
+        var startA = !filled(r,c-1) && filled(r,c+1);   // across start (right-most letter; c-1 is to the right visually)
+        var startD = !filled(r-1,c) && filled(r+1,c);   // down start
+        if(startA||startD){ num++; numAt[r+','+c]=num; }
+        if(startA){
+          var a='',cc=c,list=[]; while(filled(r,cc)){ a+=normCells[r+','+cc].ans; list.push([r,cc]); cc++; }
+          entries.push({num:num,dir:'H',cells:list,ans:a,clue:(clueByAns[a]||{}).clue||'',raw:(clueByAns[a]||{}).raw||a});
+        }
+        if(startD){
+          var d='',rr=r,l2=[]; while(filled(rr,c)){ d+=normCells[rr+','+c].ans; l2.push([rr,c]); rr++; }
+          entries.push({num:num,dir:'V',cells:l2,ans:d,clue:(clueByAns[d]||{}).clue||'',raw:(clueByAns[d]||{}).raw||d});
+        }
+      }
+    }
+    return {cells:normCells, rows:rows, cols:cols, numAt:numAt, entries:entries};
+  }
+
+  function ck(r,c){ return r+','+c; }
+  var inputs={};
+
+  function render(){
+    var grid=document.getElementById('grid');
+    grid.style.gridTemplateColumns='repeat('+model.cols+',var(--cell))';
+    grid.style.gridTemplateRows='repeat('+model.rows+',var(--cell))';
+    grid.innerHTML=''; inputs={};
+    for(var r=0;r<model.rows;r++){
+      for(var c=0;c<model.cols;c++){
+        var cell=model.cells[ck(r,c)];
+        var div=document.createElement('div');
+        div.className='cell'+(cell?'':' block');
+        div.style.gridRow=(r+1); div.style.gridColumn=(c+1);
+        if(cell){
+          var n=model.numAt[ck(r,c)];
+          if(n){ var s=document.createElement('span'); s.className='num'; s.textContent=n; div.appendChild(s); }
+          var inp=document.createElement('input');
+          inp.setAttribute('maxlength','1'); inp.setAttribute('inputmode','text');
+          inp.dataset.r=r; inp.dataset.c=c;
+          inp.addEventListener('focus',onFocus);
+          inp.addEventListener('input',onInput);
+          inp.addEventListener('keydown',onKey);
+          inp.addEventListener('click',onFocus);
+          div.appendChild(inp); inputs[ck(r,c)]=inp;
+        }
+        grid.appendChild(div);
+      }
+    }
+    renderClues();
+    document.getElementById('meta').textContent='נמצאו '+model.entries.length+' מילים · '+Object.keys(model.cells).length+' משבצות';
+  }
+
+  function renderClues(){
+    var ac=document.getElementById('across'), dn=document.getElementById('down');
+    ac.innerHTML=''; dn.innerHTML='';
+    model.entries.slice().sort(function(a,b){return a.num-b.num;}).forEach(function(e){
+      var el=document.createElement('div'); el.className='clue'; el.dataset.id=e.dir+e.num;
+      el.innerHTML='<b>'+e.num+'</b><span>'+ (e.clue||('('+e.raw+')')) +'</span>';
+      el.addEventListener('click',function(){ selectEntry(e); (e.cells[0] && inputs[ck(e.cells[0][0],e.cells[0][1])]||{focus:function(){}}).focus(); });
+      (e.dir==='H'?ac:dn).appendChild(el);
+    });
+  }
+
+  function entriesAt(r,c){ return model.entries.filter(function(e){ return e.cells.some(function(p){return p[0]===r&&p[1]===c;}); }); }
+
+  function clearSelClasses(){
+    document.querySelectorAll('.cell.sel,.cell.selword').forEach(function(el){ el.classList.remove('sel','selword'); });
+    document.querySelectorAll('.clue.active').forEach(function(el){ el.classList.remove('active'); });
+  }
+  function selectEntry(e){
+    sel.dir=e.dir; sel.cells=e.cells; sel.clueId=e.dir+e.num;
+    clearSelClasses();
+    e.cells.forEach(function(p){ var inp=inputs[ck(p[0],p[1])]; if(inp) inp.parentNode.classList.add('selword'); });
+    var cl=document.querySelector('.clue[data-id="'+(e.dir+e.num)+'"]'); if(cl) cl.classList.add('active');
+  }
+  function onFocus(ev){
+    var inp=ev.target, r=+inp.dataset.r, c=+inp.dataset.c;
+    var es=entriesAt(r,c); if(!es.length) return;
+    var cur=es.filter(function(e){return e.dir===sel.dir;})[0] || es[0];
+    // if already selected this word and clicked again, toggle direction
+    if(sel.cells.length && sel.cells.some(function(p){return p[0]===r&&p[1]===c;}) && es.length>1){
+      var other=es.filter(function(e){return e.dir!==sel.dir;})[0]; if(other) cur=other;
+    }
+    selectEntry(cur);
+    inp.parentNode.classList.add('sel');
+  }
+  function moveNext(r,c,delta){
+    // move within selected word
+    var idx=sel.cells.findIndex(function(p){return p[0]===r&&p[1]===c;});
+    if(idx<0) return;
+    var ni=idx+delta;
+    if(ni>=0 && ni<sel.cells.length){ var t=sel.cells[ni]; var inp=inputs[ck(t[0],t[1])]; if(inp) inp.focus(); }
+  }
+  function onInput(ev){
+    var inp=ev.target; var v=norm(inp.value); inp.value=v.slice(-1);
+    inp.parentNode.classList.remove('ok','bad');
+    if(inp.value) moveNext(+inp.dataset.r,+inp.dataset.c,1);
+    maybeWin();
+  }
+  function onKey(ev){
+    var inp=ev.target, r=+inp.dataset.r, c=+inp.dataset.c;
+    if(ev.key==='Backspace' && !inp.value){ moveNext(r,c,-1); }
+    else if(ev.key==='ArrowRight'){ ev.preventDefault(); focusRC(r,c-1); }
+    else if(ev.key==='ArrowLeft'){ ev.preventDefault(); focusRC(r,c+1); }
+    else if(ev.key==='ArrowUp'){ ev.preventDefault(); focusRC(r-1,c); }
+    else if(ev.key==='ArrowDown'){ ev.preventDefault(); focusRC(r+1,c); }
+  }
+  function focusRC(r,c){ var inp=inputs[ck(r,c)]; if(inp) inp.focus(); }
+
+  function check(){
+    var allRight=true, any=false;
+    Object.keys(model.cells).forEach(function(k){
+      var inp=inputs[k]; var want=model.cells[k].ans; var got=norm(inp.value);
+      inp.parentNode.classList.remove('ok','bad');
+      if(!got){ allRight=false; return; }
+      any=true;
+      if(got===want){ inp.parentNode.classList.add('ok'); } else { inp.parentNode.classList.add('bad'); allRight=false; }
+    });
+    markDoneClues();
+    if(allRight && any) win();
+  }
+  function markDoneClues(){
+    model.entries.forEach(function(e){
+      var done=e.cells.every(function(p){ return norm((inputs[ck(p[0],p[1])]||{}).value||'')===model.cells[ck(p[0],p[1])].ans; });
+      var cl=document.querySelector('.clue[data-id="'+(e.dir+e.num)+'"]'); if(cl) cl.classList.toggle('done',done);
+    });
+  }
+  function maybeWin(){
+    var all=Object.keys(model.cells).every(function(k){ return norm((inputs[k]||{}).value||'')===model.cells[k].ans; });
+    markDoneClues();
+    if(all) win();
+  }
+  function reveal(){ Object.keys(model.cells).forEach(function(k){ inputs[k].value=model.cells[k].ans; inputs[k].parentNode.classList.remove('bad'); inputs[k].parentNode.classList.add('ok'); }); markDoneClues(); }
+  function clearAll(){ Object.keys(model.cells).forEach(function(k){ inputs[k].value=''; inputs[k].parentNode.classList.remove('ok','bad'); }); markDoneClues(); }
+
+  function win(){
+    document.getElementById('win').classList.add('on');
+    confetti(); try{ ding(); }catch(e){}
+  }
+  function confetti(){
+    var cols=['#3FA9D6','#5CB85C','#F0654F','#F9D85C','#9B59B6'], w=document.createElement('div'); w.className='confetti';
+    for(var i=0;i<46;i++){ var p=document.createElement('i'); p.style.left=(Math.random()*100)+'%'; p.style.background=cols[i%cols.length]; p.style.animationDuration=(1+Math.random()*1.1)+'s'; p.style.animationDelay=(Math.random()*0.3)+'s'; w.appendChild(p); }
+    document.body.appendChild(w); setTimeout(function(){ w.remove(); },2200);
+  }
+  function ding(){ var a=new (window.AudioContext||window.webkitAudioContext)(); [880,1175].forEach(function(f,i){ var o=a.createOscillator(),g=a.createGain(); o.type='triangle'; o.frequency.value=f; o.connect(g); g.connect(a.destination); var t=a.currentTime+i*0.08; g.gain.setValueAtTime(0.0001,t); g.gain.exponentialRampToValueAtTime(0.15,t+0.01); g.gain.exponentialRampToValueAtTime(0.0001,t+0.18); o.start(t); o.stop(t+0.2); }); }
+
+  // ---- topic list + boot ----
+  function topicsWithCounts(){
+    var m={}; GLOSSARY.forEach(function(e){ if(e.aliasOf||!e.topic) return; var clean=String(e.hebrew||'').trim(); if(/^[א-ת]{3,11}$/.test(clean)) m[e.topic]=(m[e.topic]||0)+1; });
+    return Object.keys(m).map(function(k){return {topic:k,n:m[k]};}).filter(function(x){return x.n>=6;}).sort(function(a,b){return b.n-a.n;});
+  }
+  function buildPuzzle(topic){
+    var pool=poolFor(topic);
+    pool=shuffle(pool).slice(0,14); // cap for a clean, playable grid
+    var placements=bestLayout(pool);
+    model=buildModel(placements); sel={dir:'H',cells:[],clueId:null};
+    render();
+  }
+
+  function boot(){
+    var sel2=document.getElementById('topic'), list=topicsWithCounts();
+    list.forEach(function(x){ var o=document.createElement('option'); o.value=x.topic; o.textContent=x.topic+' ('+x.n+')'; sel2.appendChild(o); });
+    var def=list.filter(function(x){return x.topic==='אקולוגיה';})[0]?'אקולוגיה':(list[0]&&list[0].topic);
+    sel2.value=def;
+    document.getElementById('new').addEventListener('click',function(){ buildPuzzle(sel2.value); });
+    sel2.addEventListener('change',function(){ buildPuzzle(sel2.value); });
+    document.getElementById('check').addEventListener('click',check);
+    document.getElementById('reveal').addEventListener('click',reveal);
+    document.getElementById('clear').addEventListener('click',clearAll);
+    buildPuzzle(def);
+  }
+  if(GLOSSARY.length) boot(); else document.getElementById('meta').textContent='לא נטען מאגר המושגים.';
+})();
+</script>
+</body>
+</html>
