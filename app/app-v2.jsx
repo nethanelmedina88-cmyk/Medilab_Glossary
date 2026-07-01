@@ -28,6 +28,7 @@ function metrics(studied,favorites,stats){
 }
 const earnedIds=m=>ACH.filter(a=>{try{return a.check(m);}catch(e){return false;}}).map(a=>a.id);
 const uniq=arr=>Array.from(new Set(arr));
+const fmtSec=s=>Math.floor(s/60)+':'+('0'+(Math.round(s)%60)).slice(-2);
 // merge cloud stats into local WITHOUT clobbering progress: counters only grow, and the
 // most-recently-visited side keeps its day-streak (local mount may have advanced today's).
 function mergeStats(local,cloud){
@@ -391,6 +392,8 @@ function Profile({user,studied,favorites,stats,sync,signIn,signOut,onTopic,muted
       <div className="stat-box"><b>{m.perfect}</b><span>מבחנים מושלמים</span></div>
       <div className="stat-box"><b>{m.dayStreak}</b><span>🔥 ימים ברצף</span></div>
       <div className="stat-box"><b>{m.maxDayStreak}</b><span>שיא רצף</span></div>
+      <div className="stat-box"><b>{stats.cwSolved||0}</b><span>🧩 תשבצים שנפתרו</span></div>
+      {stats.cwBest!=null && stats.cwBest<99999 && <div className="stat-box"><b>{fmtSec(stats.cwBest)}</b><span>⏱️ שיא תשבץ</span></div>}
     </div>
     <h2 className="sec-title">התקדמות לפי נושא</h2>
     <p className="sec-sub">הקישו על נושא כדי לראות את כל המושגים שלו</p>
