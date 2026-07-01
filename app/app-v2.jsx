@@ -29,6 +29,8 @@ function metrics(studied,favorites,stats){
 const earnedIds=m=>ACH.filter(a=>{try{return a.check(m);}catch(e){return false;}}).map(a=>a.id);
 const uniq=arr=>Array.from(new Set(arr));
 const fmtSec=s=>Math.floor(s/60)+':'+('0'+(Math.round(s)%60)).slice(-2);
+const IS_IOS = /iphone|ipad|ipod/i.test(navigator.userAgent||'') || (navigator.platform==='MacIntel' && navigator.maxTouchPoints>1);
+const IS_STANDALONE = (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches) || window.navigator.standalone===true;
 // merge cloud stats into local WITHOUT clobbering progress: counters only grow, and the
 // most-recently-visited side keeps its day-streak (local mount may have advanced today's).
 function mergeStats(local,cloud){
@@ -485,7 +487,9 @@ function App(){
   const saveUserData=useCallback(async(uid)=>{ if(!db||!auth.currentUser)return; setSync('syncing');
     try{ await db.collection('users').doc(uid).set({displayName:auth.currentUser.displayName,email:auth.currentUser.email,photoURL:auth.currentUser.photoURL,favorites,studied,stats,achieved,lastSync:firebase.firestore.FieldValue.serverTimestamp()},{merge:true}); setSync('synced'); setTimeout(()=>setSync(''),1500); }
     catch(e){ console.error(e); setSync('error'); } },[favorites,studied,stats,achieved]);
-  useEffect(()=>{ if(!auth)return; const unsub=auth.onAuthStateChanged(async(u)=>{ setUser(u);
+  useEffect(()=>{ if(!auth)return;
+    if(auth.getRedirectResult){ auth.getRedirectResult().catch(function(e){ if(e&&e.code&&e.code!=='auth/no-auth-event') console.warn('sign-in redirect:',e.code); }); }
+    const unsub=auth.onAuthStateChanged(async(u)=>{ setUser(u);
     if(u&&db){ setSync('syncing');
       try{ const doc=await db.collection('users').doc(u.uid).get();
         if(doc.exists){ const d=doc.data(); loadingRef.current=true; setFav(d.favorites||[]); setStudied(d.studied||[]); if(d.stats)setStats(s=>mergeStats(s,d.stats)); if(d.achieved)setAchieved(prev=>uniq([...prev,...d.achieved])); setTimeout(()=>{loadingRef.current=false;},600); setSync('synced'); setTimeout(()=>setSync(''),1500); }
@@ -494,7 +498,18 @@ function App(){
   }); return unsub; },[]);
   useEffect(()=>{ if(user&&!loadingRef.current)saveUserData(user.uid); },[favorites,studied,stats,achieved]); // eslint-disable-line
 
-  const signIn=async()=>{ if(!auth){alert('אין חיבור');return;} try{ await auth.signInWithPopup(googleProvider); }catch(e){ alert('שגיאת התחברות: '+e.message); } };
+  const signIn=async()=>{ if(!auth){alert('אין חיבור לאינטרנט');return;}
+    try{
+      if(IS_IOS||IS_STANDALONE){ await auth.signInWithRedirect(googleProvider); }   // popups fail on iOS Safari / standalone PWAs
+      else { await auth.signInWithPopup(googleProvider); }
+    }catch(e){
+      const c=e&&e.code;
+      if(c==='auth/popup-blocked'||c==='auth/cancelled-popup-request'||c==='auth/operation-not-supported-in-this-environment'){
+        try{ await auth.signInWithRedirect(googleProvider); return; }catch(e2){ alert('שגיאת התחברות: '+(e2.message||e2)); return; }
+      }
+      if(c==='auth/popup-closed-by-user') return;   // user cancelled — no error popup
+      alert('שגיאת התחברות: '+(e.message||e));
+    } };
   const signOut=async()=>{ loadingRef.current=true; try{ await auth.signOut(); }catch(e){} setUser(null); setTimeout(()=>{loadingRef.current=false;},600); };
 
   const dm=(mode==='glossary'||mode==='flashcards'||mode==='quiz')?mode:'glossary';

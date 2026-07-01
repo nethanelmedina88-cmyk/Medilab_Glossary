@@ -424,4 +424,4 @@ html.dark .install-done{background:#15301c;border-color:#1f4429}
 /* ============ crossword tab (embedded game) ============ */
 .tab.on.x{color:#7B4FB0} .tab.on.x .pipe{background:#7B4FB0}
 .cw-wrap{margin:0 -16px 0} /* undo the .scroll side padding so the game fills the app width */
-.cw-frame{display:block;width:100%;height:calc(100dvh - 158px);min-height:500px;border:none;background:var(--bg)}
+.cw-frame{display:block;width:100%;height:calc(100vh - 158px);height:calc(100dvh - 158px);min-height:500px;border:none;background:var(--bg)}

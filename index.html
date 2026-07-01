@@ -53,11 +53,9 @@ if('serviceWorker' in navigator){
         });
       });
     }).catch(function(){});
-    // reload once when the new service worker takes control, so fresh code is shown immediately
-    var refreshed=false;
-    navigator.serviceWorker.addEventListener('controllerchange',function(){
-      if(refreshed)return; refreshed=true; window.location.reload();
-    });
+    // NOTE: intentionally NO controllerchange auto-reload. On iOS Safari the reload-on-
+    // service-worker-activation pattern can loop / interrupt the slow in-browser Babel compile
+    // and leave the app stuck loading. Network-first already serves fresh code on the next load.
   });
 }
 </script>
