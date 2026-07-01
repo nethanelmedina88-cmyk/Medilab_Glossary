@@ -1,7 +1,8 @@
-const CACHE_NAME = 'shlifim-v21';
+const CACHE_NAME = 'shlifim-v22';
 const FILES_TO_CACHE = [
   './',
   './index.html',
+  './crossword.html',
   './manifest.json',
   './glossary.js',
   './data/subjects.js',
