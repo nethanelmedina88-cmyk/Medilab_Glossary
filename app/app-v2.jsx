@@ -24,7 +24,7 @@ function metrics(studied,favorites,stats){
   const answered=stats.answered||0, correct=stats.correct||0;
   return { studied:studied.length, hard:favorites.length, dayStreak:stats.dayStreak||0, maxDayStreak:stats.maxDayStreak||0,
     answered, correct, accuracy:answered?correct/answered:0, quizzes:stats.quizzes||0, perfect:stats.perfect||0,
-    topicsCompleted:tc, topicDone, usedDark:!!stats.usedDark };
+    topicsCompleted:tc, topicDone, usedDark:!!stats.usedDark, cwSolved:stats.cwSolved||0 };
 }
 const earnedIds=m=>ACH.filter(a=>{try{return a.check(m);}catch(e){return false;}}).map(a=>a.id);
 const uniq=arr=>Array.from(new Set(arr));
@@ -54,6 +54,7 @@ const IcCards=()=> <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" st
 const IcQuiz=()=> <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="9"/></svg>;
 const IcList=()=> <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M4 5h16M4 12h16M4 19h10"/></svg>;
 const IcInfo=()=> <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 7.5v.5"/></svg>;
+const IcGrid=()=> <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M3 15h18M9 3v18M15 3v18"/></svg>;
 
 function TopicTag({topicKey}){ const tp=TBK[topicKey]; if(!tp)return null;
   return <span className="subj" style={{background:'transparent',border:'1px solid '+tp.accent,color:'var(--text-2)'}}>
@@ -164,7 +165,7 @@ function Header({pinCount,dark,setDark,user,onProfile,onReview,onLogo}){
     <button className="icon-toggle" onClick={()=>setDark(d=>!d)} aria-label="מצב כהה">{dark?'☀️':'🌙'}</button>
     <button className="avatar" onClick={onProfile} aria-label="אזור אישי">{user&&user.photoURL?<img src={user.photoURL} referrerPolicy="no-referrer" alt=""/>:'👤'}</button>
   </header>); }
-function Nav({mode,setMode}){ const T=[['glossary','מילון',IcList,'g'],['flashcards','כרטיסיות',IcCards,'f'],['quiz','מבחון',IcQuiz,'q'],['about','אודות',IcInfo,'g']];
+function Nav({mode,setMode}){ const T=[['glossary','מילון',IcList,'g'],['flashcards','כרטיסיות',IcCards,'f'],['quiz','מבחון',IcQuiz,'q'],['crossword','תשבץ',IcGrid,'x'],['about','אודות',IcInfo,'g']];
   return (<nav className="nav">{T.map(([m,label,Ic,c])=>(<button key={m} className={`tab ${c} ${mode===m?'on':''}`} onClick={()=>setMode(m)}><Ic/>{label}<div className="pipe"></div></button>))}</nav>); }
 
 /* ---------- GLOSSARY ---------- */
@@ -311,6 +312,13 @@ function Quiz({studied,toggleStudied,favorites,recordAnswer,recordQuiz,fireConfe
 
 /* ---------- ABOUT ---------- */
 const WA='https://wa.me/972524295838';
+/* ---------- CROSSWORD (embedded game) ---------- */
+function Crossword({dark}){
+  return (<div className="cw-wrap">
+    <iframe key={dark?'d':'l'} title="תשבץ ביולוגיה" className="cw-frame" src={"crossword.html?embed=1&dark="+(dark?1:0)}/>
+  </div>);
+}
+
 function About(){
   return (<>
     <div className="hero"><h1>אודות</h1><p>נתנאל יוחאי מדינה · מורה לביולוגיה ולביוטכנולוגיה</p></div>
@@ -445,6 +453,11 @@ function App(){
   useEffect(()=>{ setStats(s=>{ const today=new Date().toISOString().slice(0,10); if(s.lastVisit===today)return s;
     const y=new Date(Date.now()-86400000).toISOString().slice(0,10); const ds=(s.lastVisit===y)?((s.dayStreak||0)+1):1;
     return {...s,lastVisit:today,dayStreak:ds,maxDayStreak:Math.max(s.maxDayStreak||0,ds)}; }); },[]);
+  // crossword solves reported by the embedded game (postMessage)
+  useEffect(()=>{ function onMsg(e){ if(e&&e.data&&e.data.type==='ml-cw-solved'){
+    const sec=(typeof e.data.seconds==='number')?e.data.seconds:99999;
+    setStats(s=>({...s,cwSolved:(s.cwSolved||0)+1,cwBest:Math.min(s.cwBest||99999,sec)})); Snd.fanfare&&Snd.fanfare(); } }
+    window.addEventListener('message',onMsg); return ()=>window.removeEventListener('message',onMsg); },[]);
 
   const toggleFav=h=>setFav(f=>f.includes(h)?f.filter(x=>x!==h):[...f,h]);
   const toggleStudied=h=>setStudied(f=>f.includes(h)?f.filter(x=>x!==h):[...f,h]);
@@ -492,6 +505,7 @@ function App(){
           {mode==='glossary' && <Glossary key={glossaryTopic} initialTopic={glossaryTopic} favorites={favorites} studied={studied} toggleFav={toggleFav} toggleStudied={toggleStudied} onOpenTerm={openTerm}/>}
           {mode==='flashcards' && <Flashcards favorites={favorites} studied={studied} toggleFav={toggleFav} toggleStudied={toggleStudied} onKnow={openVerify}/>}
           {mode==='quiz' && <Quiz studied={studied} toggleStudied={toggleStudied} favorites={favorites} recordAnswer={recordAnswer} recordQuiz={recordQuiz} fireConfetti={fireConfetti}/>}
+          {mode==='crossword' && <Crossword dark={dark}/>}
           {mode==='review' && <ReviewList favorites={favorites} studied={studied} toggleFav={toggleFav} toggleStudied={toggleStudied} goQuiz={()=>setMode('quiz')} onOpenTerm={openTerm}/>}
           {mode==='about' && <About/>}
           {mode==='profile' && <Profile user={user} studied={studied} favorites={favorites} stats={stats} sync={sync} signIn={signIn} signOut={signOut} onTopic={openTopic} muted={muted} toggleSound={toggleSound}/>}

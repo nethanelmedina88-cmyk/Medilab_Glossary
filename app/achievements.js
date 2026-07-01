@@ -38,5 +38,9 @@ window.ACHIEVEMENTS = [
 
   { id:'pin1',      emoji:'📌', title:'מיקוד',            desc:'סימנת מושג לחזרה',                  check:m=>m.hard>=1 },
   { id:'pin5',      emoji:'📍', title:'רשימת חזרה',       desc:'5 מושגים לחזרה',                    check:m=>m.hard>=5 },
-  { id:'nightowl',  emoji:'🌙', title:'ינשוף לילה',       desc:'למדת במצב לילה',                    check:m=>!!m.usedDark }
+  { id:'nightowl',  emoji:'🌙', title:'ינשוף לילה',       desc:'למדת במצב לילה',                    check:m=>!!m.usedDark },
+
+  { id:'cw1',       emoji:'🧩', title:'תשבצן מתחיל',       desc:'פתרת תשבץ ראשון',                   check:m=>m.cwSolved>=1 },
+  { id:'cw5',       emoji:'🧩', title:'חובב תשבצים',       desc:'פתרת 5 תשבצים',                     check:m=>m.cwSolved>=5 },
+  { id:'cw15',      emoji:'👑', title:'אלוף התשבצים',      desc:'פתרת 15 תשבצים',                    check:m=>m.cwSolved>=15 }
 ];

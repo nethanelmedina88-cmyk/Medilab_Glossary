@@ -25,6 +25,9 @@
   *{box-sizing:border-box}
   body{margin:0;font-family:'Assistant',system-ui,sans-serif;background:var(--bg);color:var(--text);direction:rtl;-webkit-font-smoothing:antialiased;overscroll-behavior-y:none}
   .wrap{max-width:560px;margin:0 auto;padding:10px 12px 20px}
+  /* embedded inside the app: hide own logo/title/dark (the app provides them) */
+  body.embed .wrap{padding-top:6px}
+  body.embed header.hd .logo, body.embed header.hd b, body.embed #dark{display:none}
   header.hd{display:flex;align-items:center;gap:9px;margin:2px 2px 10px}
   header.hd .logo{width:32px;height:32px;border-radius:9px;object-fit:contain;box-shadow:var(--e1)}
   header.hd b{font-family:'Rubik';font-size:17px;background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
@@ -378,7 +381,8 @@
     document.getElementById('wtime').textContent=fmt(timer.t);
     document.getElementById('whints').textContent=hints;
     document.getElementById('wwords').textContent=model.entries.length;
-    document.getElementById('win').classList.add('on'); confetti(); try{ ding(); }catch(e){} }
+    document.getElementById('win').classList.add('on'); confetti(); try{ ding(); }catch(e){}
+    if(window.parent && window.parent!==window){ try{ window.parent.postMessage({type:'ml-cw-solved', seconds:timer.t, hints:hints, words:model.entries.length, topic:document.getElementById('topic').value}, '*'); }catch(e){} } }
   function confetti(){ var cols=['#3FA9D6','#5CB85C','#F0654F','#F9D85C','#9B59B6'],w=document.createElement('div');w.className='confetti';
     for(var i=0;i<48;i++){ var p=document.createElement('i');p.style.left=(Math.random()*100)+'%';p.style.background=cols[i%cols.length];p.style.animationDuration=(1+Math.random()*1.1)+'s';p.style.animationDelay=(Math.random()*0.3)+'s';w.appendChild(p);} document.body.appendChild(w); setTimeout(function(){w.remove();},2200); }
   function ding(){ var a=new (window.AudioContext||window.webkitAudioContext)(); [523,659,784,1046].forEach(function(f,i){ var o=a.createOscillator(),g=a.createGain();o.type='triangle';o.frequency.value=f;o.connect(g);g.connect(a.destination);var t=a.currentTime+i*0.09;g.gain.setValueAtTime(0.0001,t);g.gain.exponentialRampToValueAtTime(0.16,t+0.01);g.gain.exponentialRampToValueAtTime(0.0001,t+0.22);o.start(t);o.stop(t+0.24);}); }
@@ -411,6 +415,11 @@
     render();
   }
   function boot(){
+    try{ var pr=new URLSearchParams(location.search);
+      if(pr.has('embed')) document.body.classList.add('embed');
+      if(pr.get('dark')==='1') localStorage.setItem('ml-cw-dark','1');
+      else if(pr.get('dark')==='0') localStorage.setItem('ml-cw-dark','0');
+    }catch(e){}
     var sel2=document.getElementById('topic'), list=topics();
     list.forEach(function(x){ var o=document.createElement('option'); o.value=x.t; o.textContent=x.t+' ('+x.n+')'; sel2.appendChild(o); });
     sel2.value=(list.filter(function(x){return x.t==='אקולוגיה';})[0]?'אקולוגיה':(list[0]&&list[0].t));

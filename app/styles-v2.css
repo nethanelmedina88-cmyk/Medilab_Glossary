@@ -420,3 +420,8 @@ html.dark .install-done{background:#15301c;border-color:#1f4429}
 .ios-sheet ol{text-align:right;margin:0 0 16px;padding-inline-start:22px;display:flex;flex-direction:column;gap:11px}
 .ios-sheet li{font-size:14.5px;line-height:1.55;color:var(--text)}
 .ios-sheet li b{color:var(--accent-strong)}
+
+/* ============ crossword tab (embedded game) ============ */
+.tab.on.x{color:#7B4FB0} .tab.on.x .pipe{background:#7B4FB0}
+.cw-wrap{margin:0 -16px 0} /* undo the .scroll side padding so the game fills the app width */
+.cw-frame{display:block;width:100%;height:calc(100dvh - 158px);min-height:500px;border:none;background:var(--bg)}
