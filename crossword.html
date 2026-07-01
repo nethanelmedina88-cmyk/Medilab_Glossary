@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
-<title>תשבץ ביולוגיה — MediLab (אב-טיפוס)</title>
+<title>תשבץ ביולוגיה — MediLab</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;500;600;700;800&family=Rubik:wght@600;700;800&display=swap" rel="stylesheet">
@@ -15,83 +15,132 @@
     --coral:#F0654F; --spark:#F9D85C;
     --grad:linear-gradient(135deg,#3FA9D6,#5CB85C);
     --r:14px; --e2:0 6px 18px rgba(27,111,168,.08); --e1:0 1px 2px rgba(20,30,45,.05);
-    --cell:min(9vw,40px);
+    --cell:min(8.5vw,38px); --key:#fff;
+  }
+  html.dark{
+    --bg:#0E151C; --surface:#16202B; --surface-2:#1C2733; --border:#2A3744;
+    --text:#ECEFF3; --text-2:#AEB8C2; --text-3:#7C8794; --key:#1C2733;
+    --e2:0 6px 18px rgba(0,0,0,.4); --e1:0 1px 2px rgba(0,0,0,.3);
   }
   *{box-sizing:border-box}
-  body{margin:0;font-family:'Assistant',system-ui,sans-serif;background:var(--bg);color:var(--text);direction:rtl;-webkit-font-smoothing:antialiased}
-  .wrap{max-width:560px;margin:0 auto;padding:14px 14px 60px}
-  header.hd{display:flex;align-items:center;gap:10px;margin:4px 2px 14px}
-  header.hd .logo{width:34px;height:34px;border-radius:9px;object-fit:contain;box-shadow:var(--e1)}
-  header.hd b{font-family:'Rubik';font-size:19px;background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
-  header.hd span{display:block;font-size:11px;color:var(--text-3);font-weight:600}
-  .bar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:12px}
-  select,.btn{font-family:inherit;font-weight:700;font-size:14px;border-radius:10px;border:1px solid var(--border);background:var(--surface);color:var(--text);padding:9px 12px;cursor:pointer;box-shadow:var(--e1)}
+  body{margin:0;font-family:'Assistant',system-ui,sans-serif;background:var(--bg);color:var(--text);direction:rtl;-webkit-font-smoothing:antialiased;overscroll-behavior-y:none}
+  .wrap{max-width:560px;margin:0 auto;padding:10px 12px 20px}
+  header.hd{display:flex;align-items:center;gap:9px;margin:2px 2px 10px}
+  header.hd .logo{width:32px;height:32px;border-radius:9px;object-fit:contain;box-shadow:var(--e1)}
+  header.hd b{font-family:'Rubik';font-size:17px;background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+  header.hd .sp{margin-inline-start:auto;display:flex;gap:7px;align-items:center}
+  .pill{display:inline-flex;align-items:center;gap:5px;background:var(--surface);border:1px solid var(--border);border-radius:999px;padding:6px 11px;font-size:13px;font-weight:800;color:var(--text-2);box-shadow:var(--e1)}
+  .icon{width:38px;height:38px;border-radius:11px;display:flex;align-items:center;justify-content:center;background:var(--surface);border:1px solid var(--border);font-size:16px;box-shadow:var(--e1);cursor:pointer;flex:0 0 auto}
+  .bar{display:flex;gap:7px;flex-wrap:wrap;align-items:center;margin-bottom:10px}
+  select,.btn{font-family:inherit;font-weight:700;font-size:13.5px;border-radius:10px;border:1px solid var(--border);background:var(--surface);color:var(--text);padding:9px 11px;cursor:pointer;box-shadow:var(--e1)}
   .btn.pri{background:var(--grad);color:#fff;border:none}
-  .btn.g{background:linear-gradient(135deg,var(--green),var(--green-strong));color:#fff;border:none}
   .btn:active{transform:scale(.97)}
-  .meta{font-size:12.5px;color:var(--text-3);font-weight:600;margin:0 2px 10px}
-  .gridwrap{overflow:auto;padding:6px;background:var(--surface);border:1px solid var(--border);border-radius:var(--r);box-shadow:var(--e2);margin-bottom:16px}
+
+  /* active clue banner */
+  .banner{display:flex;align-items:stretch;gap:6px;background:var(--surface);border:1px solid var(--border);border-radius:12px;box-shadow:var(--e2);margin-bottom:10px;overflow:hidden}
+  .banner .nav{width:40px;flex:0 0 auto;background:var(--surface-2);border:none;color:var(--text-2);font-size:20px;font-weight:800;cursor:pointer}
+  .banner .nav:active{background:var(--border)}
+  .banner .txt{flex:1;padding:9px 6px;min-height:52px;display:flex;flex-direction:column;justify-content:center}
+  .banner .dir{font-size:11px;font-weight:800;color:var(--blue-strong)}
+  .banner .cl{font-size:14.5px;font-weight:600;line-height:1.35}
+
+  .gridwrap{overflow:auto;padding:6px;background:var(--surface);border:1px solid var(--border);border-radius:var(--r);box-shadow:var(--e2);margin-bottom:10px}
   .grid{display:grid;direction:rtl;gap:0;margin:0 auto;width:max-content}
   .cell{position:relative;width:var(--cell);height:var(--cell);border:1px solid #cfd8dd;background:#fff}
+  html.dark .cell{border-color:#33424e;background:#0f1922}
   .cell.block{border:none;background:transparent}
   .cell input{width:100%;height:100%;border:none;background:transparent;text-align:center;font-family:'Rubik';font-weight:700;
-    font-size:calc(var(--cell)*.5);color:var(--text);outline:none;padding:0;caret-color:var(--blue)}
-  .cell .num{position:absolute;top:1px;right:2px;font-size:calc(var(--cell)*.26);color:var(--text-3);font-weight:700;line-height:1}
-  .cell.sel{background:#EAF6FB}
-  .cell.selword{background:#F3FAF2}
-  .cell.ok input{color:var(--green-strong)}
-  .cell.bad input{color:var(--coral)}
-  .cell.ok{background:#EEF7EC}
-  .cell.bad{background:#FDEEEC}
-  h3.sec{font-family:'Rubik';font-size:15px;margin:14px 2px 8px;display:flex;align-items:center;gap:6px}
-  .clues{display:grid;grid-template-columns:1fr;gap:6px}
-  .clue{display:flex;gap:8px;font-size:13.5px;line-height:1.5;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:8px 10px;cursor:pointer}
-  .clue:active{background:var(--surface-2)}
-  .clue.active{border-color:var(--blue);background:#EAF6FB}
-  .clue b{color:var(--blue-strong);font-family:'Rubik';flex:0 0 auto;min-width:20px}
-  .clue.done b{color:var(--green-strong)}
-  .win{position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:rgba(10,15,22,.5);z-index:50}
+    font-size:calc(var(--cell)*.5);color:var(--text);outline:none;padding:0;caret-color:transparent;cursor:pointer}
+  .cell .num{position:absolute;top:0;right:2px;font-size:calc(var(--cell)*.24);color:var(--text-3);font-weight:800;line-height:1.1}
+  .cell .arr{position:absolute;bottom:0;left:2px;font-size:calc(var(--cell)*.3);color:var(--blue);line-height:1}
+  .cell.selword{background:#EAF6FB} html.dark .cell.selword{background:#13283a}
+  .cell.sel{background:#CDEBFA;box-shadow:inset 0 0 0 2px var(--blue)}
+  html.dark .cell.sel{background:#1d4560}
+  .cell.ok input{color:var(--green-strong)} .cell.ok{background:#EEF7EC} html.dark .cell.ok{background:#15301c}
+  .cell.bad input{color:var(--coral)} .cell.bad{background:#FDEEEC} html.dark .cell.bad{background:#371a15}
+
+  .actions{display:flex;gap:7px;margin-bottom:10px}
+  .actions .btn{flex:1;text-align:center}
+  .btn.g{background:linear-gradient(135deg,var(--green),var(--green-strong));color:#fff;border:none}
+  .btn.y{background:linear-gradient(135deg,#F6C94B,#E0A012);color:#5a3d00;border:none}
+
+  /* keyboard */
+  .kb{display:flex;flex-direction:column;gap:6px;margin-bottom:12px}
+  .kb .row{display:flex;gap:4px;justify-content:center}
+  .kb button{flex:1;min-width:0;height:42px;border-radius:8px;border:1px solid var(--border);background:var(--key);color:var(--text);
+    font-family:'Rubik';font-weight:700;font-size:17px;box-shadow:var(--e1);cursor:pointer}
+  .kb button:active{transform:scale(.94);background:var(--surface-2)}
+  .kb button.wide{flex:1.6;font-size:15px}
+
+  details{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:4px 12px;margin-bottom:10px;box-shadow:var(--e1)}
+  summary{font-family:'Rubik';font-weight:700;font-size:14px;padding:8px 0;cursor:pointer}
+  .clue{display:flex;gap:8px;font-size:13.5px;line-height:1.5;padding:7px 4px;border-bottom:1px solid var(--border);cursor:pointer}
+  .clue:last-child{border-bottom:none}
+  .clue.active{color:var(--blue-strong);font-weight:700}
+  .clue.done{color:var(--green-strong)}
+  .clue b{flex:0 0 auto;min-width:20px}
+
+  .win{position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:rgba(10,15,22,.55);z-index:50}
   .win.on{display:flex}
-  .win .card{background:#fff;border-radius:20px;padding:26px 22px;text-align:center;max-width:320px;box-shadow:0 20px 50px rgba(0,0,0,.3)}
-  .win .card .em{font-size:52px}
-  .win .card h2{font-family:'Rubik';margin:6px 0 4px}
-  .win .card p{color:var(--text-2);margin:0 0 16px}
+  .win .card{background:var(--surface);border-radius:22px;padding:26px 22px;text-align:center;max-width:330px;box-shadow:0 22px 55px rgba(0,0,0,.35)}
+  .win .em{font-size:52px} .win h2{font-family:'Rubik';margin:6px 0 4px}
+  .win .stat{display:flex;gap:16px;justify-content:center;margin:12px 0 16px}
+  .win .stat div b{font-family:'Rubik';font-size:20px;display:block;color:var(--blue-strong)}
+  .win .stat div span{font-size:12px;color:var(--text-3)}
   .confetti{position:fixed;inset:0;pointer-events:none;z-index:60;overflow:hidden}
   .confetti i{position:absolute;top:-12px;width:9px;height:14px;border-radius:2px;animation:fall linear forwards}
   @keyframes fall{0%{transform:translateY(-10px) rotate(0);opacity:1}100%{transform:translateY(105vh) rotate(540deg);opacity:.9}}
-  .note{font-size:12px;color:var(--text-3);background:var(--surface-2);border-radius:10px;padding:10px 12px;margin-top:14px;line-height:1.6}
 </style>
 </head>
 <body>
 <div class="wrap">
   <header class="hd">
     <img class="logo" src="logo.jpg" alt="MediLab" onerror="this.style.display='none'">
-    <div><b>תשבץ ביולוגיה</b><span>אב-טיפוס · MediLab</span></div>
+    <b>תשבץ ביולוגיה</b>
+    <div class="sp">
+      <span class="pill" id="timer">⏱️ 0:00</span>
+      <span class="pill" id="hints">💡 0</span>
+      <button class="icon" id="dark" aria-label="מצב כהה">🌙</button>
+    </div>
   </header>
 
   <div class="bar">
     <select id="topic" aria-label="נושא"></select>
+    <select id="diff" aria-label="קושי">
+      <option value="8">קל · 8</option>
+      <option value="12" selected>בינוני · 12</option>
+      <option value="16">קשה · 16</option>
+    </select>
     <button class="btn pri" id="new">🧩 תשבץ חדש</button>
-    <button class="btn g" id="check">בדיקה</button>
-    <button class="btn" id="reveal">גילוי</button>
-    <button class="btn" id="clear">ניקוי</button>
   </div>
-  <div class="meta" id="meta"></div>
+
+  <div class="banner">
+    <button class="nav" id="prev" aria-label="הקודם">›</button>
+    <div class="txt"><span class="dir" id="bdir">מאוזן</span><span class="cl" id="bclue">—</span></div>
+    <button class="nav" id="next" aria-label="הבא">‹</button>
+  </div>
 
   <div class="gridwrap"><div class="grid" id="grid"></div></div>
 
-  <h3 class="sec">↔️ מאוזן</h3>
-  <div class="clues" id="across"></div>
-  <h3 class="sec">↕️ מאונך</h3>
-  <div class="clues" id="down"></div>
-
-  <div class="note">
-    אב-טיפוס לבדיקה. התשבץ מחולל אוטומטית מתוך מאגר המושגים (מילים בעברית בלבד, ללא רווחים).
-    אותיות סופיות מנורמלות (כ=ך). לחיצה על הגדרה מדגישה את המילה; מקלידים אותיות והמערכת מתקדמת לאות הבאה.
+  <div class="actions">
+    <button class="btn g" id="check">✓ בדיקה</button>
+    <button class="btn y" id="hint">💡 רמז</button>
+    <button class="btn" id="clear">🗑️ ניקוי</button>
   </div>
+
+  <div class="kb" id="kb"></div>
+
+  <details>
+    <summary>כל ההגדרות</summary>
+    <div id="allclues"></div>
+  </details>
 </div>
 
-<div class="win" id="win"><div class="card"><div class="em">🎉</div><h2>כל הכבוד!</h2><p>פתרת את התשבץ</p><button class="btn pri" onclick="document.getElementById('win').classList.remove('on')">מעולה</button></div></div>
+<div class="win" id="win"><div class="card">
+  <div class="em">🎉</div><h2>כל הכבוד!</h2>
+  <div class="stat"><div><b id="wtime">0:00</b><span>זמן</span></div><div><b id="whints">0</b><span>רמזים</span></div><div><b id="wwords">0</b><span>מילים</span></div></div>
+  <button class="btn pri" style="width:100%" id="wnew">תשבץ חדש</button>
+</div></div>
 
 <script src="glossary.js"></script>
 <script>
@@ -101,305 +150,255 @@
   function norm(s){ return String(s||'').replace(/[ךםןףץ]/g,function(c){return FINALS[c];}).replace(/[^א-ת]/g,''); }
   function shortClue(e){
     var t=String(e.definition||e.paraphrase||'').trim();
-    t=t.split(/[.;]/)[0].trim();                 // first clause/sentence
-    t=t.replace(/\s*\([^)]*\)\s*/g,' ').trim();   // drop parentheticals
-    if(t.length>46) t=t.slice(0,44).trim()+'…';   // keep it short
+    t=t.split(/[.;]/)[0].trim();
+    t=t.replace(/\s*\([^)]*\)\s*/g,' ').trim();
+    if(t.length>60) t=t.slice(0,58).trim()+'…';
     return t;
   }
-
   function poolFor(topic){
     var seen={}, out=[];
     GLOSSARY.forEach(function(e){
       if(e.aliasOf || e.topic!==topic) return;
       var clean=String(e.hebrew||'').trim();
-      if(!/^[א-ת]{3,11}$/.test(clean)) return; // single Hebrew word only (no spaces / latin)
-      var ans=norm(clean);
-      if(ans.length<3 || ans.length>11) return;
+      if(!/^[א-ת]{3,11}$/.test(clean)) return;
+      var ans=norm(clean); if(ans.length<3||ans.length>11) return;
       if(seen[ans]) return; seen[ans]=1;
-      out.push({raw:clean, ans:ans, clue:shortClue(e), en:e.english});
+      out.push({raw:clean, ans:ans, clue:shortClue(e)});
     });
     return out;
   }
-
   function shuffle(a){ a=a.slice(); for(var i=a.length-1;i>0;i--){ var j=Math.floor(Math.random()*(i+1)); var t=a[i];a[i]=a[j];a[j]=t; } return a; }
 
-  // best-fit open-crossword generator: each round places the word whose best legal
-  // placement adds the MOST crossings and the LEAST footprint → tight, compact grid.
+  // ---- best-fit compact generator ----
   function generate(words, target){
-    target = target || 12;
-    words = words.slice(); // shuffled order preserved (first word = random seed → variety)
+    target=target||12; words=words.slice();
     var cells={}, placements=[], B=null;
     function key(r,c){ return r+','+c; }
-    function fits(ans,r,c,dir){ // returns #crossings, or -1 if illegal
-      var touch=0,i,rr,cc;
-      for(i=0;i<ans.length;i++){
-        rr=dir==='V'?r+i:r; cc=dir==='H'?c+i:c;
-        var cur=cells[key(rr,cc)];
+    function fits(ans,r,c,dir){ var touch=0,i,rr,cc;
+      for(i=0;i<ans.length;i++){ rr=dir==='V'?r+i:r; cc=dir==='H'?c+i:c; var cur=cells[key(rr,cc)];
         if(cur!==undefined){ if(cur!==ans[i]) return -1; touch++; }
-        else { var perp = dir==='H'? [[rr-1,cc],[rr+1,cc]] : [[rr,cc-1],[rr,cc+1]];
-          for(var p=0;p<2;p++){ if(cells[key(perp[p][0],perp[p][1])]!==undefined) return -1; } }
-      }
-      var bR=dir==='V'?r-1:r,bC=dir==='H'?c-1:c, aR=dir==='V'?r+ans.length:r,aC=dir==='H'?c+ans.length:c;
-      if(cells[key(bR,bC)]!==undefined) return -1;
-      if(cells[key(aR,aC)]!==undefined) return -1;
-      return touch;
-    }
-    function areaWith(r,c,dir,len){
-      var eR=dir==='V'?r+len-1:r, eC=dir==='H'?c+len-1:c;
-      var mnR=Math.min(B.minR,r),mnC=Math.min(B.minC,c),mxR=Math.max(B.maxR,eR),mxC=Math.max(B.maxC,eC);
-      return (mxR-mnR+1)*(mxC-mnC+1);
-    }
-    function place(w,r,c,dir){
-      for(var i=0;i<w.ans.length;i++){ var rr=dir==='V'?r+i:r, cc=dir==='H'?c+i:c; cells[key(rr,cc)]=w.ans[i];
-        if(!B){ B={minR:rr,minC:cc,maxR:rr,maxC:cc}; }
-        else { if(rr<B.minR)B.minR=rr; if(rr>B.maxR)B.maxR=rr; if(cc<B.minC)B.minC=cc; if(cc>B.maxC)B.maxC=cc; } }
-      placements.push({word:w,r:r,c:c,dir:dir});
-    }
+        else { var perp=dir==='H'?[[rr-1,cc],[rr+1,cc]]:[[rr,cc-1],[rr,cc+1]]; for(var p=0;p<2;p++){ if(cells[key(perp[p][0],perp[p][1])]!==undefined) return -1; } } }
+      var bR=dir==='V'?r-1:r,bC=dir==='H'?c-1:c,aR=dir==='V'?r+ans.length:r,aC=dir==='H'?c+ans.length:c;
+      if(cells[key(bR,bC)]!==undefined) return -1; if(cells[key(aR,aC)]!==undefined) return -1; return touch; }
+    function areaWith(r,c,dir,len){ var eR=dir==='V'?r+len-1:r,eC=dir==='H'?c+len-1:c;
+      return (Math.max(B.maxR,eR)-Math.min(B.minR,r)+1)*(Math.max(B.maxC,eC)-Math.min(B.minC,c)+1); }
+    function place(w,r,c,dir){ for(var i=0;i<w.ans.length;i++){ var rr=dir==='V'?r+i:r,cc=dir==='H'?c+i:c; cells[key(rr,cc)]=w.ans[i];
+      if(!B){B={minR:rr,minC:cc,maxR:rr,maxC:cc};} else {if(rr<B.minR)B.minR=rr;if(rr>B.maxR)B.maxR=rr;if(cc<B.minC)B.minC=cc;if(cc>B.maxC)B.maxC=cc;} }
+      placements.push({word:w,r:r,c:c,dir:dir}); }
     if(!words.length) return [];
-    // seed with a longer word from the front for a good backbone
     var seed=0; for(var s=0;s<Math.min(words.length,4);s++){ if(words[s].ans.length>words[seed].ans.length) seed=s; }
     place(words[seed],0,0,'H'); var used={}; used[words[seed].ans]=1;
     while(placements.length<target){
       var best=null;
-      for(var wi=0; wi<words.length; wi++){
-        var w=words[wi]; if(used[w.ans]) continue;
-        for(var pIdx=0; pIdx<placements.length; pIdx++){
-          var pl=placements[pIdx];
-          for(var pi=0; pi<pl.word.ans.length; pi++){
-            for(var i=0;i<w.ans.length;i++){
-              if(w.ans[i]!==pl.word.ans[pi]) continue;
-              var pr = pl.dir==='V'? pl.r+pi : pl.r;
-              var pc = pl.dir==='H'? pl.c+pi : pl.c;
-              var dir = pl.dir==='H'? 'V':'H';
-              var r = dir==='V'? pr - i : pr;
-              var c = dir==='H'? pc - i : pc;
-              var cross=fits(w.ans,r,c,dir);
-              if(cross<1) continue;
-              var area=areaWith(r,c,dir,w.ans.length);
-              if(!best || cross>best.cross || (cross===best.cross && area<best.area)){
-                best={w:w,r:r,c:c,dir:dir,cross:cross,area:area};
-              }
-            }
-          }
-        }
-      }
-      if(!best) break;
-      place(best.w,best.r,best.c,best.dir); used[best.w.ans]=1;
+      for(var wi=0;wi<words.length;wi++){ var w=words[wi]; if(used[w.ans]) continue;
+        for(var pIdx=0;pIdx<placements.length;pIdx++){ var pl=placements[pIdx];
+          for(var pi=0;pi<pl.word.ans.length;pi++){ for(var i=0;i<w.ans.length;i++){
+            if(w.ans[i]!==pl.word.ans[pi]) continue;
+            var pr=pl.dir==='V'?pl.r+pi:pl.r, pc=pl.dir==='H'?pl.c+pi:pl.c, dir=pl.dir==='H'?'V':'H';
+            var r=dir==='V'?pr-i:pr, c=dir==='H'?pc-i:pc, cross=fits(w.ans,r,c,dir);
+            if(cross<1) continue; var area=areaWith(r,c,dir,w.ans.length);
+            if(!best||cross>best.cross||(cross===best.cross&&area<best.area)) best={w:w,r:r,c:c,dir:dir,cross:cross,area:area};
+          } } } }
+      if(!best) break; place(best.w,best.r,best.c,best.dir); used[best.w.ans]=1;
     }
     return placements;
   }
-
-  function bbox(p){ if(!p.length) return {area:1e9,rows:1e6,cols:1e6}; var minR=1e9,minC=1e9,maxR=-1e9,maxC=-1e9;
-    p.forEach(function(pl){ for(var i=0;i<pl.word.ans.length;i++){ var r=pl.dir==='V'?pl.r+i:pl.r,c=pl.dir==='H'?pl.c+i:pl.c;
-      if(r<minR)minR=r;if(r>maxR)maxR=r;if(c<minC)minC=c;if(c>maxC)maxC=c; } });
-    var rows=maxR-minR+1, cols=maxC-minC+1; return {area:rows*cols, rows:rows, cols:cols}; }
-  // most words placed, then the smallest LONGER side (punish long thin strips), then smallest area
-  function score(p){ var b=bbox(p); return p.length*1e7 - Math.max(b.rows,b.cols)*1000 - b.area; }
-  function bestLayout(words, target){
-    var best=[], bestScore=-1e12;
-    for(var t=0;t<60;t++){
-      var p=generate(shuffle(words), target);
-      var s=score(p);
-      if(s>bestScore){ bestScore=s; best=p; }
-      var b=bbox(p);
-      if(p.length>=target && Math.max(b.rows,b.cols)<=10) break; // square & compact enough
-    }
-    return best;
-  }
-
-  // ---- state / rendering ----
-  var model=null; // {cells:{}, rows, cols, minR, minC, entries:[], numAt:{}}
-  var sel={dir:'H', cells:[], clueId:null};
+  function bbox(p){ if(!p.length) return {area:1e9,rows:1e6,cols:1e6}; var a=1e9,b=1e9,c=-1e9,d=-1e9;
+    p.forEach(function(pl){ for(var i=0;i<pl.word.ans.length;i++){ var r=pl.dir==='V'?pl.r+i:pl.r,cc=pl.dir==='H'?pl.c+i:pl.c;
+      if(r<a)a=r;if(r>c)c=r;if(cc<b)b=cc;if(cc>d)d=cc; } }); return {area:(c-a+1)*(d-b+1),rows:c-a+1,cols:d-b+1}; }
+  function score(p){ var x=bbox(p); return p.length*1e7 - Math.max(x.rows,x.cols)*1000 - x.area; }
+  function bestLayout(words,target){ var best=[],bs=-1e12;
+    for(var t=0;t<60;t++){ var p=generate(shuffle(words),target); var s=score(p); if(s>bs){bs=s;best=p;}
+      var x=bbox(p); if(p.length>=target && Math.max(x.rows,x.cols)<=Math.ceil(Math.sqrt(target)*3)) break; }
+    return best; }
 
   function buildModel(placements){
-    var minR=1e9,minC=1e9,maxR=-1e9,maxC=-1e9, cells={}, i;
-    placements.forEach(function(pl){
-      for(i=0;i<pl.word.ans.length;i++){
-        var r=pl.dir==='V'?pl.r+i:pl.r, c=pl.dir==='H'?pl.c+i:pl.c;
-        cells[r+','+c]={ans:pl.word.ans[i]};
-        if(r<minR)minR=r; if(r>maxR)maxR=r; if(c<minC)minC=c; if(c>maxC)maxC=c;
-      }
-    });
-    // shift to 0-based
-    var normCells={};
-    Object.keys(cells).forEach(function(k){ var p=k.split(','); var r=+p[0]-minR, c=+p[1]-minC; normCells[r+','+c]=cells[k]; });
+    var minR=1e9,minC=1e9,maxR=-1e9,maxC=-1e9,cells={},i;
+    placements.forEach(function(pl){ for(i=0;i<pl.word.ans.length;i++){ var r=pl.dir==='V'?pl.r+i:pl.r,c=pl.dir==='H'?pl.c+i:pl.c;
+      cells[r+','+c]={ans:pl.word.ans[i]}; if(r<minR)minR=r;if(r>maxR)maxR=r;if(c<minC)minC=c;if(c>maxC)maxC=c; } });
+    var nc={}; Object.keys(cells).forEach(function(k){ var p=k.split(','); nc[(+p[0]-minR)+','+(+p[1]-minC)]=cells[k]; });
     var rows=maxR-minR+1, cols=maxC-minC+1;
-    function filled(r,c){ return normCells[r+','+c]!==undefined; }
-    // numbering + entries
-    var num=0, numAt={}, entries=[];
-    var clueByAns={}; placements.forEach(function(pl){ clueByAns[pl.word.ans]=pl.word; });
-    for(var r=0;r<rows;r++){
-      for(var c=0;c<cols;c++){
-        if(!filled(r,c)) continue;
-        var startA = !filled(r,c-1) && filled(r,c+1);   // across start (right-most letter; c-1 is to the right visually)
-        var startD = !filled(r-1,c) && filled(r+1,c);   // down start
-        if(startA||startD){ num++; numAt[r+','+c]=num; }
-        if(startA){
-          var a='',cc=c,list=[]; while(filled(r,cc)){ a+=normCells[r+','+cc].ans; list.push([r,cc]); cc++; }
-          entries.push({num:num,dir:'H',cells:list,ans:a,clue:(clueByAns[a]||{}).clue||'',raw:(clueByAns[a]||{}).raw||a});
-        }
-        if(startD){
-          var d='',rr=r,l2=[]; while(filled(rr,c)){ d+=normCells[rr+','+c].ans; l2.push([rr,c]); rr++; }
-          entries.push({num:num,dir:'V',cells:l2,ans:d,clue:(clueByAns[d]||{}).clue||'',raw:(clueByAns[d]||{}).raw||d});
-        }
-      }
+    function filled(r,c){ return nc[r+','+c]!==undefined; }
+    var num=0,numAt={},arrAt={},entries=[]; var byAns={}; placements.forEach(function(pl){ byAns[pl.word.ans]=pl.word; });
+    for(var r=0;r<rows;r++) for(var c=0;c<cols;c++){
+      if(!filled(r,c)) continue;
+      var sA=!filled(r,c-1)&&filled(r,c+1), sD=!filled(r-1,c)&&filled(r+1,c);
+      if(sA||sD){ num++; numAt[r+','+c]=num; arrAt[r+','+c]=(sA&&sD)?'↙':(sA?'←':'↓'); }
+      if(sA){ var a='',cc=c,l=[]; while(filled(r,cc)){ a+=nc[r+','+cc].ans; l.push([r,cc]); cc++; } entries.push({num:num,dir:'H',cells:l,ans:a,clue:(byAns[a]||{}).clue||'',raw:(byAns[a]||{}).raw||a}); }
+      if(sD){ var d='',rr=r,l2=[]; while(filled(rr,c)){ d+=nc[rr+','+c].ans; l2.push([rr,c]); rr++; } entries.push({num:num,dir:'V',cells:l2,ans:d,clue:(byAns[d]||{}).clue||'',raw:(byAns[d]||{}).raw||d}); }
     }
-    return {cells:normCells, rows:rows, cols:cols, numAt:numAt, entries:entries};
+    return {cells:nc,rows:rows,cols:cols,numAt:numAt,arrAt:arrAt,entries:entries};
   }
 
+  // ---- state ----
+  var model=null, inputs={}, sel={entry:null,cellIdx:0}, timer={t:0,iv:null,started:false}, hints=0;
   function ck(r,c){ return r+','+c; }
-  var inputs={};
 
   function render(){
     var grid=document.getElementById('grid');
     grid.style.gridTemplateColumns='repeat('+model.cols+',var(--cell))';
     grid.style.gridTemplateRows='repeat('+model.rows+',var(--cell))';
     grid.innerHTML=''; inputs={};
-    for(var r=0;r<model.rows;r++){
-      for(var c=0;c<model.cols;c++){
-        var cell=model.cells[ck(r,c)];
-        var div=document.createElement('div');
-        div.className='cell'+(cell?'':' block');
-        div.style.gridRow=(r+1); div.style.gridColumn=(c+1);
-        if(cell){
-          var n=model.numAt[ck(r,c)];
-          if(n){ var s=document.createElement('span'); s.className='num'; s.textContent=n; div.appendChild(s); }
-          var inp=document.createElement('input');
-          inp.setAttribute('maxlength','1'); inp.setAttribute('inputmode','text');
-          inp.dataset.r=r; inp.dataset.c=c;
-          inp.addEventListener('focus',onFocus);
-          inp.addEventListener('input',onInput);
-          inp.addEventListener('keydown',onKey);
-          inp.addEventListener('click',onFocus);
-          div.appendChild(inp); inputs[ck(r,c)]=inp;
-        }
-        grid.appendChild(div);
+    for(var r=0;r<model.rows;r++) for(var c=0;c<model.cols;c++){
+      var cell=model.cells[ck(r,c)]; var div=document.createElement('div');
+      div.className='cell'+(cell?'':' block'); div.style.gridRow=(r+1); div.style.gridColumn=(c+1);
+      if(cell){
+        var n=model.numAt[ck(r,c)];
+        if(n){ var s=document.createElement('span'); s.className='num'; s.textContent=n; div.appendChild(s);
+               var ar=document.createElement('span'); ar.className='arr'; ar.textContent=model.arrAt[ck(r,c)]; div.appendChild(ar); }
+        var inp=document.createElement('input'); inp.setAttribute('maxlength','1'); inp.setAttribute('inputmode','none'); inp.setAttribute('autocomplete','off');
+        inp.dataset.r=r; inp.dataset.c=c;
+        inp.addEventListener('focus',onFocus); inp.addEventListener('click',onFocus);
+        inp.addEventListener('input',onInput); inp.addEventListener('keydown',onKey);
+        div.appendChild(inp); inputs[ck(r,c)]=inp;
       }
+      grid.appendChild(div);
     }
     renderClues();
-    document.getElementById('meta').textContent='נמצאו '+model.entries.length+' מילים · '+Object.keys(model.cells).length+' משבצות';
+    // select first entry
+    var first=model.entries.slice().sort(function(a,b){return a.num-b.num || (a.dir<b.dir?-1:1);})[0];
+    if(first) selectEntry(first,true);
   }
-
   function renderClues(){
-    var ac=document.getElementById('across'), dn=document.getElementById('down');
-    ac.innerHTML=''; dn.innerHTML='';
+    var box=document.getElementById('allclues'); box.innerHTML='';
     model.entries.slice().sort(function(a,b){return a.num-b.num;}).forEach(function(e){
       var el=document.createElement('div'); el.className='clue'; el.dataset.id=e.dir+e.num;
-      el.innerHTML='<b>'+e.num+'</b><span>'+ (e.clue||('('+e.raw+')')) +'</span>';
-      el.addEventListener('click',function(){ selectEntry(e); (e.cells[0] && inputs[ck(e.cells[0][0],e.cells[0][1])]||{focus:function(){}}).focus(); });
-      (e.dir==='H'?ac:dn).appendChild(el);
+      el.innerHTML='<b>'+e.num+(e.dir==='H'?'→':'↓')+'</b><span>'+(e.clue||('('+e.raw+')'))+'</span>';
+      el.addEventListener('click',function(){ selectEntry(e,true); });
+      box.appendChild(el);
     });
   }
-
   function entriesAt(r,c){ return model.entries.filter(function(e){ return e.cells.some(function(p){return p[0]===r&&p[1]===c;}); }); }
-
-  function clearSelClasses(){
-    document.querySelectorAll('.cell.sel,.cell.selword').forEach(function(el){ el.classList.remove('sel','selword'); });
-    document.querySelectorAll('.clue.active').forEach(function(el){ el.classList.remove('active'); });
-  }
-  function selectEntry(e){
-    sel.dir=e.dir; sel.cells=e.cells; sel.clueId=e.dir+e.num;
-    clearSelClasses();
+  function clearHi(){ document.querySelectorAll('.cell.sel,.cell.selword').forEach(function(el){ el.classList.remove('sel','selword'); });
+    document.querySelectorAll('.clue.active').forEach(function(el){ el.classList.remove('active'); }); }
+  function selectEntry(e,focusFirst){
+    sel.entry=e;
+    clearHi();
     e.cells.forEach(function(p){ var inp=inputs[ck(p[0],p[1])]; if(inp) inp.parentNode.classList.add('selword'); });
-    var cl=document.querySelector('.clue[data-id="'+(e.dir+e.num)+'"]'); if(cl) cl.classList.add('active');
+    document.getElementById('bdir').textContent = e.dir==='H'?('מאוזן · '+e.num):('מאונך · '+e.num);
+    document.getElementById('bclue').textContent = e.clue||('('+e.raw+')');
+    var cl=document.querySelector('.clue[data-id="'+(e.dir+e.num)+'"]'); if(cl){ cl.classList.add('active'); cl.scrollIntoView({block:'nearest'}); }
+    if(focusFirst){ var idx=firstEmptyIdx(e); sel.cellIdx=idx; var t=e.cells[idx]; var inp=inputs[ck(t[0],t[1])]; if(inp) inp.focus(); markCell(); }
   }
-  function onFocus(ev){
-    var inp=ev.target, r=+inp.dataset.r, c=+inp.dataset.c;
-    var es=entriesAt(r,c); if(!es.length) return;
-    var cur=es.filter(function(e){return e.dir===sel.dir;})[0] || es[0];
-    // if already selected this word and clicked again, toggle direction
-    if(sel.cells.length && sel.cells.some(function(p){return p[0]===r&&p[1]===c;}) && es.length>1){
-      var other=es.filter(function(e){return e.dir!==sel.dir;})[0]; if(other) cur=other;
-    }
-    selectEntry(cur);
-    inp.parentNode.classList.add('sel');
+  function firstEmptyIdx(e){ for(var i=0;i<e.cells.length;i++){ var p=e.cells[i]; if(!inputs[ck(p[0],p[1])].value) return i; } return 0; }
+  function markCell(){ document.querySelectorAll('.cell.sel').forEach(function(el){el.classList.remove('sel');});
+    if(!sel.entry) return; var p=sel.entry.cells[sel.cellIdx]; if(!p) return; var inp=inputs[ck(p[0],p[1])]; if(inp) inp.parentNode.classList.add('sel'); }
+  function onFocus(ev){ var inp=ev.target, r=+inp.dataset.r, c=+inp.dataset.c; var es=entriesAt(r,c); if(!es.length) return;
+    var cur=(sel.entry && es.indexOf(sel.entry)>=0) ? sel.entry : (es.filter(function(e){return e.dir==='H';})[0]||es[0]);
+    // clicking a cell already in the selected word toggles direction if it has two
+    if(sel.entry && sel.entry.cells.some(function(p){return p[0]===r&&p[1]===c;}) && es.length>1){ var o=es.filter(function(e){return e!==sel.entry;})[0]; if(o) cur=o; }
+    sel.entry=cur; clearHi();
+    cur.cells.forEach(function(p){ inputs[ck(p[0],p[1])].parentNode.classList.add('selword'); });
+    document.getElementById('bdir').textContent = cur.dir==='H'?('מאוזן · '+cur.num):('מאונך · '+cur.num);
+    document.getElementById('bclue').textContent = cur.clue||('('+cur.raw+')');
+    var clau=document.querySelector('.clue[data-id="'+(cur.dir+cur.num)+'"]'); if(clau) clau.classList.add('active');
+    sel.cellIdx=cur.cells.findIndex(function(p){return p[0]===r&&p[1]===c;}); markCell();
   }
-  function moveNext(r,c,delta){
-    // move within selected word
-    var idx=sel.cells.findIndex(function(p){return p[0]===r&&p[1]===c;});
-    if(idx<0) return;
-    var ni=idx+delta;
-    if(ni>=0 && ni<sel.cells.length){ var t=sel.cells[ni]; var inp=inputs[ck(t[0],t[1])]; if(inp) inp.focus(); }
+  function onKey(ev){ var inp=ev.target;
+    if(ev.key==='Backspace'){ ev.preventDefault(); if(inp.value){ inp.value=''; inp.parentNode.classList.remove('ok','bad'); } else advance(-1); markDone(); }
+    else if(ev.key==='ArrowRight'){ ev.preventDefault(); focusRC(+inp.dataset.r,+inp.dataset.c-1); }
+    else if(ev.key==='ArrowLeft'){ ev.preventDefault(); focusRC(+inp.dataset.r,+inp.dataset.c+1); }
+    else if(ev.key==='ArrowUp'){ ev.preventDefault(); focusRC(+inp.dataset.r-1,+inp.dataset.c); }
+    else if(ev.key==='ArrowDown'){ ev.preventDefault(); focusRC(+inp.dataset.r+1,+inp.dataset.c); }
+    else if(/^[א-ת]$/.test(ev.key)){ ev.preventDefault(); typeCh(norm(ev.key)); }
   }
-  function onInput(ev){
-    var inp=ev.target; var v=norm(inp.value); inp.value=v.slice(-1);
-    inp.parentNode.classList.remove('ok','bad');
-    if(inp.value) moveNext(+inp.dataset.r,+inp.dataset.c,1);
-    maybeWin();
-  }
-  function onKey(ev){
-    var inp=ev.target, r=+inp.dataset.r, c=+inp.dataset.c;
-    if(ev.key==='Backspace' && !inp.value){ moveNext(r,c,-1); }
-    else if(ev.key==='ArrowRight'){ ev.preventDefault(); focusRC(r,c-1); }
-    else if(ev.key==='ArrowLeft'){ ev.preventDefault(); focusRC(r,c+1); }
-    else if(ev.key==='ArrowUp'){ ev.preventDefault(); focusRC(r-1,c); }
-    else if(ev.key==='ArrowDown'){ ev.preventDefault(); focusRC(r+1,c); }
-  }
-  function focusRC(r,c){ var inp=inputs[ck(r,c)]; if(inp) inp.focus(); }
+  function onInput(ev){ var v=norm(ev.target.value); if(v){ ev.target.value=''; typeCh(v.slice(-1)); } else ev.target.value=''; }
+  function focusRC(r,c){ var inp=inputs[ck(r,c)]; if(inp){ inp.focus(); } }
+  function startTimer(){ if(timer.started) return; timer.started=true; timer.iv=setInterval(function(){ timer.t++; document.getElementById('timer').textContent='⏱️ '+fmt(timer.t); },1000); }
+  function fmt(s){ var m=Math.floor(s/60); return m+':'+('0'+(s%60)).slice(-2); }
 
-  function check(){
-    var allRight=true, any=false;
-    Object.keys(model.cells).forEach(function(k){
-      var inp=inputs[k]; var want=model.cells[k].ans; var got=norm(inp.value);
-      inp.parentNode.classList.remove('ok','bad');
-      if(!got){ allRight=false; return; }
-      any=true;
-      if(got===want){ inp.parentNode.classList.add('ok'); } else { inp.parentNode.classList.add('bad'); allRight=false; }
-    });
-    markDoneClues();
-    if(allRight && any) win();
+  function typeCh(ch){
+    startTimer();
+    if(!sel.entry) return; var p=sel.entry.cells[sel.cellIdx]; if(!p) return;
+    var inp=inputs[ck(p[0],p[1])]; inp.value=ch; inp.parentNode.classList.remove('ok','bad');
+    advance(1); markDone(); maybeWin();
   }
-  function markDoneClues(){
-    model.entries.forEach(function(e){
-      var done=e.cells.every(function(p){ return norm((inputs[ck(p[0],p[1])]||{}).value||'')===model.cells[ck(p[0],p[1])].ans; });
-      var cl=document.querySelector('.clue[data-id="'+(e.dir+e.num)+'"]'); if(cl) cl.classList.toggle('done',done);
-    });
+  function advance(delta){
+    if(!sel.entry) return; var ni=sel.cellIdx+delta;
+    if(delta>0){ // skip to next empty in word, else stay at end / move to next clue
+      while(ni<sel.entry.cells.length){ var q=sel.entry.cells[ni]; if(!inputs[ck(q[0],q[1])].value) break; ni++; }
+      if(ni>=sel.entry.cells.length){ // word maybe complete → next clue
+        if(wordComplete(sel.entry)){ nextClue(1,true); return; } ni=sel.entry.cells.length-1; }
+    } else { if(ni<0) ni=0; }
+    sel.cellIdx=ni; var t=sel.entry.cells[ni]; var inp=inputs[ck(t[0],t[1])]; if(inp) inp.focus(); markCell();
   }
-  function maybeWin(){
-    var all=Object.keys(model.cells).every(function(k){ return norm((inputs[k]||{}).value||'')===model.cells[k].ans; });
-    markDoneClues();
-    if(all) win();
+  function wordComplete(e){ return e.cells.every(function(p){ return !!inputs[ck(p[0],p[1])].value; }); }
+  function sortedEntries(){ return model.entries.slice().sort(function(a,b){ return a.num-b.num || (a.dir<b.dir?-1:1); }); }
+  function nextClue(dir,preferUnsolved){
+    var list=sortedEntries(); var idx=list.indexOf(sel.entry);
+    for(var k=1;k<=list.length;k++){ var e=list[(idx+dir*k+list.length*10)%list.length];
+      if(!preferUnsolved || !wordComplete(e)){ selectEntry(e,true); return; } }
+    selectEntry(list[(idx+dir+list.length)%list.length],true);
   }
-  function reveal(){ Object.keys(model.cells).forEach(function(k){ inputs[k].value=model.cells[k].ans; inputs[k].parentNode.classList.remove('bad'); inputs[k].parentNode.classList.add('ok'); }); markDoneClues(); }
-  function clearAll(){ Object.keys(model.cells).forEach(function(k){ inputs[k].value=''; inputs[k].parentNode.classList.remove('ok','bad'); }); markDoneClues(); }
 
-  function win(){
-    document.getElementById('win').classList.add('on');
-    confetti(); try{ ding(); }catch(e){}
-  }
-  function confetti(){
-    var cols=['#3FA9D6','#5CB85C','#F0654F','#F9D85C','#9B59B6'], w=document.createElement('div'); w.className='confetti';
-    for(var i=0;i<46;i++){ var p=document.createElement('i'); p.style.left=(Math.random()*100)+'%'; p.style.background=cols[i%cols.length]; p.style.animationDuration=(1+Math.random()*1.1)+'s'; p.style.animationDelay=(Math.random()*0.3)+'s'; w.appendChild(p); }
-    document.body.appendChild(w); setTimeout(function(){ w.remove(); },2200);
-  }
-  function ding(){ var a=new (window.AudioContext||window.webkitAudioContext)(); [880,1175].forEach(function(f,i){ var o=a.createOscillator(),g=a.createGain(); o.type='triangle'; o.frequency.value=f; o.connect(g); g.connect(a.destination); var t=a.currentTime+i*0.08; g.gain.setValueAtTime(0.0001,t); g.gain.exponentialRampToValueAtTime(0.15,t+0.01); g.gain.exponentialRampToValueAtTime(0.0001,t+0.18); o.start(t); o.stop(t+0.2); }); }
+  function markDone(){ model.entries.forEach(function(e){ var done=e.cells.every(function(p){ return norm(inputs[ck(p[0],p[1])].value||'')===model.cells[ck(p[0],p[1])].ans; });
+    var cl=document.querySelector('.clue[data-id="'+(e.dir+e.num)+'"]'); if(cl) cl.classList.toggle('done',done); }); }
+  function maybeWin(){ var all=Object.keys(model.cells).every(function(k){ return norm(inputs[k].value||'')===model.cells[k].ans; }); if(all) win(); }
 
-  // ---- topic list + boot ----
-  function topicsWithCounts(){
-    var m={}; GLOSSARY.forEach(function(e){ if(e.aliasOf||!e.topic) return; var clean=String(e.hebrew||'').trim(); if(/^[א-ת]{3,11}$/.test(clean)) m[e.topic]=(m[e.topic]||0)+1; });
-    return Object.keys(m).map(function(k){return {topic:k,n:m[k]};}).filter(function(x){return x.n>=6;}).sort(function(a,b){return b.n-a.n;});
+  function check(){ var allRight=true, any=false;
+    Object.keys(model.cells).forEach(function(k){ var inp=inputs[k], got=norm(inp.value); inp.parentNode.classList.remove('ok','bad');
+      if(!got){ allRight=false; return; } any=true; if(got===model.cells[k].ans) inp.parentNode.classList.add('ok'); else { inp.parentNode.classList.add('bad'); allRight=false; } });
+    markDone(); if(allRight&&any) win(); }
+  function hint(){ startTimer(); if(!sel.entry) return; var p=sel.entry.cells[sel.cellIdx]||sel.entry.cells[firstEmptyIdx(sel.entry)]; if(!p) return;
+    var inp=inputs[ck(p[0],p[1])]; inp.value=model.cells[ck(p[0],p[1])].ans; inp.parentNode.classList.remove('bad'); inp.parentNode.classList.add('ok');
+    hints++; document.getElementById('hints').textContent='💡 '+hints; markDone(); advance(1); maybeWin(); }
+  function clearAll(){ Object.keys(model.cells).forEach(function(k){ inputs[k].value=''; inputs[k].parentNode.classList.remove('ok','bad'); }); markDone(); }
+
+  function win(){ if(timer.iv){ clearInterval(timer.iv); timer.iv=null; }
+    document.getElementById('wtime').textContent=fmt(timer.t);
+    document.getElementById('whints').textContent=hints;
+    document.getElementById('wwords').textContent=model.entries.length;
+    document.getElementById('win').classList.add('on'); confetti(); try{ ding(); }catch(e){} }
+  function confetti(){ var cols=['#3FA9D6','#5CB85C','#F0654F','#F9D85C','#9B59B6'],w=document.createElement('div');w.className='confetti';
+    for(var i=0;i<48;i++){ var p=document.createElement('i');p.style.left=(Math.random()*100)+'%';p.style.background=cols[i%cols.length];p.style.animationDuration=(1+Math.random()*1.1)+'s';p.style.animationDelay=(Math.random()*0.3)+'s';w.appendChild(p);} document.body.appendChild(w); setTimeout(function(){w.remove();},2200); }
+  function ding(){ var a=new (window.AudioContext||window.webkitAudioContext)(); [523,659,784,1046].forEach(function(f,i){ var o=a.createOscillator(),g=a.createGain();o.type='triangle';o.frequency.value=f;o.connect(g);g.connect(a.destination);var t=a.currentTime+i*0.09;g.gain.setValueAtTime(0.0001,t);g.gain.exponentialRampToValueAtTime(0.16,t+0.01);g.gain.exponentialRampToValueAtTime(0.0001,t+0.22);o.start(t);o.stop(t+0.24);}); }
+
+  // keyboard
+  function buildKeyboard(){
+    var rows=[['א','ב','ג','ד','ה','ו','ז','ח','ט','י','כ'],['ל','מ','נ','ס','ע','פ','צ','ק','ר','ש','ת']];
+    var kb=document.getElementById('kb'); kb.innerHTML='';
+    rows.forEach(function(letters){ var row=document.createElement('div'); row.className='row';
+      letters.forEach(function(l){ var b=document.createElement('button'); b.textContent=l; b.addEventListener('click',function(){ typeCh(norm(l)); keepFocus(); }); row.appendChild(b); });
+      kb.appendChild(row); });
+    var row3=document.createElement('div'); row3.className='row';
+    var bk=document.createElement('button'); bk.className='wide'; bk.textContent='⌫ מחיקה'; bk.addEventListener('click',function(){ backspace(); keepFocus(); }); row3.appendChild(bk);
+    var nx=document.createElement('button'); nx.className='wide'; nx.textContent='הגדרה הבאה ‹'; nx.addEventListener('click',function(){ nextClue(1,false); }); row3.appendChild(nx);
+    kb.appendChild(row3);
   }
-  function buildPuzzle(topic){
-    var pool=poolFor(topic);
-    // feed the whole topic; the generator selects up to 12 that interlock most compactly
-    var placements=bestLayout(pool, 12);
-    model=buildModel(placements); sel={dir:'H',cells:[],clueId:null};
+  function backspace(){ if(!sel.entry) return; var p=sel.entry.cells[sel.cellIdx]; if(!p) return; var inp=inputs[ck(p[0],p[1])];
+    if(inp.value){ inp.value=''; inp.parentNode.classList.remove('ok','bad'); } else advance(-1); markDone(); }
+  function keepFocus(){ if(!sel.entry) return; var p=sel.entry.cells[sel.cellIdx]; if(p){ var inp=inputs[ck(p[0],p[1])]; if(inp) inp.focus(); } }
+
+  // topics + boot
+  function topics(){ var m={}; GLOSSARY.forEach(function(e){ if(e.aliasOf||!e.topic) return; var c=String(e.hebrew||'').trim(); if(/^[א-ת]{3,11}$/.test(c)) m[e.topic]=(m[e.topic]||0)+1; });
+    return Object.keys(m).map(function(k){return {t:k,n:m[k]};}).filter(function(x){return x.n>=6;}).sort(function(a,b){return b.n-a.n;}); }
+  function buildPuzzle(){
+    var topic=document.getElementById('topic').value, target=+document.getElementById('diff').value;
+    var pool=poolFor(topic); target=Math.min(target,pool.length);
+    model=buildModel(bestLayout(pool,target)); sel={entry:null,cellIdx:0};
+    if(timer.iv){clearInterval(timer.iv);timer.iv=null;} timer={t:0,iv:null,started:false}; document.getElementById('timer').textContent='⏱️ 0:00';
+    hints=0; document.getElementById('hints').textContent='💡 0';
     render();
   }
-
   function boot(){
-    var sel2=document.getElementById('topic'), list=topicsWithCounts();
-    list.forEach(function(x){ var o=document.createElement('option'); o.value=x.topic; o.textContent=x.topic+' ('+x.n+')'; sel2.appendChild(o); });
-    var def=list.filter(function(x){return x.topic==='אקולוגיה';})[0]?'אקולוגיה':(list[0]&&list[0].topic);
-    sel2.value=def;
-    document.getElementById('new').addEventListener('click',function(){ buildPuzzle(sel2.value); });
-    sel2.addEventListener('change',function(){ buildPuzzle(sel2.value); });
+    var sel2=document.getElementById('topic'), list=topics();
+    list.forEach(function(x){ var o=document.createElement('option'); o.value=x.t; o.textContent=x.t+' ('+x.n+')'; sel2.appendChild(o); });
+    sel2.value=(list.filter(function(x){return x.t==='אקולוגיה';})[0]?'אקולוגיה':(list[0]&&list[0].t));
+    document.getElementById('new').addEventListener('click',buildPuzzle);
+    document.getElementById('wnew').addEventListener('click',function(){ document.getElementById('win').classList.remove('on'); buildPuzzle(); });
+    sel2.addEventListener('change',buildPuzzle);
+    document.getElementById('diff').addEventListener('change',buildPuzzle);
     document.getElementById('check').addEventListener('click',check);
-    document.getElementById('reveal').addEventListener('click',reveal);
+    document.getElementById('hint').addEventListener('click',hint);
     document.getElementById('clear').addEventListener('click',clearAll);
-    buildPuzzle(def);
+    document.getElementById('prev').addEventListener('click',function(){ nextClue(-1,false); });
+    document.getElementById('next').addEventListener('click',function(){ nextClue(1,false); });
+    var dk=document.getElementById('dark'); var isDark=false; try{ isDark=localStorage.getItem('ml-cw-dark')==='1'; }catch(e){}
+    function applyDark(){ document.documentElement.classList.toggle('dark',isDark); dk.textContent=isDark?'☀️':'🌙'; }
+    applyDark(); dk.addEventListener('click',function(){ isDark=!isDark; try{localStorage.setItem('ml-cw-dark',isDark?'1':'0');}catch(e){} applyDark(); });
+    buildKeyboard(); buildPuzzle();
   }
-  if(GLOSSARY.length) boot(); else document.getElementById('meta').textContent='לא נטען מאגר המושגים.';
+  if(GLOSSARY.length) boot();
 })();
 </script>
 </body>
