@@ -1,0 +1,11 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Each signed-in user can read/write ONLY their own profile document.
+    // (Published to the shlifim-medilab project 2026-07-03, replacing the default
+    //  test-mode rules that had expired on 2026-06-25 and blocked all users.)
+    match /users/{uid} {
+      allow read, write: if request.auth != null && request.auth.uid == uid;
+    }
+  }
+}
