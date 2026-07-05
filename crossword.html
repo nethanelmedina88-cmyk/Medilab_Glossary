@@ -67,14 +67,6 @@
   .btn.g{background:linear-gradient(135deg,var(--green),var(--green-strong));color:#fff;border:none}
   .btn.y{background:linear-gradient(135deg,#F6C94B,#E0A012);color:#5a3d00;border:none}
 
-  /* keyboard */
-  .kb{display:flex;flex-direction:column;gap:6px;margin-bottom:12px}
-  .kb .row{display:flex;gap:4px;justify-content:center}
-  .kb button{flex:1;min-width:0;height:42px;border-radius:8px;border:1px solid var(--border);background:var(--key);color:var(--text);
-    font-family:'Rubik';font-weight:700;font-size:17px;box-shadow:var(--e1);cursor:pointer}
-  .kb button:active{transform:scale(.94);background:var(--surface-2)}
-  .kb button.wide{flex:1.6;font-size:15px}
-
   details{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:4px 12px;margin-bottom:10px;box-shadow:var(--e1)}
   summary{font-family:'Rubik';font-weight:700;font-size:14px;padding:8px 0;cursor:pointer}
   .clue{display:flex;gap:8px;font-size:13.5px;line-height:1.5;padding:7px 4px;border-bottom:1px solid var(--border);cursor:pointer}
@@ -130,8 +122,6 @@
     <button class="btn y" id="hint">💡 רמז</button>
     <button class="btn" id="clear">🗑️ ניקוי</button>
   </div>
-
-  <div class="kb" id="kb"></div>
 
   <details>
     <summary>כל ההגדרות</summary>
@@ -267,7 +257,8 @@
         var n=model.numAt[ck(r,c)];
         if(n){ var s=document.createElement('span'); s.className='num'; s.textContent=n; div.appendChild(s);
                var ar=document.createElement('span'); ar.className='arr'; ar.textContent=model.arrAt[ck(r,c)]; div.appendChild(ar); }
-        var inp=document.createElement('input'); inp.setAttribute('maxlength','1'); inp.setAttribute('inputmode','none'); inp.setAttribute('autocomplete','off');
+        var inp=document.createElement('input'); inp.setAttribute('maxlength','1'); inp.setAttribute('inputmode','text'); inp.setAttribute('autocomplete','off');
+        inp.setAttribute('autocapitalize','none'); inp.setAttribute('autocorrect','off'); inp.spellcheck=false;
         inp.dataset.r=r; inp.dataset.c=c;
         inp.addEventListener('focus',onFocus); inp.addEventListener('click',onClick);
         inp.addEventListener('input',onInput); inp.addEventListener('keydown',onKey);
@@ -402,22 +393,6 @@
     for(var i=0;i<48;i++){ var p=document.createElement('i');p.style.left=(Math.random()*100)+'%';p.style.background=cols[i%cols.length];p.style.animationDuration=(1+Math.random()*1.1)+'s';p.style.animationDelay=(Math.random()*0.3)+'s';w.appendChild(p);} document.body.appendChild(w); setTimeout(function(){w.remove();},2200); }
   function ding(){ var a=new (window.AudioContext||window.webkitAudioContext)(); [523,659,784,1046].forEach(function(f,i){ var o=a.createOscillator(),g=a.createGain();o.type='triangle';o.frequency.value=f;o.connect(g);g.connect(a.destination);var t=a.currentTime+i*0.09;g.gain.setValueAtTime(0.0001,t);g.gain.exponentialRampToValueAtTime(0.16,t+0.01);g.gain.exponentialRampToValueAtTime(0.0001,t+0.22);o.start(t);o.stop(t+0.24);}); }
 
-  // keyboard
-  function buildKeyboard(){
-    var rows=[['א','ב','ג','ד','ה','ו','ז','ח','ט','י','כ'],['ל','מ','נ','ס','ע','פ','צ','ק','ר','ש','ת']];
-    var kb=document.getElementById('kb'); kb.innerHTML='';
-    rows.forEach(function(letters){ var row=document.createElement('div'); row.className='row';
-      letters.forEach(function(l){ var b=document.createElement('button'); b.textContent=l; b.addEventListener('click',function(){ typeCh(norm(l)); keepFocus(); }); row.appendChild(b); });
-      kb.appendChild(row); });
-    var row3=document.createElement('div'); row3.className='row';
-    var bk=document.createElement('button'); bk.className='wide'; bk.textContent='⌫ מחיקה'; bk.addEventListener('click',function(){ backspace(); keepFocus(); }); row3.appendChild(bk);
-    var nx=document.createElement('button'); nx.className='wide'; nx.textContent='הגדרה הבאה ‹'; nx.addEventListener('click',function(){ nextClue(1,false); }); row3.appendChild(nx);
-    kb.appendChild(row3);
-  }
-  function backspace(){ if(!sel.entry) return; var p=sel.entry.cells[sel.cellIdx]; if(!p) return; var inp=inputs[ck(p[0],p[1])];
-    if(inp.value){ inp.value=''; inp.parentNode.classList.remove('ok','bad'); } else advance(-1); markDone(); }
-  function keepFocus(){ if(!sel.entry) return; var p=sel.entry.cells[sel.cellIdx]; if(p){ var inp=inputs[ck(p[0],p[1])]; if(inp) inp.focus(); } }
-
   // boot
   var OPTS=[];
   function buildPuzzle(){
@@ -451,7 +426,7 @@
     var dk=document.getElementById('dark'); var isDark=false; try{ isDark=localStorage.getItem('ml-cw-dark')==='1'; }catch(e){}
     function applyDark(){ document.documentElement.classList.toggle('dark',isDark); dk.textContent=isDark?'☀️':'🌙'; }
     applyDark(); dk.addEventListener('click',function(){ isDark=!isDark; try{localStorage.setItem('ml-cw-dark',isDark?'1':'0');}catch(e){} applyDark(); });
-    buildKeyboard(); buildPuzzle();
+    buildPuzzle();
   }
   if(GLOSSARY.length) boot();
 })();
