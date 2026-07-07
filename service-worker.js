@@ -13,6 +13,7 @@ const FILES_TO_CACHE = [
   './lib/quiz.js',
   './lib/validate.js',
   './app/achievements.js',
+  './audio/manifest.js',
   './app/sound.js',
   './app/styles-v2.css',
   './app/app-v2.js',
