@@ -180,7 +180,7 @@ function TermCard({t,q,fav,studied,onFav,onStudied,onOpenTerm}){
     <div className="card-top">
       <div><div className={`term ${onOpenTerm?'link':''}`} onClick={onOpenTerm?function(){onOpenTerm(t.hebrew);}:undefined}>{highlight(t.hebrew,q)}</div>{t.english&&<div className="en">{t.english}</div>}</div>
       <div className="acts">
-        <button className="ibtn" onClick={()=>Speak(t.hebrew + '. ' + def)} title="הקראה" aria-label="הקראה">🔊</button>
+        <button className="ibtn" onClick={()=>Speak(t.hebrew)} title="הקראה" aria-label="הקראה">🔊</button>
         <button className={`ibtn ${fav?'pin':''}`} onClick={onFav} title={fav?'הסר מרשימת החזרה':'סמן כמושג לחזרה (קשה לזכור)'} aria-label="לחזרה"><span className={fav?'':'pin-off'}>📌</span></button>
         <button className={`ibtn ${studied?'done':''}`} onClick={()=>{ if(!studied)Snd.ding(); onStudied(); }} title={studied?'בטל נלמד':'סמן כנלמד'} aria-label="נלמד">{studied?'✓':'○'}</button>
       </div>
