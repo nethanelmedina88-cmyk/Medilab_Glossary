@@ -34,3 +34,41 @@ T.suite('audio-manifest', function () {
     T.eq(again, man);
   });
 });
+
+T.suite('slspeak-routing', function () {
+  // Fake Audio: records src into a SHARED global read at play() time, so a cached
+  // audioEl (SLSpeak reuses one element) still reports into the current test's object.
+  function withFakes(manifest, fn) {
+    var realAudio = window.Audio, realManifest = window.AUDIO_MANIFEST, realBrowser = window.SLSpeakBrowser;
+    window.__PLAYED = { src: null };
+    var browserCalls = [];
+    window.Audio = function () { return { pause: function(){}, play: function(){ window.__PLAYED.src = this._src; return { catch: function(){} }; }, set src(v){ this._src = v; }, get src(){ return this._src; } }; };
+    window.AUDIO_MANIFEST = manifest;
+    window.SLSpeakBrowser = function (t) { browserCalls.push(t); };
+    try { fn(window.__PLAYED, browserCalls); }
+    finally { window.Audio = realAudio; window.AUDIO_MANIFEST = realManifest; window.SLSpeakBrowser = realBrowser; }
+  }
+
+  T.test('known term → plays mp3, no browser fallback', function () {
+    withFakes({ 'פוטוסינתזה': 'audio/t0001.mp3' }, function (played, browserCalls) {
+      window.SLSpeak('פוטוסינתזה');
+      T.eq(played.src, 'audio/t0001.mp3');
+      T.eq(browserCalls.length, 0);
+    });
+  });
+
+  T.test('unknown text (definition) → browser fallback, no mp3', function () {
+    withFakes({ 'פוטוסינתזה': 'audio/t0001.mp3' }, function (played, browserCalls) {
+      window.SLSpeak('תהליך ארוך שאין לו קובץ');
+      T.eq(played.src, null);
+      T.eq(browserCalls.length, 1);
+    });
+  });
+
+  T.test('trims whitespace before lookup', function () {
+    withFakes({ 'תא': 'audio/t0002.mp3' }, function (played) {
+      window.SLSpeak('  תא  ');
+      T.eq(played.src, 'audio/t0002.mp3');
+    });
+  });
+});
