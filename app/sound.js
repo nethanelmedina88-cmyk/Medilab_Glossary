@@ -18,17 +18,45 @@ window.SLSound = (function(){
   };
 })();
 
-/* Hebrew text-to-speech (Web Speech API) */
-window.SLSpeak = function(text){
-  try{
-    if(!window.speechSynthesis || !text) return;
-    var u = new SpeechSynthesisUtterance(String(text));
-    u.lang = 'he-IL'; u.rate = 0.95; u.pitch = 1;
-    var vs = window.speechSynthesis.getVoices() || [];
-    var he = vs.filter(function(v){ return /he|iw/i.test(v.lang); })[0];
-    if(he) u.voice = he;
-    window.speechSynthesis.cancel();
-    window.speechSynthesis.speak(u);
-  }catch(e){}
-};
-try{ if(window.speechSynthesis){ window.speechSynthesis.getVoices(); window.speechSynthesis.onvoiceschanged = function(){ window.speechSynthesis.getVoices(); }; } }catch(e){}
+/* Hebrew TTS: pre-generated ElevenLabs "Liam" MP3 for known term names,
+   graceful fallback to the Web Speech API for everything else. */
+(function () {
+  var audioEl = null; // single shared element, avoids overlaps
+
+  function browserSpeak(text) {
+    try {
+      if (!window.speechSynthesis || !text) return;
+      var u = new SpeechSynthesisUtterance(String(text));
+      u.lang = 'he-IL'; u.rate = 0.95; u.pitch = 1;
+      var vs = window.speechSynthesis.getVoices() || [];
+      var he = vs.filter(function (v) { return /he|iw/i.test(v.lang); })[0];
+      if (he) u.voice = he;
+      window.speechSynthesis.cancel();
+      window.speechSynthesis.speak(u);
+    } catch (e) {}
+  }
+  window.SLSpeakBrowser = browserSpeak; // exposed so callers/tests can spy or force it
+
+  window.SLSpeak = function (text) {
+    var key = (text == null ? '' : String(text)).trim();
+    var map = window.AUDIO_MANIFEST;
+    var file = (map && key) ? map[key] : null;
+    if (!file) { window.SLSpeakBrowser(text); return; }
+    try {
+      try { if (window.speechSynthesis) window.speechSynthesis.cancel(); } catch (e) {}
+      if (!audioEl) { audioEl = new Audio(); }
+      audioEl.pause();
+      audioEl.onerror = function () { window.SLSpeakBrowser(text); };
+      audioEl.src = file;
+      var p = audioEl.play();
+      if (p && p.catch) p.catch(function () { window.SLSpeakBrowser(text); });
+    } catch (e) { window.SLSpeakBrowser(text); }
+  };
+
+  try {
+    if (window.speechSynthesis) {
+      window.speechSynthesis.getVoices();
+      window.speechSynthesis.onvoiceschanged = function () { window.speechSynthesis.getVoices(); };
+    }
+  } catch (e) {}
+})();

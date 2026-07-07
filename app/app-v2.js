@@ -575,7 +575,7 @@ function TermCard({
     className: "acts"
   }, /*#__PURE__*/React.createElement("button", {
     className: "ibtn",
-    onClick: () => Speak(t.hebrew + '. ' + def),
+    onClick: () => Speak(t.hebrew),
     title: "\u05D4\u05E7\u05E8\u05D0\u05D4",
     "aria-label": "\u05D4\u05E7\u05E8\u05D0\u05D4"
   }, "\uD83D\uDD0A"), /*#__PURE__*/React.createElement("button", {
