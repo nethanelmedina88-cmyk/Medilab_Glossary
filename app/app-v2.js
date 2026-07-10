@@ -164,64 +164,11 @@ function highlight(text, q) {
     className: "hl"
   }, text.slice(i, i + q.length)), text.slice(i + q.length));
 }
-const IcCards = () => /*#__PURE__*/React.createElement("svg", {
-  viewBox: "0 0 24 24",
-  fill: "none",
-  stroke: "currentColor",
-  strokeWidth: "2"
-}, /*#__PURE__*/React.createElement("rect", {
-  x: "3",
-  y: "5",
-  width: "18",
-  height: "14",
-  rx: "2"
-}));
-const IcQuiz = () => /*#__PURE__*/React.createElement("svg", {
-  viewBox: "0 0 24 24",
-  fill: "none",
-  stroke: "currentColor",
-  strokeWidth: "2"
-}, /*#__PURE__*/React.createElement("path", {
-  d: "M9 12l2 2 4-4"
-}), /*#__PURE__*/React.createElement("circle", {
-  cx: "12",
-  cy: "12",
-  r: "9"
-}));
-const IcList = () => /*#__PURE__*/React.createElement("svg", {
-  viewBox: "0 0 24 24",
-  fill: "none",
-  stroke: "currentColor",
-  strokeWidth: "2"
-}, /*#__PURE__*/React.createElement("path", {
-  d: "M4 5h16M4 12h16M4 19h10"
-}));
-const IcInfo = () => /*#__PURE__*/React.createElement("svg", {
-  viewBox: "0 0 24 24",
-  fill: "none",
-  stroke: "currentColor",
-  strokeWidth: "2"
-}, /*#__PURE__*/React.createElement("circle", {
-  cx: "12",
-  cy: "12",
-  r: "9"
-}), /*#__PURE__*/React.createElement("path", {
-  d: "M12 11v5M12 7.5v.5"
-}));
-const IcGrid = () => /*#__PURE__*/React.createElement("svg", {
-  viewBox: "0 0 24 24",
-  fill: "none",
-  stroke: "currentColor",
-  strokeWidth: "2"
-}, /*#__PURE__*/React.createElement("rect", {
-  x: "3",
-  y: "3",
-  width: "18",
-  height: "18",
-  rx: "2"
-}), /*#__PURE__*/React.createElement("path", {
-  d: "M3 9h18M3 15h18M9 3v18M15 3v18"
-}));
+const IcList = () => /*#__PURE__*/React.createElement("svg", { viewBox: "0 0 24 24", fill: "none" }, /*#__PURE__*/React.createElement("path", { d: "M12 6.2C10.3 5 8.2 4.4 5.6 4.4c-.6 0-1 .4-1 1v11.3c0 .5.4 1 1 1 2.6 0 4.7.6 6.4 1.9V6.2z", fill: "#3FA9D6" }), /*#__PURE__*/React.createElement("path", { d: "M12 6.2C13.7 5 15.8 4.4 18.4 4.4c.6 0 1 .4 1 1v11.3c0 .5-.4 1-1 1-2.6 0-4.7.6-6.4 1.9V6.2z", fill: "#9BD7EF" }), /*#__PURE__*/React.createElement("path", { d: "M7 8.3h2.6M7 11h2.6", stroke: "#1B6FA8", strokeWidth: "1.2", strokeLinecap: "round" }));
+const IcCards = () => /*#__PURE__*/React.createElement("svg", { viewBox: "0 0 24 24", fill: "none" }, /*#__PURE__*/React.createElement("rect", { x: "6.5", y: "7.6", width: "13", height: "10.4", rx: "2.4", fill: "#A9DEA0" }), /*#__PURE__*/React.createElement("rect", { x: "4.5", y: "5", width: "13", height: "10.4", rx: "2.4", fill: "#5CB85C" }), /*#__PURE__*/React.createElement("path", { d: "M7.6 8.4h6.9M7.6 11.2h4.2", stroke: "#fff", strokeWidth: "1.5", strokeLinecap: "round" }));
+const IcQuiz = () => /*#__PURE__*/React.createElement("svg", { viewBox: "0 0 24 24", fill: "none" }, /*#__PURE__*/React.createElement("rect", { x: "5", y: "4.2", width: "14", height: "16.3", rx: "2.6", fill: "#FBD38D" }), /*#__PURE__*/React.createElement("rect", { x: "8.7", y: "2.6", width: "6.6", height: "3.6", rx: "1.3", fill: "#F0654F" }), /*#__PURE__*/React.createElement("path", { d: "M8.6 13l2.4 2.4 4.4-4.7", stroke: "#F0654F", strokeWidth: "2.1", strokeLinecap: "round", strokeLinejoin: "round" }));
+const IcGrid = () => /*#__PURE__*/React.createElement("svg", { viewBox: "0 0 24 24", fill: "none" }, /*#__PURE__*/React.createElement("rect", { x: "4", y: "4", width: "16", height: "16", rx: "2.6", fill: "#E4D6F3" }), /*#__PURE__*/React.createElement("path", { d: "M9.33 4v16M14.67 4v16M4 9.33h16M4 14.67h16", stroke: "#fff", strokeWidth: "1.3" }), /*#__PURE__*/React.createElement("rect", { x: "4.5", y: "4.5", width: "4.3", height: "4.3", rx: "1", fill: "#7B4FB0" }), /*#__PURE__*/React.createElement("rect", { x: "15.2", y: "9.83", width: "4.3", height: "4.3", rx: "1", fill: "#7B4FB0" }), /*#__PURE__*/React.createElement("rect", { x: "9.85", y: "15.2", width: "4.3", height: "4.3", rx: "1", fill: "#9B6FC7" }));
+const IcInfo = () => /*#__PURE__*/React.createElement("svg", { viewBox: "0 0 24 24", fill: "none" }, /*#__PURE__*/React.createElement("path", { d: "M10.3 3.5v5.2L6.2 16c-.7 1.4.3 3 1.9 3h7.8c1.6 0 2.6-1.6 1.9-3l-4.1-7.3V3.5", fill: "#BFE9F5", stroke: "#1B6FA8", strokeWidth: "1.3", strokeLinejoin: "round", strokeLinecap: "round" }), /*#__PURE__*/React.createElement("path", { d: "M8 13.2h8l1.8 2.9c.7 1.4-.3 3-1.9 3H8.1c-1.6 0-2.6-1.6-1.9-3z", fill: "#5CB85C" }), /*#__PURE__*/React.createElement("path", { d: "M9.5 3.3h5", stroke: "#1B6FA8", strokeWidth: "1.5", strokeLinecap: "round" }), /*#__PURE__*/React.createElement("circle", { cx: "12.6", cy: "15.7", r: ".9", fill: "#fff", opacity: ".85" }), /*#__PURE__*/React.createElement("circle", { cx: "10", cy: "17.1", r: ".65", fill: "#fff", opacity: ".75" }));
 function TopicTag({
   topicKey
 }) {
