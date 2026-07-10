@@ -1237,7 +1237,7 @@ function Ring({
     x: "42",
     y: "48",
     textAnchor: "middle",
-    fontFamily: "Rubik",
+    fontFamily: "Secular One",
     fontWeight: "800",
     fontSize: "20",
     fill: "var(--text)"

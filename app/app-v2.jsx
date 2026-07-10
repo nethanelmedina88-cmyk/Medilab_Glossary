@@ -362,7 +362,7 @@ function About(){
 
 /* ---------- PROFILE / STATS / ACHIEVEMENTS ---------- */
 function Ring({pct,color}){ const r=34,c=2*Math.PI*r,off=c*(1-pct/100);
-  return (<svg width="84" height="84" viewBox="0 0 84 84" className="ring"><circle cx="42" cy="42" r={r} fill="none" stroke="var(--surface-2)" strokeWidth="9"/><circle cx="42" cy="42" r={r} fill="none" stroke={color} strokeWidth="9" strokeLinecap="round" strokeDasharray={c} strokeDashoffset={off} transform="rotate(-90 42 42)"/><text x="42" y="48" textAnchor="middle" fontFamily="Rubik" fontWeight="800" fontSize="20" fill="var(--text)">{pct}%</text></svg>); }
+  return (<svg width="84" height="84" viewBox="0 0 84 84" className="ring"><circle cx="42" cy="42" r={r} fill="none" stroke="var(--surface-2)" strokeWidth="9"/><circle cx="42" cy="42" r={r} fill="none" stroke={color} strokeWidth="9" strokeLinecap="round" strokeDasharray={c} strokeDashoffset={off} transform="rotate(-90 42 42)"/><text x="42" y="48" textAnchor="middle" fontFamily="Secular One" fontWeight="800" fontSize="20" fill="var(--text)">{pct}%</text></svg>); }
 function Profile({user,studied,favorites,stats,sync,signIn,signOut,onTopic,muted,toggleSound}){
   const m=metrics(studied,favorites,stats);
   const earned=earnedIds(m); const earnedSet={}; earned.forEach(id=>earnedSet[id]=1);
