@@ -306,23 +306,19 @@ const IcSpeaker = () => /*#__PURE__*/React.createElement("svg", {
   viewBox: "0 0 24 24",
   fill: "none"
 }, /*#__PURE__*/React.createElement("path", {
-  d: "M4 9.5h3.2L12 5.8v12.4L7.2 14.5H4z",
-  fill: "currentColor"
+  d: "M4 9h3.5L12 5v14l-4.5-4H4z",
+  fill: "#3FA9D6"
 }), /*#__PURE__*/React.createElement("path", {
-  d: "M15.5 9a4 4 0 0 1 0 6M18 6.5a7.5 7.5 0 0 1 0 11",
-  stroke: "currentColor",
-  strokeWidth: "1.7",
+  d: "M15.4 9a4 4 0 0 1 0 6M17.9 6.5a7.5 7.5 0 0 1 0 11",
+  stroke: "#3FA9D6",
+  strokeWidth: "1.9",
   strokeLinecap: "round"
 }));
 const IcPin = () => /*#__PURE__*/React.createElement("svg", {
   viewBox: "0 0 24 24",
-  fill: "none",
-  stroke: "currentColor",
-  strokeWidth: "1.8",
-  strokeLinecap: "round",
-  strokeLinejoin: "round"
+  fill: "#F0654F"
 }, /*#__PURE__*/React.createElement("path", {
-  d: "M9 4h6M10 4l-1 6-2.6 2.6h11.2L15 10l-1-6M12 15.2V20"
+  d: "M9 3h6a1 1 0 0 1 0 2h-.6l.7 6 1.9 1.9a1 1 0 0 1-.7 1.7H13v4.9a1 1 0 0 1-2 0V14.6H7.7a1 1 0 0 1-.7-1.7L8.9 11l.7-6H9a1 1 0 0 1 0-2z"
 }));
 function TopicTag({
   topicKey
