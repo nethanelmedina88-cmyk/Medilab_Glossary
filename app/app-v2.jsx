@@ -53,15 +53,16 @@ try{ if(window.firebase){ if(!firebase.apps.length)firebase.initializeApp(FB_CON
 function useLocal(key,init){ const [v,setV]=useState(()=>{try{const s=localStorage.getItem(key);return s!=null?JSON.parse(s):init;}catch{return init;}}); useEffect(()=>{try{localStorage.setItem(key,JSON.stringify(v));}catch{}},[key,v]); return [v,setV]; }
 function highlight(text,q){ if(!q)return text; const i=(text||'').toLowerCase().indexOf(q.toLowerCase()); if(i<0)return text; return <>{text.slice(0,i)}<mark className="hl">{text.slice(i,i+q.length)}</mark>{text.slice(i+q.length)}</>; }
 
-/* app-tile nav icons (colored square + white glyph) */
-const IcCards=()=> <svg viewBox="0 0 24 24"><rect width="24" height="24" rx="6" fill="#3F8C3F"/><rect x="8" y="8.5" width="10" height="7.5" rx="1.6" fill="#fff" opacity=".8"/><rect x="6" y="6.5" width="10" height="7.5" rx="1.6" fill="#fff"/><path d="M8.4 9.4h5M8.4 11.6h3.2" stroke="#3F8C3F" strokeWidth="1.3" strokeLinecap="round"/></svg>;
-const IcQuiz=()=> <svg viewBox="0 0 24 24"><rect width="24" height="24" rx="6" fill="#E8654A"/><rect x="7" y="6.5" width="10" height="12" rx="2" fill="#fff"/><rect x="9.6" y="5.2" width="4.8" height="2.8" rx="1" fill="#E8654A"/><path d="M9.5 12.5l1.8 1.8 3.3-3.5" fill="none" stroke="#E8654A" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/></svg>;
-const IcList=()=> <svg viewBox="0 0 24 24"><rect width="24" height="24" rx="6" fill="#1B6FA8"/><path d="M12 7.5c-1.3-.9-2.9-1.3-4.8-1.3-.5 0-.8.3-.8.8v8c0 .4.3.8.8.8 1.9 0 3.5.4 4.8 1.3V7.5z" fill="#fff"/><path d="M12 7.5c1.3-.9 2.9-1.3 4.8-1.3.5 0 .8.3.8.8v8c0 .4-.3.8-.8.8-1.9 0-3.5.4-4.8 1.3V7.5z" fill="#fff" opacity=".8"/></svg>;
-const IcInfo=()=> <svg viewBox="0 0 24 24"><rect width="24" height="24" rx="6" fill="#17A398"/><path d="M10 6.5v3.5L7 15.5c-.4.8.2 1.7 1 1.7h8c.8 0 1.4-.9 1-1.7L14 10V6.5" fill="none" stroke="#fff" strokeWidth="1.6" strokeLinejoin="round"/><path d="M9 6.5h6" stroke="#fff" strokeWidth="1.7" strokeLinecap="round"/><circle cx="12.6" cy="14.2" r=".9" fill="#fff"/></svg>;
-const IcGrid=()=> <svg viewBox="0 0 24 24"><rect width="24" height="24" rx="6" fill="#7B4FB0"/><rect x="6" y="6" width="12" height="12" rx="1.5" fill="none" stroke="#fff" strokeWidth="1.5"/><path d="M10 6v12M14 6v12M6 10h12M6 14h12" stroke="#fff" strokeWidth="1.2"/><rect x="6.6" y="6.6" width="2.8" height="2.8" fill="#fff"/><rect x="14.6" y="14.6" width="2.8" height="2.8" fill="#fff"/></svg>;
+/* icons — Twemoji (CC-BY 4.0) supplied via window.MLICONS (app/mlicons.js) */
+const mlic=(k)=> <span className="mlic" dangerouslySetInnerHTML={{__html:(window.MLICONS||{})[k]||''}}/>;
+const IcCards=()=> mlic('cards');
+const IcQuiz=()=> mlic('quiz');
+const IcList=()=> mlic('book');
+const IcInfo=()=> mlic('flask');
+const IcGrid=()=> mlic('grid');
 const TopicIcon=({tp})=> (tp&&tp.svg) ? <span className="tpi" dangerouslySetInnerHTML={{__html:tp.svg}}/> : null;
-const IcSpeaker=()=> <svg viewBox="0 0 24 24"><rect width="24" height="24" rx="6" fill="#3FA9D6"/><path d="M6 10h2.5L12 7v10l-3.5-3H6z" fill="#fff"/><path d="M14.5 9.8a3 3 0 0 1 0 4.4" fill="none" stroke="#fff" strokeWidth="1.6" strokeLinecap="round"/></svg>;
-const IcPin=()=> <svg viewBox="0 0 24 24"><rect x="1.1" y="1.1" width="21.8" height="21.8" rx="5.4" fill="#F0654F" stroke="#20262e" strokeWidth="1.4"/><path d="M9.5 5.5h5a.9.9 0 0 1 0 1.8h-.4l.5 4.4 1.5 1.5a.9.9 0 0 1-.6 1.5H12.9v3.8a.9.9 0 0 1-1.8 0V16.2H8.5a.9.9 0 0 1-.6-1.5l1.5-1.5.5-4.4h-.4a.9.9 0 0 1 0-1.8z" fill="#fff"/></svg>;
+const IcSpeaker=()=> mlic('speaker');
+const IcPin=()=> mlic('pin');
 
 function TopicTag({topicKey}){ const tp=TBK[topicKey]; if(!tp)return null;
   return <span className="subj" style={{background:'transparent',border:'1px solid '+tp.accent,color:'var(--text-2)'}}>
@@ -360,6 +361,7 @@ function About(){
       <a href="mailto:biomedilab88@gmail.com"><span className="em">✉️</span> מייל</a>
     </div>
     <div style={{textAlign:'center',marginTop:14}}><a className="btn btn-ghost" href="https://nethanelmedina88-cmyk.github.io/Bio_MediLab/" target="_blank" rel="noopener" style={{textDecoration:'none'}}>לאתר המלא ←</a></div>
+    <p className="credit">אייקונים: <a href="https://github.com/jdecked/twemoji" target="_blank" rel="noopener">Twemoji</a> · רישיון CC-BY 4.0</p>
   </>);
 }
 
