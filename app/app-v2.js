@@ -164,135 +164,135 @@ function highlight(text, q) {
   }, text.slice(i, i + q.length)), text.slice(i + q.length));
 }
 
-/* colorful duotone nav icons (MediLab palette) */
+/* app-tile nav icons (colored square + white glyph) */
 const IcCards = () => /*#__PURE__*/React.createElement("svg", {
-  viewBox: "0 0 24 24",
-  fill: "none"
+  viewBox: "0 0 24 24"
 }, /*#__PURE__*/React.createElement("rect", {
-  x: "6.5",
-  y: "7.6",
-  width: "13",
-  height: "10.4",
-  rx: "2.4",
-  fill: "#A9DEA0"
+  width: "24",
+  height: "24",
+  rx: "6",
+  fill: "#3F8C3F"
 }), /*#__PURE__*/React.createElement("rect", {
-  x: "4.5",
-  y: "5",
-  width: "13",
-  height: "10.4",
-  rx: "2.4",
-  fill: "#5CB85C"
+  x: "8",
+  y: "8.5",
+  width: "10",
+  height: "7.5",
+  rx: "1.6",
+  fill: "#fff",
+  opacity: ".8"
+}), /*#__PURE__*/React.createElement("rect", {
+  x: "6",
+  y: "6.5",
+  width: "10",
+  height: "7.5",
+  rx: "1.6",
+  fill: "#fff"
 }), /*#__PURE__*/React.createElement("path", {
-  d: "M7.6 8.4h6.9M7.6 11.2h4.2",
-  stroke: "#fff",
-  strokeWidth: "1.5",
+  d: "M8.4 9.4h5M8.4 11.6h3.2",
+  stroke: "#3F8C3F",
+  strokeWidth: "1.3",
   strokeLinecap: "round"
 }));
 const IcQuiz = () => /*#__PURE__*/React.createElement("svg", {
-  viewBox: "0 0 24 24",
-  fill: "none"
+  viewBox: "0 0 24 24"
 }, /*#__PURE__*/React.createElement("rect", {
-  x: "5",
-  y: "4.2",
-  width: "14",
-  height: "16.3",
-  rx: "2.6",
-  fill: "#FBD38D"
+  width: "24",
+  height: "24",
+  rx: "6",
+  fill: "#E8654A"
 }), /*#__PURE__*/React.createElement("rect", {
-  x: "8.7",
-  y: "2.6",
-  width: "6.6",
-  height: "3.6",
-  rx: "1.3",
-  fill: "#F0654F"
+  x: "7",
+  y: "6.5",
+  width: "10",
+  height: "12",
+  rx: "2",
+  fill: "#fff"
+}), /*#__PURE__*/React.createElement("rect", {
+  x: "9.6",
+  y: "5.2",
+  width: "4.8",
+  height: "2.8",
+  rx: "1",
+  fill: "#E8654A"
 }), /*#__PURE__*/React.createElement("path", {
-  d: "M8.6 13l2.4 2.4 4.4-4.7",
-  stroke: "#F0654F",
-  strokeWidth: "2.1",
+  d: "M9.5 12.5l1.8 1.8 3.3-3.5",
+  fill: "none",
+  stroke: "#E8654A",
+  strokeWidth: "1.8",
   strokeLinecap: "round",
   strokeLinejoin: "round"
 }));
 const IcList = () => /*#__PURE__*/React.createElement("svg", {
-  viewBox: "0 0 24 24",
-  fill: "none"
-}, /*#__PURE__*/React.createElement("path", {
-  d: "M12 6.2C10.3 5 8.2 4.4 5.6 4.4c-.6 0-1 .4-1 1v11.3c0 .5.4 1 1 1 2.6 0 4.7.6 6.4 1.9V6.2z",
-  fill: "#3FA9D6"
+  viewBox: "0 0 24 24"
+}, /*#__PURE__*/React.createElement("rect", {
+  width: "24",
+  height: "24",
+  rx: "6",
+  fill: "#1B6FA8"
 }), /*#__PURE__*/React.createElement("path", {
-  d: "M12 6.2C13.7 5 15.8 4.4 18.4 4.4c.6 0 1 .4 1 1v11.3c0 .5-.4 1-1 1-2.6 0-4.7.6-6.4 1.9V6.2z",
-  fill: "#9BD7EF"
+  d: "M12 7.5c-1.3-.9-2.9-1.3-4.8-1.3-.5 0-.8.3-.8.8v8c0 .4.3.8.8.8 1.9 0 3.5.4 4.8 1.3V7.5z",
+  fill: "#fff"
 }), /*#__PURE__*/React.createElement("path", {
-  d: "M7 8.3h2.6M7 11h2.6",
-  stroke: "#1B6FA8",
-  strokeWidth: "1.2",
-  strokeLinecap: "round"
+  d: "M12 7.5c1.3-.9 2.9-1.3 4.8-1.3.5 0 .8.3.8.8v8c0 .4-.3.8-.8.8-1.9 0-3.5.4-4.8 1.3V7.5z",
+  fill: "#fff",
+  opacity: ".8"
 }));
 const IcInfo = () => /*#__PURE__*/React.createElement("svg", {
-  viewBox: "0 0 24 24",
-  fill: "none"
-}, /*#__PURE__*/React.createElement("path", {
-  d: "M10.3 3.5v5.2L6.2 16c-.7 1.4.3 3 1.9 3h7.8c1.6 0 2.6-1.6 1.9-3l-4.1-7.3V3.5",
-  fill: "#BFE9F5",
-  stroke: "#1B6FA8",
-  strokeWidth: "1.3",
-  strokeLinejoin: "round",
-  strokeLinecap: "round"
+  viewBox: "0 0 24 24"
+}, /*#__PURE__*/React.createElement("rect", {
+  width: "24",
+  height: "24",
+  rx: "6",
+  fill: "#17A398"
 }), /*#__PURE__*/React.createElement("path", {
-  d: "M8 13.2h8l1.8 2.9c.7 1.4-.3 3-1.9 3H8.1c-1.6 0-2.6-1.6-1.9-3z",
-  fill: "#5CB85C"
+  d: "M10 6.5v3.5L7 15.5c-.4.8.2 1.7 1 1.7h8c.8 0 1.4-.9 1-1.7L14 10V6.5",
+  fill: "none",
+  stroke: "#fff",
+  strokeWidth: "1.6",
+  strokeLinejoin: "round"
 }), /*#__PURE__*/React.createElement("path", {
-  d: "M9.5 3.3h5",
-  stroke: "#1B6FA8",
-  strokeWidth: "1.5",
+  d: "M9 6.5h6",
+  stroke: "#fff",
+  strokeWidth: "1.7",
   strokeLinecap: "round"
 }), /*#__PURE__*/React.createElement("circle", {
   cx: "12.6",
-  cy: "15.7",
+  cy: "14.2",
   r: ".9",
-  fill: "#fff",
-  opacity: ".85"
-}), /*#__PURE__*/React.createElement("circle", {
-  cx: "10",
-  cy: "17.1",
-  r: ".65",
-  fill: "#fff",
-  opacity: ".75"
+  fill: "#fff"
 }));
 const IcGrid = () => /*#__PURE__*/React.createElement("svg", {
-  viewBox: "0 0 24 24",
-  fill: "none"
+  viewBox: "0 0 24 24"
 }, /*#__PURE__*/React.createElement("rect", {
-  x: "4",
-  y: "4",
-  width: "16",
-  height: "16",
-  rx: "2.6",
-  fill: "#E4D6F3"
-}), /*#__PURE__*/React.createElement("path", {
-  d: "M9.33 4v16M14.67 4v16M4 9.33h16M4 14.67h16",
+  width: "24",
+  height: "24",
+  rx: "6",
+  fill: "#7B4FB0"
+}), /*#__PURE__*/React.createElement("rect", {
+  x: "6",
+  y: "6",
+  width: "12",
+  height: "12",
+  rx: "1.5",
+  fill: "none",
   stroke: "#fff",
-  strokeWidth: "1.3"
+  strokeWidth: "1.5"
+}), /*#__PURE__*/React.createElement("path", {
+  d: "M10 6v12M14 6v12M6 10h12M6 14h12",
+  stroke: "#fff",
+  strokeWidth: "1.2"
 }), /*#__PURE__*/React.createElement("rect", {
-  x: "4.5",
-  y: "4.5",
-  width: "4.3",
-  height: "4.3",
-  rx: "1",
-  fill: "#7B4FB0"
+  x: "6.6",
+  y: "6.6",
+  width: "2.8",
+  height: "2.8",
+  fill: "#fff"
 }), /*#__PURE__*/React.createElement("rect", {
-  x: "15.2",
-  y: "9.83",
-  width: "4.3",
-  height: "4.3",
-  rx: "1",
-  fill: "#7B4FB0"
-}), /*#__PURE__*/React.createElement("rect", {
-  x: "9.85",
-  y: "15.2",
-  width: "4.3",
-  height: "4.3",
-  rx: "1",
-  fill: "#9B6FC7"
+  x: "14.6",
+  y: "14.6",
+  width: "2.8",
+  height: "2.8",
+  fill: "#fff"
 }));
 const TopicIcon = ({
   tp
@@ -303,22 +303,32 @@ const TopicIcon = ({
   }
 }) : null;
 const IcSpeaker = () => /*#__PURE__*/React.createElement("svg", {
-  viewBox: "0 0 24 24",
-  fill: "none"
-}, /*#__PURE__*/React.createElement("path", {
-  d: "M4 9h3.5L12 5v14l-4.5-4H4z",
+  viewBox: "0 0 24 24"
+}, /*#__PURE__*/React.createElement("rect", {
+  width: "24",
+  height: "24",
+  rx: "6",
   fill: "#3FA9D6"
 }), /*#__PURE__*/React.createElement("path", {
-  d: "M15.4 9a4 4 0 0 1 0 6M17.9 6.5a7.5 7.5 0 0 1 0 11",
-  stroke: "#3FA9D6",
-  strokeWidth: "1.9",
+  d: "M6 10h2.5L12 7v10l-3.5-3H6z",
+  fill: "#fff"
+}), /*#__PURE__*/React.createElement("path", {
+  d: "M14.5 9.8a3 3 0 0 1 0 4.4",
+  fill: "none",
+  stroke: "#fff",
+  strokeWidth: "1.6",
   strokeLinecap: "round"
 }));
 const IcPin = () => /*#__PURE__*/React.createElement("svg", {
-  viewBox: "0 0 24 24",
+  viewBox: "0 0 24 24"
+}, /*#__PURE__*/React.createElement("rect", {
+  width: "24",
+  height: "24",
+  rx: "6",
   fill: "#F0654F"
-}, /*#__PURE__*/React.createElement("path", {
-  d: "M9 3h6a1 1 0 0 1 0 2h-.6l.7 6 1.9 1.9a1 1 0 0 1-.7 1.7H13v4.9a1 1 0 0 1-2 0V14.6H7.7a1 1 0 0 1-.7-1.7L8.9 11l.7-6H9a1 1 0 0 1 0-2z"
+}), /*#__PURE__*/React.createElement("path", {
+  d: "M9.5 5.5h5a.9.9 0 0 1 0 1.8h-.4l.5 4.4 1.5 1.5a.9.9 0 0 1-.6 1.5H12.9v3.8a.9.9 0 0 1-1.8 0V16.2H8.5a.9.9 0 0 1-.6-1.5l1.5-1.5.5-4.4h-.4a.9.9 0 0 1 0-1.8z",
+  fill: "#fff"
 }));
 function TopicTag({
   topicKey
