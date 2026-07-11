@@ -61,7 +61,7 @@ const IcInfo=()=> <svg viewBox="0 0 24 24"><rect width="24" height="24" rx="6" f
 const IcGrid=()=> <svg viewBox="0 0 24 24"><rect width="24" height="24" rx="6" fill="#7B4FB0"/><rect x="6" y="6" width="12" height="12" rx="1.5" fill="none" stroke="#fff" strokeWidth="1.5"/><path d="M10 6v12M14 6v12M6 10h12M6 14h12" stroke="#fff" strokeWidth="1.2"/><rect x="6.6" y="6.6" width="2.8" height="2.8" fill="#fff"/><rect x="14.6" y="14.6" width="2.8" height="2.8" fill="#fff"/></svg>;
 const TopicIcon=({tp})=> (tp&&tp.svg) ? <span className="tpi" dangerouslySetInnerHTML={{__html:tp.svg}}/> : null;
 const IcSpeaker=()=> <svg viewBox="0 0 24 24"><rect width="24" height="24" rx="6" fill="#3FA9D6"/><path d="M6 10h2.5L12 7v10l-3.5-3H6z" fill="#fff"/><path d="M14.5 9.8a3 3 0 0 1 0 4.4" fill="none" stroke="#fff" strokeWidth="1.6" strokeLinecap="round"/></svg>;
-const IcPin=()=> <svg viewBox="0 0 24 24"><rect width="24" height="24" rx="6" fill="#F0654F"/><path d="M9.5 5.5h5a.9.9 0 0 1 0 1.8h-.4l.5 4.4 1.5 1.5a.9.9 0 0 1-.6 1.5H12.9v3.8a.9.9 0 0 1-1.8 0V16.2H8.5a.9.9 0 0 1-.6-1.5l1.5-1.5.5-4.4h-.4a.9.9 0 0 1 0-1.8z" fill="#fff"/></svg>;
+const IcPin=()=> <svg viewBox="0 0 24 24"><rect x="1.1" y="1.1" width="21.8" height="21.8" rx="5.4" fill="#F0654F" stroke="#20262e" strokeWidth="1.4"/><path d="M9.5 5.5h5a.9.9 0 0 1 0 1.8h-.4l.5 4.4 1.5 1.5a.9.9 0 0 1-.6 1.5H12.9v3.8a.9.9 0 0 1-1.8 0V16.2H8.5a.9.9 0 0 1-.6-1.5l1.5-1.5.5-4.4h-.4a.9.9 0 0 1 0-1.8z" fill="#fff"/></svg>;
 
 function TopicTag({topicKey}){ const tp=TBK[topicKey]; if(!tp)return null;
   return <span className="subj" style={{background:'transparent',border:'1px solid '+tp.accent,color:'var(--text-2)'}}>

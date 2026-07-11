@@ -322,10 +322,14 @@ const IcSpeaker = () => /*#__PURE__*/React.createElement("svg", {
 const IcPin = () => /*#__PURE__*/React.createElement("svg", {
   viewBox: "0 0 24 24"
 }, /*#__PURE__*/React.createElement("rect", {
-  width: "24",
-  height: "24",
-  rx: "6",
-  fill: "#F0654F"
+  x: "1.1",
+  y: "1.1",
+  width: "21.8",
+  height: "21.8",
+  rx: "5.4",
+  fill: "#F0654F",
+  stroke: "#20262e",
+  strokeWidth: "1.4"
 }), /*#__PURE__*/React.createElement("path", {
   d: "M9.5 5.5h5a.9.9 0 0 1 0 1.8h-.4l.5 4.4 1.5 1.5a.9.9 0 0 1-.6 1.5H12.9v3.8a.9.9 0 0 1-1.8 0V16.2H8.5a.9.9 0 0 1-.6-1.5l1.5-1.5.5-4.4h-.4a.9.9 0 0 1 0-1.8z",
   fill: "#fff"
