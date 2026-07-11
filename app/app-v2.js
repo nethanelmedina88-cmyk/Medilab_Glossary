@@ -186,6 +186,8 @@ const TopicIcon = ({
 }) : null;
 const IcSpeaker = () => mlic('speaker');
 const IcPin = () => mlic('pin');
+/* vocalized (menukad) form for display; falls back to plain hebrew. Search/audio/keys still use .hebrew */
+const termLabel = t => t && (t.nikud || t.hebrew);
 function TopicTag({
   topicKey
 }) {
@@ -607,7 +609,7 @@ function TermCard({
     onClick: onOpenTerm ? function () {
       onOpenTerm(t.hebrew);
     } : undefined
-  }, highlight(t.hebrew, q)), t.english && /*#__PURE__*/React.createElement("div", {
+  }, t.nikud ? t.nikud : highlight(t.hebrew, q)), t.english && /*#__PURE__*/React.createElement("div", {
     className: "en"
   }, t.english)), /*#__PURE__*/React.createElement("div", {
     className: "acts"
@@ -849,7 +851,7 @@ function Flashcards({
     className: "fc-badge"
   }, card.letter), /*#__PURE__*/React.createElement("div", {
     className: "fc-term"
-  }, card.hebrew), card.english && /*#__PURE__*/React.createElement("div", {
+  }, termLabel(card)), card.english && /*#__PURE__*/React.createElement("div", {
     className: "fc-en"
   }, card.english), card.topic && /*#__PURE__*/React.createElement("div", {
     style: {
@@ -1085,8 +1087,8 @@ function Quiz({
   }, item.kind === 'pick-definition' ? 'בחרו את ההגדרה הנכונה' : item.kind === 'pick-term' ? 'בחרו את המושג הנכון' : 'הקלידו את המושג'), /*#__PURE__*/React.createElement("div", {
     className: "q-q"
   }, item.kind === 'pick-definition' ? /*#__PURE__*/React.createElement(React.Fragment, null, "\u05DE\u05D4\u05D9 ", /*#__PURE__*/React.createElement("span", {
-    className: "hl"
-  }, item.term.hebrew), "?") : item.prompt), /*#__PURE__*/React.createElement("button", {
+    className: "hl mnk"
+  }, termLabel(item.term)), "?") : item.prompt), /*#__PURE__*/React.createElement("button", {
     className: "chip",
     onClick: () => Speak(item.kind === 'pick-definition' ? item.term.hebrew : item.prompt),
     style: {
@@ -1106,9 +1108,9 @@ function Quiz({
     onClick: answerType
   }, "\u05D1\u05D3\u05D9\u05E7\u05D4")), answered && (chosen.correct ? /*#__PURE__*/React.createElement("div", {
     className: "fb ok"
-  }, "\uD83C\uDF89 \u05E0\u05DB\u05D5\u05DF! ", item.term.hebrew) : /*#__PURE__*/React.createElement("div", {
+  }, "\uD83C\uDF89 \u05E0\u05DB\u05D5\u05DF! ", termLabel(item.term)) : /*#__PURE__*/React.createElement("div", {
     className: "fb no"
-  }, "\u2717 \u05D4\u05EA\u05E9\u05D5\u05D1\u05D4: ", item.term.hebrew))) : item.options.map((o, idx) => {
+  }, "\u2717 \u05D4\u05EA\u05E9\u05D5\u05D1\u05D4: ", termLabel(item.term)))) : item.options.map((o, idx) => {
     let cls = 'opt';
     if (answered) {
       if (o.correct) cls += ' correct';else if (chosen === o) cls += ' wrong';
@@ -1607,7 +1609,7 @@ function TermQuiz({
     "aria-label": "\u05E1\u05D2\u05D5\u05E8"
   }, "\xD7"), /*#__PURE__*/React.createElement("div", {
     className: "od-term"
-  }, t.hebrew, " ", /*#__PURE__*/React.createElement("button", {
+  }, termLabel(t), " ", /*#__PURE__*/React.createElement("button", {
     className: "ibtn",
     style: {
       display: 'inline-flex',
@@ -1627,7 +1629,7 @@ function TermQuiz({
     topicKey: t.topic
   })), /*#__PURE__*/React.createElement("div", {
     className: "od-sec"
-  }, "\u05DE\u05D4\u05D9 ", /*#__PURE__*/React.createElement("b", null, t.hebrew), "? \u05D1\u05D7\u05E8\u05D5 \u05D0\u05EA \u05D4\u05D4\u05D2\u05D3\u05E8\u05D4 \u05D4\u05E0\u05DB\u05D5\u05E0\u05D4:"), opts.map((o, i) => {
+  }, "\u05DE\u05D4\u05D9 ", /*#__PURE__*/React.createElement("b", null, termLabel(t)), "? \u05D1\u05D7\u05E8\u05D5 \u05D0\u05EA \u05D4\u05D4\u05D2\u05D3\u05E8\u05D4 \u05D4\u05E0\u05DB\u05D5\u05E0\u05D4:"), opts.map((o, i) => {
     let cls = 'opt';
     if (sel) {
       if (o.correct) cls += ' correct';else if (sel === o) cls += ' wrong';

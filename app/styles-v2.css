@@ -103,7 +103,7 @@ input{font-family:inherit}
 .card::before{content:"";position:absolute;inset-inline-start:0;top:0;bottom:0;width:4px;background:var(--grad)}
 .card.studied{background:linear-gradient(180deg,var(--surface),color-mix(in srgb,var(--green-500) 8%,var(--surface)))}
 .card-top{display:flex;justify-content:space-between;align-items:flex-start;gap:10px}
-.term{font-family:'Secular One';font-weight:700;font-size:18px;line-height:1.3}
+.term{font-family:'Assistant',sans-serif;font-weight:800;font-size:19px;line-height:1.45}
 .term .hl{background:linear-gradient(180deg,transparent 62%,var(--spark) 62%);padding:0 2px}
 html.dark .term .hl{background:linear-gradient(180deg,transparent 62%,rgba(249,216,92,.32) 62%)}
 .en{font-size:12px;color:var(--text-3)}
@@ -149,7 +149,7 @@ html.dark .ibtn.fav{background:#2a2410}
 .fc-back{transform:rotateY(180deg)}
 .fc-badge{width:42px;height:42px;border-radius:var(--r-md);background:var(--accent-soft);color:var(--accent-strong);
   font-family:'Secular One';font-weight:700;font-size:20px;display:flex;align-items:center;justify-content:center;margin-bottom:14px}
-.fc-term{font-family:'Secular One';font-weight:800;font-size:30px;letter-spacing:-.5px}
+.fc-term{font-family:'Assistant',sans-serif;font-weight:800;font-size:30px;line-height:1.5}
 .fc-en{font-size:15px;color:var(--text-3);margin-top:6px}
 .fc-def{font-size:15.5px;line-height:1.65;color:var(--text);max-width:34ch}
 .fc-hint{position:absolute;bottom:14px;font-size:12px;color:var(--text-3)}
@@ -380,7 +380,8 @@ html.dark .term .hl, html.dark .q-q .hl, html.dark .fc-term .hl{
 .sheet-card{background:var(--bg);width:100%;max-width:520px;max-height:90vh;overflow:auto;border-radius:22px 22px 0 0;padding:16px 16px 30px;box-shadow:var(--e3);animation:toastIn .3s var(--ease);position:relative}
 @media(min-width:560px){.sheet-card{border-radius:22px}}
 .od-x{position:absolute;top:12px;left:12px;width:36px;height:36px;border-radius:50%;background:var(--surface-2);font-size:20px;color:var(--text-2);display:flex;align-items:center;justify-content:center}
-.od-term{font-family:'Secular One';font-weight:800;font-size:24px;margin:2px 40px 0 0}
+.od-term{font-family:'Assistant',sans-serif;font-weight:800;font-size:24px;line-height:1.5;margin:2px 40px 0 0}
+.mnk{font-family:'Assistant',sans-serif}
 .od-def{font-size:15px;line-height:1.65;color:var(--text);margin:8px 0}
 .od-sec{font-family:'Secular One';font-weight:700;font-size:13.5px;margin:18px 0 4px;color:var(--text-2)}
 

@@ -63,6 +63,8 @@ const IcGrid=()=> mlic('grid');
 const TopicIcon=({tp})=> (tp&&tp.svg) ? <span className="tpi" dangerouslySetInnerHTML={{__html:tp.svg}}/> : null;
 const IcSpeaker=()=> mlic('speaker');
 const IcPin=()=> mlic('pin');
+/* vocalized (menukad) form for display; falls back to plain hebrew. Search/audio/keys still use .hebrew */
+const termLabel=t=> t&&(t.nikud||t.hebrew);
 
 function TopicTag({topicKey}){ const tp=TBK[topicKey]; if(!tp)return null;
   return <span className="subj" style={{background:'transparent',border:'1px solid '+tp.accent,color:'var(--text-2)'}}>
@@ -197,7 +199,7 @@ function TermCard({t,q,fav,studied,onFav,onStudied,onOpenTerm}){
   const def=canon?canon.definition:t.definition; const long=(def||'').length>170; const shown=long&&!open?def.slice(0,170)+'…':def;
   return (<article className={`card ${studied?'studied':''}`}>
     <div className="card-top">
-      <div><div className={`term ${onOpenTerm?'link':''}`} onClick={onOpenTerm?function(){onOpenTerm(t.hebrew);}:undefined}>{highlight(t.hebrew,q)}</div>{t.english&&<div className="en">{t.english}</div>}</div>
+      <div><div className={`term ${onOpenTerm?'link':''}`} onClick={onOpenTerm?function(){onOpenTerm(t.hebrew);}:undefined}>{t.nikud?t.nikud:highlight(t.hebrew,q)}</div>{t.english&&<div className="en">{t.english}</div>}</div>
       <div className="acts">
         <button className="ibtn" onClick={()=>Speak(t.hebrew)} title="הקראה" aria-label="הקראה"><IcSpeaker/></button>
         <button className={`ibtn ${fav?'pin':''}`} onClick={onFav} title={fav?'הסר מרשימת החזרה':'סמן כמושג לחזרה (קשה לזכור)'} aria-label="לחזרה"><span className={fav?'':'pin-off'}><IcPin/></span></button>
@@ -269,7 +271,7 @@ function Flashcards({favorites,studied,toggleFav,toggleStudied,onKnow}){
         <div className="prog"><span>{i+1} / {cards.length}</span><div className="bar"><i style={{width:`${((i+1)/cards.length)*100}%`}}></i></div></div>
         <div className={`fc ${flip?'flip':''}`} onClick={()=>setFlip(f=>!f)} onTouchStart={e=>tref.current=e.touches[0].clientX} onTouchEnd={onTouchEnd}>
           <div className="fc-inner">
-            <div className="fc-face"><div className="fc-badge">{card.letter}</div><div className="fc-term">{card.hebrew}</div>{card.english&&<div className="fc-en">{card.english}</div>}{card.topic&&<div style={{marginTop:12}}><TopicTag topicKey={card.topic}/></div>}<div className="fc-hint">↻ הקישו לתשובה</div></div>
+            <div className="fc-face"><div className="fc-badge">{card.letter}</div><div className="fc-term">{termLabel(card)}</div>{card.english&&<div className="fc-en">{card.english}</div>}{card.topic&&<div style={{marginTop:12}}><TopicTag topicKey={card.topic}/></div>}<div className="fc-hint">↻ הקישו לתשובה</div></div>
             <div className="fc-face fc-back"><div className="fc-def">{card.definition}</div><div className="fc-hint">↻ הקישו לחזרה</div></div>
           </div>
         </div>
@@ -320,11 +322,11 @@ function Quiz({studied,toggleStudied,favorites,recordAnswer,recordQuiz,fireConfe
     {spark && <div className="spark-pop">✨</div>}
     <div className="q-top"><span>שאלה {qi+1} / {quiz.length}</span><div className="bar"><i style={{width:`${(qi/quiz.length)*100}%`}}></i></div><span className="q-score">{score} ✓</span></div>
     <span className="q-kind">{item.kind==='pick-definition'?'בחרו את ההגדרה הנכונה':item.kind==='pick-term'?'בחרו את המושג הנכון':'הקלידו את המושג'}</span>
-    <div className="q-q">{item.kind==='pick-definition'?<>מהי <span className="hl">{item.term.hebrew}</span>?</>:item.prompt}</div>
+    <div className="q-q">{item.kind==='pick-definition'?<>מהי <span className="hl mnk">{termLabel(item.term)}</span>?</>:item.prompt}</div>
     <button className="chip" onClick={()=>Speak(item.kind==='pick-definition'?item.term.hebrew:item.prompt)} style={{marginBottom:10}} aria-label="הקראה"><IcSpeaker/> הקראה</button>
     {item.kind==='type-answer'
       ? (<><div className="q-type-in"><input value={typed} onChange={e=>setTyped(e.target.value)} disabled={answered} placeholder="הקלידו את המושג…" onKeyDown={e=>e.key==='Enter'&&answerType()}/>{!answered&&<button className="btn btn-accent" onClick={answerType}>בדיקה</button>}</div>
-        {answered && (chosen.correct?<div className="fb ok">🎉 נכון! {item.term.hebrew}</div>:<div className="fb no">✗ התשובה: {item.term.hebrew}</div>)}</>)
+        {answered && (chosen.correct?<div className="fb ok">🎉 נכון! {termLabel(item.term)}</div>:<div className="fb no">✗ התשובה: {termLabel(item.term)}</div>)}</>)
       : item.options.map((o,idx)=>{let cls='opt';if(answered){if(o.correct)cls+=' correct';else if(chosen===o)cls+=' wrong';}
           return <button key={idx} className={cls} onClick={()=>answerMC(o)} disabled={answered}><span className="mk">{answered&&o.correct?'✓':String.fromCharCode(1488+idx)}</span><span>{o.text}</span></button>;})}
     {answered && item.kind!=='type-answer' && (chosen&&chosen.correct?<div className="fb ok">🎉 כל הכבוד!</div>:<div className="fb no">התשובה הנכונה מסומנת בירוק</div>)}
@@ -442,10 +444,10 @@ function TermQuiz({hebrew,onClose,onResult}){
   return (<div className="overlay" onClick={onClose}>
     <div className="sheet-card" onClick={e=>e.stopPropagation()}>
       <button className="od-x" onClick={onClose} aria-label="סגור">×</button>
-      <div className="od-term">{t.hebrew} <button className="ibtn" style={{display:'inline-flex',width:34,height:34,verticalAlign:'middle'}} onClick={()=>Speak(t.hebrew)} aria-label="הקראה"><IcSpeaker/></button></div>
+      <div className="od-term">{termLabel(t)} <button className="ibtn" style={{display:'inline-flex',width:34,height:34,verticalAlign:'middle'}} onClick={()=>Speak(t.hebrew)} aria-label="הקראה"><IcSpeaker/></button></div>
       {t.english&&<div className="en">{t.english}</div>}
       {t.topic&&<div style={{marginTop:6}}><TopicTag topicKey={t.topic}/></div>}
-      <div className="od-sec">מהי <b>{t.hebrew}</b>? בחרו את ההגדרה הנכונה:</div>
+      <div className="od-sec">מהי <b>{termLabel(t)}</b>? בחרו את ההגדרה הנכונה:</div>
       {opts.map((o,i)=>{ let cls='opt'; if(sel){ if(o.correct)cls+=' correct'; else if(sel===o)cls+=' wrong'; }
         return <button key={i} className={cls} disabled={!!sel} onClick={()=>answer(o)}><span className="mk">{sel&&o.correct?'✓':String.fromCharCode(1488+i)}</span><span>{o.text}</span></button>; })}
       {sel && <div className={`fb ${sel.correct?'ok':'no'}`}>{sel.correct?'🎉 כל הכבוד! ידעת את המושג':'אל דאגה — ההגדרה הנכונה מסומנת בירוק'}</div>}
