@@ -395,8 +395,8 @@ function Profile({user,studied,favorites,stats,sync,signIn,signOut,onTopic,muted
       <div className="stat-box"><b>{m.perfect}</b><span>מבחנים מושלמים</span></div>
       <div className="stat-box"><b>{m.dayStreak}</b><span>🔥 ימים ברצף</span></div>
       <div className="stat-box"><b>{m.maxDayStreak}</b><span>שיא רצף</span></div>
-      <div className="stat-box"><b>{stats.cwSolved||0}</b><span>🧩 תשבצים שנפתרו</span></div>
-      {stats.cwBest!=null && stats.cwBest<99999 && <div className="stat-box"><b>{fmtSec(stats.cwBest)}</b><span>⏱️ שיא תשבץ</span></div>}
+      <div className="stat-box"><b>{stats.cwSolved||0}</b><span><svg viewBox="0 0 24 24" fill="none"><rect x="4" y="4" width="16" height="16" rx="2.4" fill="#E4D6F3"/><path d="M9.33 4v16M14.67 4v16M4 9.33h16M4 14.67h16" stroke="#fff" strokeWidth="1.6"/><rect x="4.5" y="4.5" width="4.3" height="4.3" rx="1" fill="#7B4FB0"/><rect x="15.2" y="15.2" width="4.3" height="4.3" rx="1" fill="#7B4FB0"/></svg> תשבצים שנפתרו</span></div>
+      {stats.cwBest!=null && stats.cwBest<99999 && <div className="stat-box"><b>{fmtSec(stats.cwBest)}</b><span><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="13.5" r="7.5" stroke="#3FA9D6" strokeWidth="1.9"/><path d="M12 9.5v4l2.4 1.5" stroke="#3FA9D6" strokeWidth="1.9" strokeLinecap="round"/><path d="M9.8 3.2h4.4" stroke="#3FA9D6" strokeWidth="1.9" strokeLinecap="round"/></svg> שיא תשבץ</span></div>}
     </div>
     <h2 className="sec-title">התקדמות לפי נושא</h2>
     <p className="sec-sub">הקישו על נושא כדי לראות את כל המושגים שלו</p>
