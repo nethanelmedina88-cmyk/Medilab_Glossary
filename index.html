@@ -40,10 +40,15 @@
 <script src="app/sound.js"></script>
 <script src="app/app-v2.js"></script>
 <script>
-/* desktop: let the mouse wheel scroll horizontal topic-chip rows sideways (touch already swipes) */
+/* desktop: let the mouse wheel scroll the horizontal topic + letter rows sideways (touch already swipes).
+   RTL-aware: in a right-to-left row, scrollLeft runs negative, so flip the wheel delta. */
 document.addEventListener('wheel', function(e){
-  var el = e.target.closest && e.target.closest('.chips');
-  if(el && el.scrollWidth > el.clientWidth + 2 && Math.abs(e.deltaY) > Math.abs(e.deltaX)){ el.scrollLeft += e.deltaY; e.preventDefault(); }
+  var el = e.target.closest && e.target.closest('.chips, .letters');
+  if(el && el.scrollWidth > el.clientWidth + 2 && Math.abs(e.deltaY) > Math.abs(e.deltaX)){
+    var rtl = getComputedStyle(el).direction === 'rtl';
+    el.scrollLeft += (rtl ? -e.deltaY : e.deltaY);
+    e.preventDefault();
+  }
 }, {passive:false});
 </script>
 <script>
