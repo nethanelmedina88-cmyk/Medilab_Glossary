@@ -215,6 +215,14 @@ html.dark .fb.ok{background:#15301c} html.dark .fb.no{background:#371a15}
 .ibtn svg,.fc-nav svg,.streak svg{width:18px;height:18px;flex:0 0 auto}
 .chip>svg,.chip .mlic svg{width:16px;height:16px}
 .mlic{display:inline-flex;align-items:center;justify-content:center;vertical-align:-.2em;line-height:0;margin-inline-end:2px}
+/* horizontal scroll rows with click chevrons */
+.scroller{position:relative}
+.scroll-arrow{position:absolute;top:calc(50% - 3px);transform:translateY(-50%);z-index:4;display:none;align-items:center;justify-content:center;width:28px;height:28px;padding:0;border-radius:50%;border:1px solid var(--border);background:var(--surface);color:var(--text);box-shadow:0 2px 8px rgba(0,0,0,.16);cursor:pointer;transition:opacity var(--base),transform var(--base)}
+.scroll-arrow.show{display:inline-flex}
+.scroll-arrow:active{transform:translateY(-50%) scale(.9)}
+.scroll-arrow.left{left:-4px}
+.scroll-arrow.right{right:-4px}
+@media (hover:hover){.chips,.letters{scroll-behavior:smooth}}
 .credit{text-align:center;margin-top:18px;font-size:12px;color:var(--muted)}
 .credit a{color:var(--muted);text-decoration:underline}
 .hero h1 svg{width:24px;height:24px;vertical-align:-4px;margin-inline-end:2px}

@@ -211,11 +211,81 @@ function TopicTag({
     tp: tp
   }), " ", tp.label);
 }
+/* horizontal scroll row with click-to-scroll chevrons (RTL-aware); arrows show only when scrollable */
+function Scroller({
+  className,
+  children
+}) {
+  const ref = useRef(null);
+  const [start, setStart] = useState(true);
+  const [end, setEnd] = useState(false);
+  const update = useCallback(() => {
+    const el = ref.current;
+    if (!el) return;
+    const max = el.scrollWidth - el.clientWidth;
+    const sl = Math.abs(el.scrollLeft);
+    setStart(sl <= 4);
+    setEnd(max <= 4 || sl >= max - 4);
+  }, []);
+  useEffect(() => {
+    update();
+    const el = ref.current;
+    if (!el) return;
+    el.addEventListener('scroll', update, {
+      passive: true
+    });
+    window.addEventListener('resize', update);
+    const t = setTimeout(update, 300);
+    return () => {
+      el.removeEventListener('scroll', update);
+      window.removeEventListener('resize', update);
+      clearTimeout(t);
+    };
+  }, [update, children]);
+  const page = dir => {
+    const el = ref.current;
+    if (!el) return;
+    const rtl = getComputedStyle(el).direction === 'rtl';
+    const amt = el.clientWidth * 0.72;
+    el.scrollBy({
+      left: (rtl ? -amt : amt) * dir
+    });
+  };
+  const chev = d => /*#__PURE__*/React.createElement("svg", {
+    viewBox: "0 0 24 24",
+    width: "18",
+    height: "18",
+    "aria-hidden": "true"
+  }, /*#__PURE__*/React.createElement("path", {
+    d: d,
+    fill: "none",
+    stroke: "currentColor",
+    strokeWidth: "2.4",
+    strokeLinecap: "round",
+    strokeLinejoin: "round"
+  }));
+  return /*#__PURE__*/React.createElement("div", {
+    className: "scroller"
+  }, /*#__PURE__*/React.createElement("button", {
+    className: `scroll-arrow right ${!start ? 'show' : ''}`,
+    onClick: () => page(-1),
+    "aria-label": "\u05D4\u05E7\u05D5\u05D3\u05DD",
+    tabIndex: -1
+  }, chev("M9 6l6 6-6 6")), /*#__PURE__*/React.createElement("div", {
+    className: className,
+    ref: ref
+  }, children), /*#__PURE__*/React.createElement("button", {
+    className: `scroll-arrow left ${!end ? 'show' : ''}`,
+    onClick: () => page(1),
+    "aria-label": "\u05D4\u05D1\u05D0",
+    tabIndex: -1
+  }, chev("M15 6l-6 6 6 6")));
+}
 function TopicChips({
   value,
   onPick
 }) {
-  return /*#__PURE__*/React.createElement("div", {
+  return /*#__PURE__*/React.createElement(Scroller, {
     className: "chips"
   }, /*#__PURE__*/React.createElement("button", {
     className: `chip ${!value ? 'on' : ''}`,
@@ -612,7 +682,7 @@ function Glossary({
   }, "\xD7")), /*#__PURE__*/React.createElement(TopicChips, {
     value: topic,
     onPick: setTopic
-  }), /*#__PURE__*/React.createElement("div", {
+  }), /*#__PURE__*/React.createElement(Scroller, {
     className: "letters"
   }, /*#__PURE__*/React.createElement("button", {
     className: `let ${!letter ? 'on' : ''}`,

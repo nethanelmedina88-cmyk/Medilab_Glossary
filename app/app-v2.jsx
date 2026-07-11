@@ -67,10 +67,24 @@ const IcPin=()=> mlic('pin');
 function TopicTag({topicKey}){ const tp=TBK[topicKey]; if(!tp)return null;
   return <span className="subj" style={{background:'transparent',border:'1px solid '+tp.accent,color:'var(--text-2)'}}>
     <span style={{width:8,height:8,borderRadius:'50%',background:tp.accent,display:'inline-block',marginInlineEnd:3}}></span><TopicIcon tp={tp}/> {tp.label}</span>; }
-function TopicChips({value,onPick}){ return (<div className="chips">
+/* horizontal scroll row with click-to-scroll chevrons (RTL-aware); arrows show only when scrollable */
+function Scroller({className,children}){
+  const ref=useRef(null);
+  const [start,setStart]=useState(true); const [end,setEnd]=useState(false);
+  const update=useCallback(()=>{ const el=ref.current; if(!el) return; const max=el.scrollWidth-el.clientWidth; const sl=Math.abs(el.scrollLeft); setStart(sl<=4); setEnd(max<=4||sl>=max-4); },[]);
+  useEffect(()=>{ update(); const el=ref.current; if(!el) return; el.addEventListener('scroll',update,{passive:true}); window.addEventListener('resize',update); const t=setTimeout(update,300); return ()=>{ el.removeEventListener('scroll',update); window.removeEventListener('resize',update); clearTimeout(t); }; },[update,children]);
+  const page=(dir)=>{ const el=ref.current; if(!el) return; const rtl=getComputedStyle(el).direction==='rtl'; const amt=el.clientWidth*0.72; el.scrollBy({left:(rtl?-amt:amt)*dir}); };
+  const chev=(d)=> <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d={d} fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round"/></svg>;
+  return (<div className="scroller">
+    <button className={`scroll-arrow right ${!start?'show':''}`} onClick={()=>page(-1)} aria-label="הקודם" tabIndex={-1}>{chev("M9 6l6 6-6 6")}</button>
+    <div className={className} ref={ref}>{children}</div>
+    <button className={`scroll-arrow left ${!end?'show':''}`} onClick={()=>page(1)} aria-label="הבא" tabIndex={-1}>{chev("M15 6l-6 6 6 6")}</button>
+  </div>);
+}
+function TopicChips({value,onPick}){ return (<Scroller className="chips">
   <button className={`chip ${!value?'on':''}`} onClick={()=>onPick('')}>הכל</button>
   {TOPICS.map(t=>{const on=value===t.key; return <button key={t.key} className="chip" onClick={()=>onPick(on?'':t.key)} style={on?{background:t.primary,color:'#fff',borderColor:t.primary}:undefined}><TopicIcon tp={t}/> {t.label}</button>;})}
-</div>); }
+</Scroller>); }
 function Confetti(){ const cols=['#3FA9D6','#5CB85C','#F0654F','#F9D85C','#9B59B6']; const p=[];
   for(let i=0;i<42;i++){ p.push(<i key={i} style={{left:(Math.random()*100)+'%',background:cols[i%cols.length],animationDuration:(1+Math.random()*1.1)+'s',animationDelay:(Math.random()*0.3)+'s'}}/>); }
   return <div className="confetti">{p}</div>; }
@@ -206,8 +220,8 @@ function Glossary({favorites,studied,toggleFav,toggleStudied,initialTopic,onOpen
     <InstallCard/>
     <div className="search"><span aria-hidden="true">🔍</span><input value={q} onChange={e=>setQ(e.target.value)} placeholder="חפשו מושג… (אוסמוזה, PCR, אקסון)"/>{q&&<button className="x" onClick={()=>setQ('')} aria-label="נקה">×</button>}</div>
     <TopicChips value={topic} onPick={setTopic}/>
-    <div className="letters"><button className={`let ${!letter?'on':''}`} style={{width:'auto',padding:'0 10px'}} onClick={()=>setLetter('')}>הכל</button>
-      {HEB.map(l=>(<button key={l} className={`let ${letter===l?'on':''}`} disabled={!letterCounts[l]} onClick={()=>setLetter(letter===l?'':l)}>{l}</button>))}</div>
+    <Scroller className="letters"><button className={`let ${!letter?'on':''}`} style={{width:'auto',padding:'0 10px'}} onClick={()=>setLetter('')}>הכל</button>
+      {HEB.map(l=>(<button key={l} className={`let ${letter===l?'on':''}`} disabled={!letterCounts[l]} onClick={()=>setLetter(letter===l?'':l)}>{l}</button>))}</Scroller>
     <div className="meta">{tp?<><TopicIcon tp={tp}/> {tp.label} · </>:''}{results.length} מושגים</div>
     {results.length===0
       ? <div className="empty"><div style={{fontSize:46}}>🔬</div><h3>לא נמצאו תוצאות</h3><p>נסו מושג אחר או נקו את הסינון.</p></div>
