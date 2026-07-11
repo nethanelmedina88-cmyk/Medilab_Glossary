@@ -59,13 +59,14 @@ const IcQuiz=()=> <svg viewBox="0 0 24 24" fill="none"><rect x="5" y="4.2" width
 const IcList=()=> <svg viewBox="0 0 24 24" fill="none"><path d="M12 6.2C10.3 5 8.2 4.4 5.6 4.4c-.6 0-1 .4-1 1v11.3c0 .5.4 1 1 1 2.6 0 4.7.6 6.4 1.9V6.2z" fill="#3FA9D6"/><path d="M12 6.2C13.7 5 15.8 4.4 18.4 4.4c.6 0 1 .4 1 1v11.3c0 .5-.4 1-1 1-2.6 0-4.7.6-6.4 1.9V6.2z" fill="#9BD7EF"/><path d="M7 8.3h2.6M7 11h2.6" stroke="#1B6FA8" strokeWidth="1.2" strokeLinecap="round"/></svg>;
 const IcInfo=()=> <svg viewBox="0 0 24 24" fill="none"><path d="M10.3 3.5v5.2L6.2 16c-.7 1.4.3 3 1.9 3h7.8c1.6 0 2.6-1.6 1.9-3l-4.1-7.3V3.5" fill="#BFE9F5" stroke="#1B6FA8" strokeWidth="1.3" strokeLinejoin="round" strokeLinecap="round"/><path d="M8 13.2h8l1.8 2.9c.7 1.4-.3 3-1.9 3H8.1c-1.6 0-2.6-1.6-1.9-3z" fill="#5CB85C"/><path d="M9.5 3.3h5" stroke="#1B6FA8" strokeWidth="1.5" strokeLinecap="round"/><circle cx="12.6" cy="15.7" r=".9" fill="#fff" opacity=".85"/><circle cx="10" cy="17.1" r=".65" fill="#fff" opacity=".75"/></svg>;
 const IcGrid=()=> <svg viewBox="0 0 24 24" fill="none"><rect x="4" y="4" width="16" height="16" rx="2.6" fill="#E4D6F3"/><path d="M9.33 4v16M14.67 4v16M4 9.33h16M4 14.67h16" stroke="#fff" strokeWidth="1.3"/><rect x="4.5" y="4.5" width="4.3" height="4.3" rx="1" fill="#7B4FB0"/><rect x="15.2" y="9.83" width="4.3" height="4.3" rx="1" fill="#7B4FB0"/><rect x="9.85" y="15.2" width="4.3" height="4.3" rx="1" fill="#9B6FC7"/></svg>;
+const TopicIcon=({tp})=> (tp&&tp.svg) ? <span className="tpi" dangerouslySetInnerHTML={{__html:tp.svg}}/> : null;
 
 function TopicTag({topicKey}){ const tp=TBK[topicKey]; if(!tp)return null;
   return <span className="subj" style={{background:'transparent',border:'1px solid '+tp.accent,color:'var(--text-2)'}}>
-    <span style={{width:8,height:8,borderRadius:'50%',background:tp.accent,display:'inline-block',marginInlineEnd:3}}></span>{tp.emoji} {tp.label}</span>; }
+    <span style={{width:8,height:8,borderRadius:'50%',background:tp.accent,display:'inline-block',marginInlineEnd:3}}></span><TopicIcon tp={tp}/> {tp.label}</span>; }
 function TopicChips({value,onPick}){ return (<div className="chips">
   <button className={`chip ${!value?'on':''}`} onClick={()=>onPick('')}>הכל</button>
-  {TOPICS.map(t=>{const on=value===t.key; return <button key={t.key} className="chip" onClick={()=>onPick(on?'':t.key)} style={on?{background:t.primary,color:'#fff',borderColor:t.primary}:undefined}>{t.emoji} {t.label}</button>;})}
+  {TOPICS.map(t=>{const on=value===t.key; return <button key={t.key} className="chip" onClick={()=>onPick(on?'':t.key)} style={on?{background:t.primary,color:'#fff',borderColor:t.primary}:undefined}><TopicIcon tp={t}/> {t.label}</button>;})}
 </div>); }
 function Confetti(){ const cols=['#3FA9D6','#5CB85C','#F0654F','#F9D85C','#9B59B6']; const p=[];
   for(let i=0;i<42;i++){ p.push(<i key={i} style={{left:(Math.random()*100)+'%',background:cols[i%cols.length],animationDuration:(1+Math.random()*1.1)+'s',animationDelay:(Math.random()*0.3)+'s'}}/>); }
@@ -204,7 +205,7 @@ function Glossary({favorites,studied,toggleFav,toggleStudied,initialTopic,onOpen
     <TopicChips value={topic} onPick={setTopic}/>
     <div className="letters"><button className={`let ${!letter?'on':''}`} style={{width:'auto',padding:'0 10px'}} onClick={()=>setLetter('')}>הכל</button>
       {HEB.map(l=>(<button key={l} className={`let ${letter===l?'on':''}`} disabled={!letterCounts[l]} onClick={()=>setLetter(letter===l?'':l)}>{l}</button>))}</div>
-    <div className="meta">{tp?`${tp.emoji} ${tp.label} · `:''}{results.length} מושגים</div>
+    <div className="meta">{tp?<><TopicIcon tp={tp}/> {tp.label} · </>:''}{results.length} מושגים</div>
     {results.length===0
       ? <div className="empty"><div style={{fontSize:46}}>🔬</div><h3>לא נמצאו תוצאות</h3><p>נסו מושג אחר או נקו את הסינון.</p></div>
       : results.map(t=>(<TermCard key={t.hebrew+t.letter} t={t} q={q.trim()} fav={favorites.includes(t.hebrew)} studied={studied.includes(t.hebrew)} onFav={()=>toggleFav(t.hebrew)} onStudied={()=>toggleStudied(t.hebrew)} onOpenTerm={onOpenTerm}/>))}
@@ -401,7 +402,7 @@ function Profile({user,studied,favorites,stats,sync,signIn,signOut,onTopic,muted
     <h2 className="sec-title">התקדמות לפי נושא</h2>
     <p className="sec-sub">הקישו על נושא כדי לראות את כל המושגים שלו</p>
     <div style={{marginTop:6}}>{perTopic.map(({t,total,done})=>{const p=Math.round(done/total*100);
-      return (<div className="topic-prog click" key={t.key} onClick={()=>onTopic(t.key)}><div className="lab"><span>{t.emoji} {t.label} ›</span><span>{done}/{total}</span></div><div className="tbar"><i style={{width:p+'%',background:t.primary}}></i></div></div>);})}</div>
+      return (<div className="topic-prog click" key={t.key} onClick={()=>onTopic(t.key)}><div className="lab"><span><TopicIcon tp={t}/> {t.label} ›</span><span>{done}/{total}</span></div><div className="tbar"><i style={{width:p+'%',background:t.primary}}></i></div></div>);})}</div>
     <div className="ach-head"><h2>הישגים 🏆</h2><span className="cnt">{earned.length}/{ACH.length}</span></div>
     <div className="ach-grid">{ACH.map(a=>(<div key={a.id} className={`ach ${earnedSet[a.id]?'on':''}`} title={a.desc}><span className="em">{a.emoji}</span><span className="t">{a.title}</span></div>))}</div>
   </>);

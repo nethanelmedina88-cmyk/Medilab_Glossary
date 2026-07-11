@@ -210,6 +210,8 @@ html.dark .fb.ok{background:#15301c} html.dark .fb.no{background:#371a15}
 .stat-box b{display:block;font-family:'Secular One';font-weight:800;font-size:22px;color:var(--accent-strong)}
 .stat-box span{font-size:11.5px;color:var(--text-3);font-weight:600}
 .stat-box span svg{width:14px;height:14px;vertical-align:-2px;margin-inline-start:2px}
+.tpi{display:inline-block;width:16px;height:16px;vertical-align:-3px;margin-inline-end:3px}
+.tpi svg{width:100%;height:100%;display:block}
 .degrees{display:flex;flex-direction:column;gap:8px;margin:12px 0}
 .degree{display:flex;gap:10px;align-items:center;background:var(--surface);border:1px solid var(--border);border-radius:var(--r-md);padding:9px 12px}
 .degree .tag{font-family:'Secular One';font-weight:700;font-size:12px;color:#fff;background:var(--grad);border-radius:8px;padding:4px 8px;flex:0 0 auto}

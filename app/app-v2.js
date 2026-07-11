@@ -169,6 +169,7 @@ const IcCards = () => /*#__PURE__*/React.createElement("svg", { viewBox: "0 0 24
 const IcQuiz = () => /*#__PURE__*/React.createElement("svg", { viewBox: "0 0 24 24", fill: "none" }, /*#__PURE__*/React.createElement("rect", { x: "5", y: "4.2", width: "14", height: "16.3", rx: "2.6", fill: "#FBD38D" }), /*#__PURE__*/React.createElement("rect", { x: "8.7", y: "2.6", width: "6.6", height: "3.6", rx: "1.3", fill: "#F0654F" }), /*#__PURE__*/React.createElement("path", { d: "M8.6 13l2.4 2.4 4.4-4.7", stroke: "#F0654F", strokeWidth: "2.1", strokeLinecap: "round", strokeLinejoin: "round" }));
 const IcGrid = () => /*#__PURE__*/React.createElement("svg", { viewBox: "0 0 24 24", fill: "none" }, /*#__PURE__*/React.createElement("rect", { x: "4", y: "4", width: "16", height: "16", rx: "2.6", fill: "#E4D6F3" }), /*#__PURE__*/React.createElement("path", { d: "M9.33 4v16M14.67 4v16M4 9.33h16M4 14.67h16", stroke: "#fff", strokeWidth: "1.3" }), /*#__PURE__*/React.createElement("rect", { x: "4.5", y: "4.5", width: "4.3", height: "4.3", rx: "1", fill: "#7B4FB0" }), /*#__PURE__*/React.createElement("rect", { x: "15.2", y: "9.83", width: "4.3", height: "4.3", rx: "1", fill: "#7B4FB0" }), /*#__PURE__*/React.createElement("rect", { x: "9.85", y: "15.2", width: "4.3", height: "4.3", rx: "1", fill: "#9B6FC7" }));
 const IcInfo = () => /*#__PURE__*/React.createElement("svg", { viewBox: "0 0 24 24", fill: "none" }, /*#__PURE__*/React.createElement("path", { d: "M10.3 3.5v5.2L6.2 16c-.7 1.4.3 3 1.9 3h7.8c1.6 0 2.6-1.6 1.9-3l-4.1-7.3V3.5", fill: "#BFE9F5", stroke: "#1B6FA8", strokeWidth: "1.3", strokeLinejoin: "round", strokeLinecap: "round" }), /*#__PURE__*/React.createElement("path", { d: "M8 13.2h8l1.8 2.9c.7 1.4-.3 3-1.9 3H8.1c-1.6 0-2.6-1.6-1.9-3z", fill: "#5CB85C" }), /*#__PURE__*/React.createElement("path", { d: "M9.5 3.3h5", stroke: "#1B6FA8", strokeWidth: "1.5", strokeLinecap: "round" }), /*#__PURE__*/React.createElement("circle", { cx: "12.6", cy: "15.7", r: ".9", fill: "#fff", opacity: ".85" }), /*#__PURE__*/React.createElement("circle", { cx: "10", cy: "17.1", r: ".65", fill: "#fff", opacity: ".75" }));
+const TopicIcon = ({ tp }) => tp && tp.svg ? /*#__PURE__*/React.createElement("span", { className: "tpi", dangerouslySetInnerHTML: { __html: tp.svg } }) : null;
 function TopicTag({
   topicKey
 }) {
@@ -190,7 +191,7 @@ function TopicTag({
       display: 'inline-block',
       marginInlineEnd: 3
     }
-  }), tp.emoji, " ", tp.label);
+  }), /*#__PURE__*/React.createElement(TopicIcon, { tp: tp }), " ", tp.label);
 }
 function TopicChips({
   value,
@@ -212,7 +213,7 @@ function TopicChips({
         color: '#fff',
         borderColor: t.primary
       } : undefined
-    }, t.emoji, " ", t.label);
+    }, /*#__PURE__*/React.createElement(TopicIcon, { tp: t }), " ", t.label);
   }));
 }
 function Confetti() {
@@ -607,7 +608,7 @@ function Glossary({
     onClick: () => setLetter(letter === l ? '' : l)
   }, l))), /*#__PURE__*/React.createElement("div", {
     className: "meta"
-  }, tp ? `${tp.emoji} ${tp.label} · ` : '', results.length, " \u05DE\u05D5\u05E9\u05D2\u05D9\u05DD"), results.length === 0 ? /*#__PURE__*/React.createElement("div", {
+  }, tp ? /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement(TopicIcon, { tp: tp }), " ", tp.label, " · ") : '', results.length, " \u05DE\u05D5\u05E9\u05D2\u05D9\u05DD"), results.length === 0 ? /*#__PURE__*/React.createElement("div", {
     className: "empty"
   }, /*#__PURE__*/React.createElement("div", {
     style: {
@@ -1385,7 +1386,7 @@ function Profile({
       onClick: () => onTopic(t.key)
     }, /*#__PURE__*/React.createElement("div", {
       className: "lab"
-    }, /*#__PURE__*/React.createElement("span", null, t.emoji, " ", t.label, " \u203A"), /*#__PURE__*/React.createElement("span", null, done, "/", total)), /*#__PURE__*/React.createElement("div", {
+    }, /*#__PURE__*/React.createElement("span", null, /*#__PURE__*/React.createElement(TopicIcon, { tp: t }), " ", t.label, " \u203A"), /*#__PURE__*/React.createElement("span", null, done, "/", total)), /*#__PURE__*/React.createElement("div", {
       className: "tbar"
     }, /*#__PURE__*/React.createElement("i", {
       style: {
