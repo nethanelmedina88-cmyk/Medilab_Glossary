@@ -60,6 +60,8 @@ const IcList=()=> <svg viewBox="0 0 24 24" fill="none"><path d="M12 6.2C10.3 5 8
 const IcInfo=()=> <svg viewBox="0 0 24 24" fill="none"><path d="M10.3 3.5v5.2L6.2 16c-.7 1.4.3 3 1.9 3h7.8c1.6 0 2.6-1.6 1.9-3l-4.1-7.3V3.5" fill="#BFE9F5" stroke="#1B6FA8" strokeWidth="1.3" strokeLinejoin="round" strokeLinecap="round"/><path d="M8 13.2h8l1.8 2.9c.7 1.4-.3 3-1.9 3H8.1c-1.6 0-2.6-1.6-1.9-3z" fill="#5CB85C"/><path d="M9.5 3.3h5" stroke="#1B6FA8" strokeWidth="1.5" strokeLinecap="round"/><circle cx="12.6" cy="15.7" r=".9" fill="#fff" opacity=".85"/><circle cx="10" cy="17.1" r=".65" fill="#fff" opacity=".75"/></svg>;
 const IcGrid=()=> <svg viewBox="0 0 24 24" fill="none"><rect x="4" y="4" width="16" height="16" rx="2.6" fill="#E4D6F3"/><path d="M9.33 4v16M14.67 4v16M4 9.33h16M4 14.67h16" stroke="#fff" strokeWidth="1.3"/><rect x="4.5" y="4.5" width="4.3" height="4.3" rx="1" fill="#7B4FB0"/><rect x="15.2" y="9.83" width="4.3" height="4.3" rx="1" fill="#7B4FB0"/><rect x="9.85" y="15.2" width="4.3" height="4.3" rx="1" fill="#9B6FC7"/></svg>;
 const TopicIcon=({tp})=> (tp&&tp.svg) ? <span className="tpi" dangerouslySetInnerHTML={{__html:tp.svg}}/> : null;
+const IcSpeaker=()=> <svg viewBox="0 0 24 24" fill="none"><path d="M4 9.5h3.2L12 5.8v12.4L7.2 14.5H4z" fill="currentColor"/><path d="M15.5 9a4 4 0 0 1 0 6M18 6.5a7.5 7.5 0 0 1 0 11" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round"/></svg>;
+const IcPin=()=> <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M9 4h6M10 4l-1 6-2.6 2.6h11.2L15 10l-1-6M12 15.2V20"/></svg>;
 
 function TopicTag({topicKey}){ const tp=TBK[topicKey]; if(!tp)return null;
   return <span className="subj" style={{background:'transparent',border:'1px solid '+tp.accent,color:'var(--text-2)'}}>
@@ -166,7 +168,7 @@ function Header({pinCount,dark,setDark,user,onProfile,onReview,onLogo}){
     <div className="logo-wrap" onClick={onLogo} style={{cursor:'pointer'}} title="אודות" role="button" aria-label="אודות"><img className="logo-mark" src="logo.jpg" alt="MediLab"/><span className="bub b1"></span><span className="bub b2"></span><span className="bub b3"></span></div>
     <div className="brand"><b>שליפים</b><span>נתנאל יוחאי מדינה</span></div>
     <div className="hdr-spacer"></div>
-    <button className="streak" onClick={onReview} title="מושגים לחזרה" style={pinCount?{color:'var(--coral-700)',borderColor:'var(--coral-500)'}:undefined}>📌 {pinCount||0}</button>
+    <button className="streak" onClick={onReview} title="מושגים לחזרה" style={pinCount?{color:'var(--coral-700)',borderColor:'var(--coral-500)'}:undefined}><IcPin/> {pinCount||0}</button>
     <button className="icon-toggle" onClick={()=>setDark(d=>!d)} aria-label="מצב כהה">{dark?'☀️':'🌙'}</button>
     <button className="avatar" onClick={onProfile} aria-label="אזור אישי">{user&&user.photoURL?<img src={user.photoURL} referrerPolicy="no-referrer" alt=""/>:'👤'}</button>
   </header>); }
@@ -182,8 +184,8 @@ function TermCard({t,q,fav,studied,onFav,onStudied,onOpenTerm}){
     <div className="card-top">
       <div><div className={`term ${onOpenTerm?'link':''}`} onClick={onOpenTerm?function(){onOpenTerm(t.hebrew);}:undefined}>{highlight(t.hebrew,q)}</div>{t.english&&<div className="en">{t.english}</div>}</div>
       <div className="acts">
-        <button className="ibtn" onClick={()=>Speak(t.hebrew)} title="הקראה" aria-label="הקראה">🔊</button>
-        <button className={`ibtn ${fav?'pin':''}`} onClick={onFav} title={fav?'הסר מרשימת החזרה':'סמן כמושג לחזרה (קשה לזכור)'} aria-label="לחזרה"><span className={fav?'':'pin-off'}>📌</span></button>
+        <button className="ibtn" onClick={()=>Speak(t.hebrew)} title="הקראה" aria-label="הקראה"><IcSpeaker/></button>
+        <button className={`ibtn ${fav?'pin':''}`} onClick={onFav} title={fav?'הסר מרשימת החזרה':'סמן כמושג לחזרה (קשה לזכור)'} aria-label="לחזרה"><span className={fav?'':'pin-off'}><IcPin/></span></button>
         <button className={`ibtn ${studied?'done':''}`} onClick={()=>{ if(!studied)Snd.ding(); onStudied(); }} title={studied?'בטל נלמד':'סמן כנלמד'} aria-label="נלמד">{studied?'✓':'○'}</button>
       </div>
     </div>
@@ -216,9 +218,9 @@ function Glossary({favorites,studied,toggleFav,toggleStudied,initialTopic,onOpen
 function ReviewList({favorites,studied,toggleFav,toggleStudied,goQuiz,onOpenTerm}){
   const items=GLOSSARY.filter(t=>favorites.includes(t.hebrew));
   return (<>
-    <div className="hero"><h1>📌 מושגים לחזרה</h1><p>{items.length} מושגים שסימנת לחזור אליהם</p></div>
+    <div className="hero"><h1><IcPin/> מושגים לחזרה</h1><p>{items.length} מושגים שסימנת לחזור אליהם</p></div>
     {items.length===0
-      ? <div className="empty"><div style={{fontSize:46}}>📌</div><h3>הרשימה ריקה</h3><p>סמנו מושג ב-📌 (במילון או בכרטיסיות) כדי לאסוף אותו לכאן, ולהיבחן רק על מה שקשה לכם.</p></div>
+      ? <div className="empty"><div className="pin-lg"><IcPin/></div><h3>הרשימה ריקה</h3><p>סמנו מושג ב-📌 (במילון או בכרטיסיות) כדי לאסוף אותו לכאן, ולהיבחן רק על מה שקשה לכם.</p></div>
       : (<>
           <button className="btn btn-accent" style={{width:'100%',marginBottom:14}} onClick={goQuiz}>🎯 בחנו אותי על המושגים האלה ←</button>
           {items.map(t=>(<TermCard key={t.hebrew+t.letter} t={t} q="" fav={true} studied={studied.includes(t.hebrew)} onFav={()=>toggleFav(t.hebrew)} onStudied={()=>toggleStudied(t.hebrew)} onOpenTerm={onOpenTerm}/>))}
@@ -243,7 +245,7 @@ function Flashcards({favorites,studied,toggleFav,toggleStudied,onKnow}){
     <div className="deck">
       <button className={`chip ${deck==='all'?'on':''}`} onClick={()=>setDeck('all')}>הכל</button>
       <button className={`chip ${deck==='unstudied'?'on':''}`} onClick={()=>setDeck('unstudied')}>לא נלמדו</button>
-      <button className={`chip ${deck==='review'?'on':''}`} onClick={()=>setDeck('review')}>📌 לחזרה</button>
+      <button className={`chip ${deck==='review'?'on':''}`} onClick={()=>setDeck('review')}><IcPin/> לחזרה</button>
     </div>
     <TopicChips value={topic} onPick={setTopic}/>
     {cards.length===0
@@ -258,9 +260,9 @@ function Flashcards({favorites,studied,toggleFav,toggleStudied,onKnow}){
         </div>
         <div className="fc-ctrl">
           <button className="fc-nav" onClick={prev} aria-label="הקודם">→</button>
-          <button className="fc-nav" onClick={()=>Speak(flip?card.definition:card.hebrew)} aria-label="הקראה" title="הקראה">🔊</button>
+          <button className="fc-nav" onClick={()=>Speak(flip?card.definition:card.hebrew)} aria-label="הקראה" title="הקראה"><IcSpeaker/></button>
           <button className="btn btn-accent" style={{flex:1}} onClick={()=> studied.includes(card.hebrew)?toggleStudied(card.hebrew):onKnow(card.hebrew)}>{studied.includes(card.hebrew)?'✓ נלמד':'אני יודע — בדקו אותי'}</button>
-          <button className="fc-nav" style={favorites.includes(card.hebrew)?{color:'#fff',background:'var(--coral-500)',borderColor:'var(--coral-700)'}:undefined} onClick={()=>toggleFav(card.hebrew)} aria-label="לחזרה" title="מושג לחזרה">📌</button>
+          <button className="fc-nav" style={favorites.includes(card.hebrew)?{color:'#fff',background:'var(--coral-500)',borderColor:'var(--coral-700)'}:undefined} onClick={()=>toggleFav(card.hebrew)} aria-label="לחזרה" title="מושג לחזרה"><IcPin/></button>
           <button className="fc-nav" onClick={next} aria-label="הבא">←</button>
         </div>
       </>)}
@@ -288,7 +290,7 @@ function Quiz({studied,toggleStudied,favorites,recordAnswer,recordQuiz,fireConfe
   if(!quiz) return (<>
     <div className="hero"><h1>מבחון</h1><p>בחירה מרובה · השלמת מושג · בדיקה עצמית</p></div>
     <div className="setup"><h2>בחרו נושא</h2><TopicChips value={topic} onPick={setTopic}/>
-      <div style={{margin:'12px 0'}}><button className={`chip ${hardOnly?'on':''}`} onClick={()=>setHardOnly(h=>!h)} style={hardOnly?{background:'var(--coral-500)',color:'#fff',borderColor:'var(--coral-700)'}:undefined}>📌 מושגים לחזרה בלבד ({favorites.length})</button></div>
+      <div style={{margin:'12px 0'}}><button className={`chip ${hardOnly?'on':''}`} onClick={()=>setHardOnly(h=>!h)} style={hardOnly?{background:'var(--coral-500)',color:'#fff',borderColor:'var(--coral-700)'}:undefined}><IcPin/> מושגים לחזרה בלבד ({favorites.length})</button></div>
       <h2>מספר שאלות</h2>
       <div className="seg">{[5,10,15,20].map(n=>(<button key={n} className={`chip ${len===n?'on':''}`} onClick={()=>setLen(n)}>{n}</button>))}</div>
       <button className="btn btn-accent" style={{width:'100%'}} onClick={start} disabled={pool.length<3}>{pool.length<3?'מעט מדי מושגים בסינון הזה':`התחילו מבחון (${pool.length} מושגים) ←`}</button>
@@ -304,7 +306,7 @@ function Quiz({studied,toggleStudied,favorites,recordAnswer,recordQuiz,fireConfe
     <div className="q-top"><span>שאלה {qi+1} / {quiz.length}</span><div className="bar"><i style={{width:`${(qi/quiz.length)*100}%`}}></i></div><span className="q-score">{score} ✓</span></div>
     <span className="q-kind">{item.kind==='pick-definition'?'בחרו את ההגדרה הנכונה':item.kind==='pick-term'?'בחרו את המושג הנכון':'הקלידו את המושג'}</span>
     <div className="q-q">{item.kind==='pick-definition'?<>מהי <span className="hl">{item.term.hebrew}</span>?</>:item.prompt}</div>
-    <button className="chip" onClick={()=>Speak(item.kind==='pick-definition'?item.term.hebrew:item.prompt)} style={{marginBottom:10}} aria-label="הקראה">🔊 הקראה</button>
+    <button className="chip" onClick={()=>Speak(item.kind==='pick-definition'?item.term.hebrew:item.prompt)} style={{marginBottom:10}} aria-label="הקראה"><IcSpeaker/> הקראה</button>
     {item.kind==='type-answer'
       ? (<><div className="q-type-in"><input value={typed} onChange={e=>setTyped(e.target.value)} disabled={answered} placeholder="הקלידו את המושג…" onKeyDown={e=>e.key==='Enter'&&answerType()}/>{!answered&&<button className="btn btn-accent" onClick={answerType}>בדיקה</button>}</div>
         {answered && (chosen.correct?<div className="fb ok">🎉 נכון! {item.term.hebrew}</div>:<div className="fb no">✗ התשובה: {item.term.hebrew}</div>)}</>)
@@ -382,12 +384,12 @@ function Profile({user,studied,favorites,stats,sync,signIn,signOut,onTopic,muted
             התחברות עם Google</button></>)}
     </div>
     <div className="prof-card" style={{display:'flex',alignItems:'center',justifyContent:'space-between',textAlign:'right',padding:'14px 16px'}}>
-      <span style={{fontWeight:700}}>🔊 צלילי משוב</span>
+      <span style={{fontWeight:700}}><IcSpeaker/> צלילי משוב</span>
       <button className="chip" onClick={toggleSound} style={muted?undefined:{background:'var(--green-500)',color:'#fff',borderColor:'var(--green-700)'}}>{muted?'כבוי 🔇':'דלוק 🔊'}</button>
     </div>
     <div className="ring-wrap"><Ring pct={pct} color="#3FA9D6"/><div className="mini-stats">
       <div className="stat-box"><b>{m.studied}</b><span>נלמדו / {TOTAL}</span></div>
-      <div className="stat-box"><b>{m.hard}</b><span>📌 לחזרה</span></div>
+      <div className="stat-box"><b>{m.hard}</b><span><IcPin/> לחזרה</span></div>
     </div></div>
     <div className="perf">
       <div className="stat-box"><b>{acc}%</b><span>דייקנות במבחנים</span></div>
@@ -424,7 +426,7 @@ function TermQuiz({hebrew,onClose,onResult}){
   return (<div className="overlay" onClick={onClose}>
     <div className="sheet-card" onClick={e=>e.stopPropagation()}>
       <button className="od-x" onClick={onClose} aria-label="סגור">×</button>
-      <div className="od-term">{t.hebrew} <button className="ibtn" style={{display:'inline-flex',width:34,height:34,verticalAlign:'middle'}} onClick={()=>Speak(t.hebrew)} aria-label="הקראה">🔊</button></div>
+      <div className="od-term">{t.hebrew} <button className="ibtn" style={{display:'inline-flex',width:34,height:34,verticalAlign:'middle'}} onClick={()=>Speak(t.hebrew)} aria-label="הקראה"><IcSpeaker/></button></div>
       {t.english&&<div className="en">{t.english}</div>}
       {t.topic&&<div style={{marginTop:6}}><TopicTag topicKey={t.topic}/></div>}
       <div className="od-sec">מהי <b>{t.hebrew}</b>? בחרו את ההגדרה הנכונה:</div>

@@ -1,4 +1,3 @@
-/* AUTO-GENERATED from app/app-v2.jsx by in-browser Babel (classic JSX). Do not edit directly; edit the .jsx and recompile. */
 /* @jsxRuntime classic */
 /* ^ keep classic JSX (React.createElement) — we load React via global <script>, not as a module,
    so the automatic runtime's `import "react/jsx-runtime"` would crash the in-browser Babel build. */
@@ -164,12 +163,167 @@ function highlight(text, q) {
     className: "hl"
   }, text.slice(i, i + q.length)), text.slice(i + q.length));
 }
-const IcList = () => /*#__PURE__*/React.createElement("svg", { viewBox: "0 0 24 24", fill: "none" }, /*#__PURE__*/React.createElement("path", { d: "M12 6.2C10.3 5 8.2 4.4 5.6 4.4c-.6 0-1 .4-1 1v11.3c0 .5.4 1 1 1 2.6 0 4.7.6 6.4 1.9V6.2z", fill: "#3FA9D6" }), /*#__PURE__*/React.createElement("path", { d: "M12 6.2C13.7 5 15.8 4.4 18.4 4.4c.6 0 1 .4 1 1v11.3c0 .5-.4 1-1 1-2.6 0-4.7.6-6.4 1.9V6.2z", fill: "#9BD7EF" }), /*#__PURE__*/React.createElement("path", { d: "M7 8.3h2.6M7 11h2.6", stroke: "#1B6FA8", strokeWidth: "1.2", strokeLinecap: "round" }));
-const IcCards = () => /*#__PURE__*/React.createElement("svg", { viewBox: "0 0 24 24", fill: "none" }, /*#__PURE__*/React.createElement("rect", { x: "6.5", y: "7.6", width: "13", height: "10.4", rx: "2.4", fill: "#A9DEA0" }), /*#__PURE__*/React.createElement("rect", { x: "4.5", y: "5", width: "13", height: "10.4", rx: "2.4", fill: "#5CB85C" }), /*#__PURE__*/React.createElement("path", { d: "M7.6 8.4h6.9M7.6 11.2h4.2", stroke: "#fff", strokeWidth: "1.5", strokeLinecap: "round" }));
-const IcQuiz = () => /*#__PURE__*/React.createElement("svg", { viewBox: "0 0 24 24", fill: "none" }, /*#__PURE__*/React.createElement("rect", { x: "5", y: "4.2", width: "14", height: "16.3", rx: "2.6", fill: "#FBD38D" }), /*#__PURE__*/React.createElement("rect", { x: "8.7", y: "2.6", width: "6.6", height: "3.6", rx: "1.3", fill: "#F0654F" }), /*#__PURE__*/React.createElement("path", { d: "M8.6 13l2.4 2.4 4.4-4.7", stroke: "#F0654F", strokeWidth: "2.1", strokeLinecap: "round", strokeLinejoin: "round" }));
-const IcGrid = () => /*#__PURE__*/React.createElement("svg", { viewBox: "0 0 24 24", fill: "none" }, /*#__PURE__*/React.createElement("rect", { x: "4", y: "4", width: "16", height: "16", rx: "2.6", fill: "#E4D6F3" }), /*#__PURE__*/React.createElement("path", { d: "M9.33 4v16M14.67 4v16M4 9.33h16M4 14.67h16", stroke: "#fff", strokeWidth: "1.3" }), /*#__PURE__*/React.createElement("rect", { x: "4.5", y: "4.5", width: "4.3", height: "4.3", rx: "1", fill: "#7B4FB0" }), /*#__PURE__*/React.createElement("rect", { x: "15.2", y: "9.83", width: "4.3", height: "4.3", rx: "1", fill: "#7B4FB0" }), /*#__PURE__*/React.createElement("rect", { x: "9.85", y: "15.2", width: "4.3", height: "4.3", rx: "1", fill: "#9B6FC7" }));
-const IcInfo = () => /*#__PURE__*/React.createElement("svg", { viewBox: "0 0 24 24", fill: "none" }, /*#__PURE__*/React.createElement("path", { d: "M10.3 3.5v5.2L6.2 16c-.7 1.4.3 3 1.9 3h7.8c1.6 0 2.6-1.6 1.9-3l-4.1-7.3V3.5", fill: "#BFE9F5", stroke: "#1B6FA8", strokeWidth: "1.3", strokeLinejoin: "round", strokeLinecap: "round" }), /*#__PURE__*/React.createElement("path", { d: "M8 13.2h8l1.8 2.9c.7 1.4-.3 3-1.9 3H8.1c-1.6 0-2.6-1.6-1.9-3z", fill: "#5CB85C" }), /*#__PURE__*/React.createElement("path", { d: "M9.5 3.3h5", stroke: "#1B6FA8", strokeWidth: "1.5", strokeLinecap: "round" }), /*#__PURE__*/React.createElement("circle", { cx: "12.6", cy: "15.7", r: ".9", fill: "#fff", opacity: ".85" }), /*#__PURE__*/React.createElement("circle", { cx: "10", cy: "17.1", r: ".65", fill: "#fff", opacity: ".75" }));
-const TopicIcon = ({ tp }) => tp && tp.svg ? /*#__PURE__*/React.createElement("span", { className: "tpi", dangerouslySetInnerHTML: { __html: tp.svg } }) : null;
+
+/* colorful duotone nav icons (MediLab palette) */
+const IcCards = () => /*#__PURE__*/React.createElement("svg", {
+  viewBox: "0 0 24 24",
+  fill: "none"
+}, /*#__PURE__*/React.createElement("rect", {
+  x: "6.5",
+  y: "7.6",
+  width: "13",
+  height: "10.4",
+  rx: "2.4",
+  fill: "#A9DEA0"
+}), /*#__PURE__*/React.createElement("rect", {
+  x: "4.5",
+  y: "5",
+  width: "13",
+  height: "10.4",
+  rx: "2.4",
+  fill: "#5CB85C"
+}), /*#__PURE__*/React.createElement("path", {
+  d: "M7.6 8.4h6.9M7.6 11.2h4.2",
+  stroke: "#fff",
+  strokeWidth: "1.5",
+  strokeLinecap: "round"
+}));
+const IcQuiz = () => /*#__PURE__*/React.createElement("svg", {
+  viewBox: "0 0 24 24",
+  fill: "none"
+}, /*#__PURE__*/React.createElement("rect", {
+  x: "5",
+  y: "4.2",
+  width: "14",
+  height: "16.3",
+  rx: "2.6",
+  fill: "#FBD38D"
+}), /*#__PURE__*/React.createElement("rect", {
+  x: "8.7",
+  y: "2.6",
+  width: "6.6",
+  height: "3.6",
+  rx: "1.3",
+  fill: "#F0654F"
+}), /*#__PURE__*/React.createElement("path", {
+  d: "M8.6 13l2.4 2.4 4.4-4.7",
+  stroke: "#F0654F",
+  strokeWidth: "2.1",
+  strokeLinecap: "round",
+  strokeLinejoin: "round"
+}));
+const IcList = () => /*#__PURE__*/React.createElement("svg", {
+  viewBox: "0 0 24 24",
+  fill: "none"
+}, /*#__PURE__*/React.createElement("path", {
+  d: "M12 6.2C10.3 5 8.2 4.4 5.6 4.4c-.6 0-1 .4-1 1v11.3c0 .5.4 1 1 1 2.6 0 4.7.6 6.4 1.9V6.2z",
+  fill: "#3FA9D6"
+}), /*#__PURE__*/React.createElement("path", {
+  d: "M12 6.2C13.7 5 15.8 4.4 18.4 4.4c.6 0 1 .4 1 1v11.3c0 .5-.4 1-1 1-2.6 0-4.7.6-6.4 1.9V6.2z",
+  fill: "#9BD7EF"
+}), /*#__PURE__*/React.createElement("path", {
+  d: "M7 8.3h2.6M7 11h2.6",
+  stroke: "#1B6FA8",
+  strokeWidth: "1.2",
+  strokeLinecap: "round"
+}));
+const IcInfo = () => /*#__PURE__*/React.createElement("svg", {
+  viewBox: "0 0 24 24",
+  fill: "none"
+}, /*#__PURE__*/React.createElement("path", {
+  d: "M10.3 3.5v5.2L6.2 16c-.7 1.4.3 3 1.9 3h7.8c1.6 0 2.6-1.6 1.9-3l-4.1-7.3V3.5",
+  fill: "#BFE9F5",
+  stroke: "#1B6FA8",
+  strokeWidth: "1.3",
+  strokeLinejoin: "round",
+  strokeLinecap: "round"
+}), /*#__PURE__*/React.createElement("path", {
+  d: "M8 13.2h8l1.8 2.9c.7 1.4-.3 3-1.9 3H8.1c-1.6 0-2.6-1.6-1.9-3z",
+  fill: "#5CB85C"
+}), /*#__PURE__*/React.createElement("path", {
+  d: "M9.5 3.3h5",
+  stroke: "#1B6FA8",
+  strokeWidth: "1.5",
+  strokeLinecap: "round"
+}), /*#__PURE__*/React.createElement("circle", {
+  cx: "12.6",
+  cy: "15.7",
+  r: ".9",
+  fill: "#fff",
+  opacity: ".85"
+}), /*#__PURE__*/React.createElement("circle", {
+  cx: "10",
+  cy: "17.1",
+  r: ".65",
+  fill: "#fff",
+  opacity: ".75"
+}));
+const IcGrid = () => /*#__PURE__*/React.createElement("svg", {
+  viewBox: "0 0 24 24",
+  fill: "none"
+}, /*#__PURE__*/React.createElement("rect", {
+  x: "4",
+  y: "4",
+  width: "16",
+  height: "16",
+  rx: "2.6",
+  fill: "#E4D6F3"
+}), /*#__PURE__*/React.createElement("path", {
+  d: "M9.33 4v16M14.67 4v16M4 9.33h16M4 14.67h16",
+  stroke: "#fff",
+  strokeWidth: "1.3"
+}), /*#__PURE__*/React.createElement("rect", {
+  x: "4.5",
+  y: "4.5",
+  width: "4.3",
+  height: "4.3",
+  rx: "1",
+  fill: "#7B4FB0"
+}), /*#__PURE__*/React.createElement("rect", {
+  x: "15.2",
+  y: "9.83",
+  width: "4.3",
+  height: "4.3",
+  rx: "1",
+  fill: "#7B4FB0"
+}), /*#__PURE__*/React.createElement("rect", {
+  x: "9.85",
+  y: "15.2",
+  width: "4.3",
+  height: "4.3",
+  rx: "1",
+  fill: "#9B6FC7"
+}));
+const TopicIcon = ({
+  tp
+}) => tp && tp.svg ? /*#__PURE__*/React.createElement("span", {
+  className: "tpi",
+  dangerouslySetInnerHTML: {
+    __html: tp.svg
+  }
+}) : null;
+const IcSpeaker = () => /*#__PURE__*/React.createElement("svg", {
+  viewBox: "0 0 24 24",
+  fill: "none"
+}, /*#__PURE__*/React.createElement("path", {
+  d: "M4 9.5h3.2L12 5.8v12.4L7.2 14.5H4z",
+  fill: "currentColor"
+}), /*#__PURE__*/React.createElement("path", {
+  d: "M15.5 9a4 4 0 0 1 0 6M18 6.5a7.5 7.5 0 0 1 0 11",
+  stroke: "currentColor",
+  strokeWidth: "1.7",
+  strokeLinecap: "round"
+}));
+const IcPin = () => /*#__PURE__*/React.createElement("svg", {
+  viewBox: "0 0 24 24",
+  fill: "none",
+  stroke: "currentColor",
+  strokeWidth: "1.8",
+  strokeLinecap: "round",
+  strokeLinejoin: "round"
+}, /*#__PURE__*/React.createElement("path", {
+  d: "M9 4h6M10 4l-1 6-2.6 2.6h11.2L15 10l-1-6M12 15.2V20"
+}));
 function TopicTag({
   topicKey
 }) {
@@ -191,7 +345,9 @@ function TopicTag({
       display: 'inline-block',
       marginInlineEnd: 3
     }
-  }), /*#__PURE__*/React.createElement(TopicIcon, { tp: tp }), " ", tp.label);
+  }), /*#__PURE__*/React.createElement(TopicIcon, {
+    tp: tp
+  }), " ", tp.label);
 }
 function TopicChips({
   value,
@@ -213,7 +369,9 @@ function TopicChips({
         color: '#fff',
         borderColor: t.primary
       } : undefined
-    }, /*#__PURE__*/React.createElement(TopicIcon, { tp: t }), " ", t.label);
+    }, /*#__PURE__*/React.createElement(TopicIcon, {
+      tp: t
+    }), " ", t.label);
   }));
 }
 function Confetti() {
@@ -462,7 +620,7 @@ function Header({
       color: 'var(--coral-700)',
       borderColor: 'var(--coral-500)'
     } : undefined
-  }, "\uD83D\uDCCC ", pinCount || 0), /*#__PURE__*/React.createElement("button", {
+  }, /*#__PURE__*/React.createElement(IcPin, null), " ", pinCount || 0), /*#__PURE__*/React.createElement("button", {
     className: "icon-toggle",
     onClick: () => setDark(d => !d),
     "aria-label": "\u05DE\u05E6\u05D1 \u05DB\u05D4\u05D4"
@@ -526,14 +684,14 @@ function TermCard({
     onClick: () => Speak(t.hebrew),
     title: "\u05D4\u05E7\u05E8\u05D0\u05D4",
     "aria-label": "\u05D4\u05E7\u05E8\u05D0\u05D4"
-  }, "\uD83D\uDD0A"), /*#__PURE__*/React.createElement("button", {
+  }, /*#__PURE__*/React.createElement(IcSpeaker, null)), /*#__PURE__*/React.createElement("button", {
     className: `ibtn ${fav ? 'pin' : ''}`,
     onClick: onFav,
     title: fav ? 'הסר מרשימת החזרה' : 'סמן כמושג לחזרה (קשה לזכור)',
     "aria-label": "\u05DC\u05D7\u05D6\u05E8\u05D4"
   }, /*#__PURE__*/React.createElement("span", {
     className: fav ? '' : 'pin-off'
-  }, "\uD83D\uDCCC")), /*#__PURE__*/React.createElement("button", {
+  }, /*#__PURE__*/React.createElement(IcPin, null))), /*#__PURE__*/React.createElement("button", {
     className: `ibtn ${studied ? 'done' : ''}`,
     onClick: () => {
       if (!studied) Snd.ding();
@@ -608,7 +766,9 @@ function Glossary({
     onClick: () => setLetter(letter === l ? '' : l)
   }, l))), /*#__PURE__*/React.createElement("div", {
     className: "meta"
-  }, tp ? /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement(TopicIcon, { tp: tp }), " ", tp.label, " · ") : '', results.length, " \u05DE\u05D5\u05E9\u05D2\u05D9\u05DD"), results.length === 0 ? /*#__PURE__*/React.createElement("div", {
+  }, tp ? /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement(TopicIcon, {
+    tp: tp
+  }), " ", tp.label, " \xB7 ") : '', results.length, " \u05DE\u05D5\u05E9\u05D2\u05D9\u05DD"), results.length === 0 ? /*#__PURE__*/React.createElement("div", {
     className: "empty"
   }, /*#__PURE__*/React.createElement("div", {
     style: {
@@ -638,13 +798,11 @@ function ReviewList({
   const items = GLOSSARY.filter(t => favorites.includes(t.hebrew));
   return /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("div", {
     className: "hero"
-  }, /*#__PURE__*/React.createElement("h1", null, "\uD83D\uDCCC \u05DE\u05D5\u05E9\u05D2\u05D9\u05DD \u05DC\u05D7\u05D6\u05E8\u05D4"), /*#__PURE__*/React.createElement("p", null, items.length, " \u05DE\u05D5\u05E9\u05D2\u05D9\u05DD \u05E9\u05E1\u05D9\u05DE\u05E0\u05EA \u05DC\u05D7\u05D6\u05D5\u05E8 \u05D0\u05DC\u05D9\u05D4\u05DD")), items.length === 0 ? /*#__PURE__*/React.createElement("div", {
+  }, /*#__PURE__*/React.createElement("h1", null, /*#__PURE__*/React.createElement(IcPin, null), " \u05DE\u05D5\u05E9\u05D2\u05D9\u05DD \u05DC\u05D7\u05D6\u05E8\u05D4"), /*#__PURE__*/React.createElement("p", null, items.length, " \u05DE\u05D5\u05E9\u05D2\u05D9\u05DD \u05E9\u05E1\u05D9\u05DE\u05E0\u05EA \u05DC\u05D7\u05D6\u05D5\u05E8 \u05D0\u05DC\u05D9\u05D4\u05DD")), items.length === 0 ? /*#__PURE__*/React.createElement("div", {
     className: "empty"
   }, /*#__PURE__*/React.createElement("div", {
-    style: {
-      fontSize: 46
-    }
-  }, "\uD83D\uDCCC"), /*#__PURE__*/React.createElement("h3", null, "\u05D4\u05E8\u05E9\u05D9\u05DE\u05D4 \u05E8\u05D9\u05E7\u05D4"), /*#__PURE__*/React.createElement("p", null, "\u05E1\u05DE\u05E0\u05D5 \u05DE\u05D5\u05E9\u05D2 \u05D1-\uD83D\uDCCC (\u05D1\u05DE\u05D9\u05DC\u05D5\u05DF \u05D0\u05D5 \u05D1\u05DB\u05E8\u05D8\u05D9\u05E1\u05D9\u05D5\u05EA) \u05DB\u05D3\u05D9 \u05DC\u05D0\u05E1\u05D5\u05E3 \u05D0\u05D5\u05EA\u05D5 \u05DC\u05DB\u05D0\u05DF, \u05D5\u05DC\u05D4\u05D9\u05D1\u05D7\u05DF \u05E8\u05E7 \u05E2\u05DC \u05DE\u05D4 \u05E9\u05E7\u05E9\u05D4 \u05DC\u05DB\u05DD.")) : /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("button", {
+    className: "pin-lg"
+  }, /*#__PURE__*/React.createElement(IcPin, null)), /*#__PURE__*/React.createElement("h3", null, "\u05D4\u05E8\u05E9\u05D9\u05DE\u05D4 \u05E8\u05D9\u05E7\u05D4"), /*#__PURE__*/React.createElement("p", null, "\u05E1\u05DE\u05E0\u05D5 \u05DE\u05D5\u05E9\u05D2 \u05D1-\uD83D\uDCCC (\u05D1\u05DE\u05D9\u05DC\u05D5\u05DF \u05D0\u05D5 \u05D1\u05DB\u05E8\u05D8\u05D9\u05E1\u05D9\u05D5\u05EA) \u05DB\u05D3\u05D9 \u05DC\u05D0\u05E1\u05D5\u05E3 \u05D0\u05D5\u05EA\u05D5 \u05DC\u05DB\u05D0\u05DF, \u05D5\u05DC\u05D4\u05D9\u05D1\u05D7\u05DF \u05E8\u05E7 \u05E2\u05DC \u05DE\u05D4 \u05E9\u05E7\u05E9\u05D4 \u05DC\u05DB\u05DD.")) : /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("button", {
     className: "btn btn-accent",
     style: {
       width: '100%',
@@ -729,7 +887,7 @@ function Flashcards({
   }, "\u05DC\u05D0 \u05E0\u05DC\u05DE\u05D3\u05D5"), /*#__PURE__*/React.createElement("button", {
     className: `chip ${deck === 'review' ? 'on' : ''}`,
     onClick: () => setDeck('review')
-  }, "\uD83D\uDCCC \u05DC\u05D7\u05D6\u05E8\u05D4")), /*#__PURE__*/React.createElement(TopicChips, {
+  }, /*#__PURE__*/React.createElement(IcPin, null), " \u05DC\u05D7\u05D6\u05E8\u05D4")), /*#__PURE__*/React.createElement(TopicChips, {
     value: topic,
     onPick: setTopic
   }), cards.length === 0 ? /*#__PURE__*/React.createElement("div", {
@@ -786,7 +944,7 @@ function Flashcards({
     onClick: () => Speak(flip ? card.definition : card.hebrew),
     "aria-label": "\u05D4\u05E7\u05E8\u05D0\u05D4",
     title: "\u05D4\u05E7\u05E8\u05D0\u05D4"
-  }, "\uD83D\uDD0A"), /*#__PURE__*/React.createElement("button", {
+  }, /*#__PURE__*/React.createElement(IcSpeaker, null)), /*#__PURE__*/React.createElement("button", {
     className: "btn btn-accent",
     style: {
       flex: 1
@@ -802,7 +960,7 @@ function Flashcards({
     onClick: () => toggleFav(card.hebrew),
     "aria-label": "\u05DC\u05D7\u05D6\u05E8\u05D4",
     title: "\u05DE\u05D5\u05E9\u05D2 \u05DC\u05D7\u05D6\u05E8\u05D4"
-  }, "\uD83D\uDCCC"), /*#__PURE__*/React.createElement("button", {
+  }, /*#__PURE__*/React.createElement(IcPin, null)), /*#__PURE__*/React.createElement("button", {
     className: "fc-nav",
     onClick: next,
     "aria-label": "\u05D4\u05D1\u05D0"
@@ -931,7 +1089,7 @@ function Quiz({
       color: '#fff',
       borderColor: 'var(--coral-700)'
     } : undefined
-  }, "\uD83D\uDCCC \u05DE\u05D5\u05E9\u05D2\u05D9\u05DD \u05DC\u05D7\u05D6\u05E8\u05D4 \u05D1\u05DC\u05D1\u05D3 (", favorites.length, ")")), /*#__PURE__*/React.createElement("h2", null, "\u05DE\u05E1\u05E4\u05E8 \u05E9\u05D0\u05DC\u05D5\u05EA"), /*#__PURE__*/React.createElement("div", {
+  }, /*#__PURE__*/React.createElement(IcPin, null), " \u05DE\u05D5\u05E9\u05D2\u05D9\u05DD \u05DC\u05D7\u05D6\u05E8\u05D4 \u05D1\u05DC\u05D1\u05D3 (", favorites.length, ")")), /*#__PURE__*/React.createElement("h2", null, "\u05DE\u05E1\u05E4\u05E8 \u05E9\u05D0\u05DC\u05D5\u05EA"), /*#__PURE__*/React.createElement("div", {
     className: "seg"
   }, [5, 10, 15, 20].map(n => /*#__PURE__*/React.createElement("button", {
     key: n,
@@ -1003,7 +1161,7 @@ function Quiz({
       marginBottom: 10
     },
     "aria-label": "\u05D4\u05E7\u05E8\u05D0\u05D4"
-  }, "\uD83D\uDD0A \u05D4\u05E7\u05E8\u05D0\u05D4"), item.kind === 'type-answer' ? /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("div", {
+  }, /*#__PURE__*/React.createElement(IcSpeaker, null), " \u05D4\u05E7\u05E8\u05D0\u05D4"), item.kind === 'type-answer' ? /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("div", {
     className: "q-type-in"
   }, /*#__PURE__*/React.createElement("input", {
     value: typed,
@@ -1329,7 +1487,7 @@ function Profile({
     style: {
       fontWeight: 700
     }
-  }, "\uD83D\uDD0A \u05E6\u05DC\u05D9\u05DC\u05D9 \u05DE\u05E9\u05D5\u05D1"), /*#__PURE__*/React.createElement("button", {
+  }, /*#__PURE__*/React.createElement(IcSpeaker, null), " \u05E6\u05DC\u05D9\u05DC\u05D9 \u05DE\u05E9\u05D5\u05D1"), /*#__PURE__*/React.createElement("button", {
     className: "chip",
     onClick: toggleSound,
     style: muted ? undefined : {
@@ -1348,7 +1506,7 @@ function Profile({
     className: "stat-box"
   }, /*#__PURE__*/React.createElement("b", null, m.studied), /*#__PURE__*/React.createElement("span", null, "\u05E0\u05DC\u05DE\u05D3\u05D5 / ", TOTAL)), /*#__PURE__*/React.createElement("div", {
     className: "stat-box"
-  }, /*#__PURE__*/React.createElement("b", null, m.hard), /*#__PURE__*/React.createElement("span", null, "\uD83D\uDCCC \u05DC\u05D7\u05D6\u05E8\u05D4")))), /*#__PURE__*/React.createElement("div", {
+  }, /*#__PURE__*/React.createElement("b", null, m.hard), /*#__PURE__*/React.createElement("span", null, /*#__PURE__*/React.createElement(IcPin, null), " \u05DC\u05D7\u05D6\u05E8\u05D4")))), /*#__PURE__*/React.createElement("div", {
     className: "perf"
   }, /*#__PURE__*/React.createElement("div", {
     className: "stat-box"
@@ -1364,9 +1522,56 @@ function Profile({
     className: "stat-box"
   }, /*#__PURE__*/React.createElement("b", null, m.maxDayStreak), /*#__PURE__*/React.createElement("span", null, "\u05E9\u05D9\u05D0 \u05E8\u05E6\u05E3")), /*#__PURE__*/React.createElement("div", {
     className: "stat-box"
-  }, /*#__PURE__*/React.createElement("b", null, stats.cwSolved || 0), /*#__PURE__*/React.createElement("span", null, /*#__PURE__*/React.createElement("svg", { viewBox: "0 0 24 24", fill: "none" }, /*#__PURE__*/React.createElement("rect", { x: "4", y: "4", width: "16", height: "16", rx: "2.4", fill: "#E4D6F3" }), /*#__PURE__*/React.createElement("path", { d: "M9.33 4v16M14.67 4v16M4 9.33h16M4 14.67h16", stroke: "#fff", strokeWidth: "1.6" }), /*#__PURE__*/React.createElement("rect", { x: "4.5", y: "4.5", width: "4.3", height: "4.3", rx: "1", fill: "#7B4FB0" }), /*#__PURE__*/React.createElement("rect", { x: "15.2", y: "15.2", width: "4.3", height: "4.3", rx: "1", fill: "#7B4FB0" })), " \u05EA\u05E9\u05D1\u05E6\u05D9\u05DD \u05E9\u05E0\u05E4\u05EA\u05E8\u05D5")), stats.cwBest != null && stats.cwBest < 99999 && /*#__PURE__*/React.createElement("div", {
+  }, /*#__PURE__*/React.createElement("b", null, stats.cwSolved || 0), /*#__PURE__*/React.createElement("span", null, /*#__PURE__*/React.createElement("svg", {
+    viewBox: "0 0 24 24",
+    fill: "none"
+  }, /*#__PURE__*/React.createElement("rect", {
+    x: "4",
+    y: "4",
+    width: "16",
+    height: "16",
+    rx: "2.4",
+    fill: "#E4D6F3"
+  }), /*#__PURE__*/React.createElement("path", {
+    d: "M9.33 4v16M14.67 4v16M4 9.33h16M4 14.67h16",
+    stroke: "#fff",
+    strokeWidth: "1.6"
+  }), /*#__PURE__*/React.createElement("rect", {
+    x: "4.5",
+    y: "4.5",
+    width: "4.3",
+    height: "4.3",
+    rx: "1",
+    fill: "#7B4FB0"
+  }), /*#__PURE__*/React.createElement("rect", {
+    x: "15.2",
+    y: "15.2",
+    width: "4.3",
+    height: "4.3",
+    rx: "1",
+    fill: "#7B4FB0"
+  })), " \u05EA\u05E9\u05D1\u05E6\u05D9\u05DD \u05E9\u05E0\u05E4\u05EA\u05E8\u05D5")), stats.cwBest != null && stats.cwBest < 99999 && /*#__PURE__*/React.createElement("div", {
     className: "stat-box"
-  }, /*#__PURE__*/React.createElement("b", null, fmtSec(stats.cwBest)), /*#__PURE__*/React.createElement("span", null, /*#__PURE__*/React.createElement("svg", { viewBox: "0 0 24 24", fill: "none" }, /*#__PURE__*/React.createElement("circle", { cx: "12", cy: "13.5", r: "7.5", stroke: "#3FA9D6", strokeWidth: "1.9" }), /*#__PURE__*/React.createElement("path", { d: "M12 9.5v4l2.4 1.5", stroke: "#3FA9D6", strokeWidth: "1.9", strokeLinecap: "round" }), /*#__PURE__*/React.createElement("path", { d: "M9.8 3.2h4.4", stroke: "#3FA9D6", strokeWidth: "1.9", strokeLinecap: "round" })), " \u05E9\u05D9\u05D0 \u05EA\u05E9\u05D1\u05E5"))), /*#__PURE__*/React.createElement("h2", {
+  }, /*#__PURE__*/React.createElement("b", null, fmtSec(stats.cwBest)), /*#__PURE__*/React.createElement("span", null, /*#__PURE__*/React.createElement("svg", {
+    viewBox: "0 0 24 24",
+    fill: "none"
+  }, /*#__PURE__*/React.createElement("circle", {
+    cx: "12",
+    cy: "13.5",
+    r: "7.5",
+    stroke: "#3FA9D6",
+    strokeWidth: "1.9"
+  }), /*#__PURE__*/React.createElement("path", {
+    d: "M12 9.5v4l2.4 1.5",
+    stroke: "#3FA9D6",
+    strokeWidth: "1.9",
+    strokeLinecap: "round"
+  }), /*#__PURE__*/React.createElement("path", {
+    d: "M9.8 3.2h4.4",
+    stroke: "#3FA9D6",
+    strokeWidth: "1.9",
+    strokeLinecap: "round"
+  })), " \u05E9\u05D9\u05D0 \u05EA\u05E9\u05D1\u05E5"))), /*#__PURE__*/React.createElement("h2", {
     className: "sec-title"
   }, "\u05D4\u05EA\u05E7\u05D3\u05DE\u05D5\u05EA \u05DC\u05E4\u05D9 \u05E0\u05D5\u05E9\u05D0"), /*#__PURE__*/React.createElement("p", {
     className: "sec-sub"
@@ -1386,7 +1591,9 @@ function Profile({
       onClick: () => onTopic(t.key)
     }, /*#__PURE__*/React.createElement("div", {
       className: "lab"
-    }, /*#__PURE__*/React.createElement("span", null, /*#__PURE__*/React.createElement(TopicIcon, { tp: t }), " ", t.label, " \u203A"), /*#__PURE__*/React.createElement("span", null, done, "/", total)), /*#__PURE__*/React.createElement("div", {
+    }, /*#__PURE__*/React.createElement("span", null, /*#__PURE__*/React.createElement(TopicIcon, {
+      tp: t
+    }), " ", t.label, " \u203A"), /*#__PURE__*/React.createElement("span", null, done, "/", total)), /*#__PURE__*/React.createElement("div", {
       className: "tbar"
     }, /*#__PURE__*/React.createElement("i", {
       style: {
@@ -1472,7 +1679,7 @@ function TermQuiz({
     },
     onClick: () => Speak(t.hebrew),
     "aria-label": "\u05D4\u05E7\u05E8\u05D0\u05D4"
-  }, "\uD83D\uDD0A")), t.english && /*#__PURE__*/React.createElement("div", {
+  }, /*#__PURE__*/React.createElement(IcSpeaker, null))), t.english && /*#__PURE__*/React.createElement("div", {
     className: "en"
   }, t.english), t.topic && /*#__PURE__*/React.createElement("div", {
     style: {

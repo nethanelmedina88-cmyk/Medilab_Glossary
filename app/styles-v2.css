@@ -212,6 +212,11 @@ html.dark .fb.ok{background:#15301c} html.dark .fb.no{background:#371a15}
 .stat-box span svg{width:14px;height:14px;vertical-align:-2px;margin-inline-start:2px}
 .tpi{display:inline-block;width:19px;height:19px;vertical-align:-4px;margin-inline-end:3px}
 .tpi svg{width:100%;height:100%;display:block}
+.ibtn svg,.fc-nav svg,.streak svg{width:18px;height:18px;flex:0 0 auto}
+.chip>svg{width:16px;height:16px;vertical-align:-3px;margin-inline-end:2px}
+.hero h1 svg{width:24px;height:24px;vertical-align:-4px;margin-inline-end:2px}
+.pin-lg{width:46px;height:46px;margin:2px auto;color:var(--coral-500)}
+.pin-lg svg{width:100%;height:100%}
 .degrees{display:flex;flex-direction:column;gap:8px;margin:12px 0}
 .degree{display:flex;gap:10px;align-items:center;background:var(--surface);border:1px solid var(--border);border-radius:var(--r-md);padding:9px 12px}
 .degree .tag{font-family:'Secular One';font-weight:700;font-size:12px;color:#fff;background:var(--grad);border-radius:8px;padding:4px 8px;flex:0 0 auto}
