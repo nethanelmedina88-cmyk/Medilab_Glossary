@@ -963,12 +963,17 @@ function Quiz({
   recordQuiz,
   fireConfetti,
   tier,
-  onNeedAll
+  onNeedAll,
+  needTier
 }) {
   const lockTopics = tier === 'free';
   const [topic, setTopic] = useState(lockTopics ? SL.FREE_TOPIC : '');
   const [len, setLen] = useState(10);
   const [hardOnly, setHardOnly] = useState(false);
+  const [weakSpots, setWeakSpots] = useState(false);
+  const [examMode, setExamMode] = useState(false);
+  const [timeLeft, setTimeLeft] = useState(0);
+  const fmtT = s => Math.floor(Math.max(0, s) / 60) + ':' + String(Math.max(0, s) % 60).padStart(2, '0');
   const pickTopic = next => {
     if (lockTopics && next !== SL.FREE_TOPIC) {
       onNeedAll && onNeedAll();
@@ -986,16 +991,18 @@ function Quiz({
   const pool = useMemo(() => {
     let p = SL.eligibleTerms(GLOSSARY, maps);
     if (topic) p = p.filter(t => t.topic === topic);
-    if (hardOnly) p = p.filter(t => favorites.includes(t.hebrew));
+    if (weakSpots) p = p.filter(t => favorites.includes(t.hebrew) || !studied.includes(t.hebrew));else if (hardOnly) p = p.filter(t => favorites.includes(t.hebrew));
     return p;
-  }, [topic, hardOnly, favorites]);
+  }, [topic, hardOnly, weakSpots, favorites, studied]);
   const start = () => {
-    setQuiz(buildQuiz(pool, Math.min(len, pool.length)));
+    const L = Math.min(len, pool.length);
+    setQuiz(buildQuiz(pool, L));
     setQi(0);
     setAnswered(false);
     setChosen(null);
     setTyped('');
     setScore(0);
+    setTimeLeft(examMode ? L * 15 : 0);
   };
   const item = quiz && quiz[qi];
   const grade = ok => {
@@ -1040,6 +1047,17 @@ function Quiz({
     setChosen(null);
     setTyped('');
   };
+  // exam-mode countdown: when time runs out, jump to results with the current score
+  useEffect(() => {
+    if (!examMode || !quiz || qi >= quiz.length) return;
+    if (timeLeft <= 0) {
+      recordQuiz(score, quiz.length);
+      setQi(quiz.length);
+      return;
+    }
+    const id = setTimeout(() => setTimeLeft(t => t - 1), 1000);
+    return () => clearTimeout(id);
+  }, [examMode, quiz, qi, timeLeft]); // eslint-disable-line
   if (!quiz) return /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("div", {
     className: "hero"
   }, /*#__PURE__*/React.createElement("h1", null, "\u05DE\u05D1\u05D7\u05D5\u05DF"), /*#__PURE__*/React.createElement("p", null, "\u05D1\u05D7\u05D9\u05E8\u05D4 \u05DE\u05E8\u05D5\u05D1\u05D4 \xB7 \u05D4\u05E9\u05DC\u05DE\u05EA \u05DE\u05D5\u05E9\u05D2 \xB7 \u05D1\u05D3\u05D9\u05E7\u05D4 \u05E2\u05E6\u05DE\u05D9\u05EA")), /*#__PURE__*/React.createElement("div", {
@@ -1062,7 +1080,39 @@ function Quiz({
       color: '#fff',
       borderColor: 'var(--coral-700)'
     } : undefined
-  }, /*#__PURE__*/React.createElement(IcPin, null), " \u05DE\u05D5\u05E9\u05D2\u05D9\u05DD \u05DC\u05D7\u05D6\u05E8\u05D4 \u05D1\u05DC\u05D1\u05D3 (", favorites.length, ")")), /*#__PURE__*/React.createElement("h2", null, "\u05DE\u05E1\u05E4\u05E8 \u05E9\u05D0\u05DC\u05D5\u05EA"), /*#__PURE__*/React.createElement("div", {
+  }, /*#__PURE__*/React.createElement(IcPin, null), " \u05DE\u05D5\u05E9\u05D2\u05D9\u05DD \u05DC\u05D7\u05D6\u05E8\u05D4 \u05D1\u05DC\u05D1\u05D3 (", favorites.length, ")")), /*#__PURE__*/React.createElement("div", {
+    style: {
+      margin: '0 0 12px',
+      display: 'flex',
+      gap: 8,
+      flexWrap: 'wrap'
+    }
+  }, /*#__PURE__*/React.createElement("button", {
+    className: `chip ${weakSpots ? 'on' : ''}`,
+    onClick: () => {
+      if (!weakSpots) {
+        if (!needTier('weakspots')) return;
+        setHardOnly(false);
+      }
+      setWeakSpots(w => !w);
+    },
+    style: weakSpots ? {
+      background: 'var(--accent-strong)',
+      color: '#fff',
+      borderColor: 'var(--accent-strong)'
+    } : undefined
+  }, "\uD83C\uDFAF \u05D7\u05D6\u05E8\u05D4 \u05DE\u05DE\u05D5\u05E7\u05D3\u05EA"), /*#__PURE__*/React.createElement("button", {
+    className: `chip ${examMode ? 'on' : ''}`,
+    onClick: () => {
+      if (!examMode && !needTier('exam')) return;
+      setExamMode(e => !e);
+    },
+    style: examMode ? {
+      background: 'var(--accent-strong)',
+      color: '#fff',
+      borderColor: 'var(--accent-strong)'
+    } : undefined
+  }, "\u23F1\uFE0F \u05DE\u05E6\u05D1 \u05D1\u05D7\u05D9\u05E0\u05D4")), /*#__PURE__*/React.createElement("h2", null, "\u05DE\u05E1\u05E4\u05E8 \u05E9\u05D0\u05DC\u05D5\u05EA"), /*#__PURE__*/React.createElement("div", {
     className: "seg"
   }, [5, 10, 15, 20].map(n => /*#__PURE__*/React.createElement("button", {
     key: n,
@@ -1121,7 +1171,9 @@ function Quiz({
     }
   })), /*#__PURE__*/React.createElement("span", {
     className: "q-score"
-  }, score, " \u2713")), /*#__PURE__*/React.createElement("span", {
+  }, examMode ? /*#__PURE__*/React.createElement("span", {
+    className: timeLeft <= 15 ? 'q-time-low' : ''
+  }, "\u23F1\uFE0F ", fmtT(timeLeft)) : `${score} ✓`)), /*#__PURE__*/React.createElement("span", {
     className: "q-kind"
   }, item.kind === 'pick-definition' ? 'בחרו את ההגדרה הנכונה' : item.kind === 'pick-term' ? 'בחרו את המושג הנכון' : 'הקלידו את המושג'), /*#__PURE__*/React.createElement("div", {
     className: "q-q"
@@ -2077,7 +2129,8 @@ function App() {
     recordQuiz: recordQuiz,
     fireConfetti: fireConfetti,
     tier: tier,
-    onNeedAll: () => needTier('practice-all')
+    onNeedAll: () => needTier('practice-all'),
+    needTier: needTier
   }), mode === 'crossword' && /*#__PURE__*/React.createElement(Crossword, {
     dark: dark
   }), mode === 'review' && /*#__PURE__*/React.createElement(ReviewList, {

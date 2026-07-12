@@ -241,6 +241,7 @@ html.dark .fb.ok{background:#15301c} html.dark .fb.no{background:#371a15}
 .plan-badge{position:absolute;top:-9px;background:var(--coral-500);color:#fff;font-family:'Secular One';font-size:10px;padding:2px 8px;border-radius:999px;white-space:nowrap}
 .plan-per{font-family:'Secular One';font-weight:800;font-size:22px;line-height:1}
 .plan-unit{font-size:12px;opacity:.85}
+.q-time-low{color:var(--coral-500);font-weight:800}
 .credit{text-align:center;margin-top:18px;font-size:12px;color:var(--muted)}
 .credit a{color:var(--muted);text-decoration:underline}
 .hero h1 svg{width:24px;height:24px;vertical-align:-4px;margin-inline-end:2px}

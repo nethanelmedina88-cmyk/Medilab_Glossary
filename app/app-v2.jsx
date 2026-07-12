@@ -298,24 +298,32 @@ function buildQuiz(pool,n){ const kinds=['pick-definition','pick-term','type-ans
     if(kind==='type-answer'){const t=pool[Math.floor(Math.random()*pool.length)];if(used[t.hebrew])continue;used[t.hebrew]=1;items.push({kind,term:t,prompt:SL.defText(t),options:[]});}
     else{const it=SL.generateItem(pool,maps,kind,Math.floor(Math.random()*1e6));if(used[it.term.hebrew])continue;used[it.term.hebrew]=1;items.push(it);} }
   return items; }
-function Quiz({studied,toggleStudied,favorites,recordAnswer,recordQuiz,fireConfetti,tier,onNeedAll}){
+function Quiz({studied,toggleStudied,favorites,recordAnswer,recordQuiz,fireConfetti,tier,onNeedAll,needTier}){
   const lockTopics=tier==='free';
   const [topic,setTopic]=useState(lockTopics?SL.FREE_TOPIC:''); const [len,setLen]=useState(10); const [hardOnly,setHardOnly]=useState(false);
+  const [weakSpots,setWeakSpots]=useState(false); const [examMode,setExamMode]=useState(false); const [timeLeft,setTimeLeft]=useState(0);
+  const fmtT=s=>Math.floor(Math.max(0,s)/60)+':'+String(Math.max(0,s)%60).padStart(2,'0');
   const pickTopic=next=>{ if(lockTopics && next!==SL.FREE_TOPIC){ onNeedAll&&onNeedAll(); return; } setTopic(next); };
   const [quiz,setQuiz]=useState(null); const [qi,setQi]=useState(0);
   const [answered,setAnswered]=useState(false); const [chosen,setChosen]=useState(null);
   const [typed,setTyped]=useState(''); const [score,setScore]=useState(0); const [spark,setSpark]=useState(false);
-  const pool=useMemo(()=>{let p=SL.eligibleTerms(GLOSSARY,maps); if(topic)p=p.filter(t=>t.topic===topic); if(hardOnly)p=p.filter(t=>favorites.includes(t.hebrew)); return p;},[topic,hardOnly,favorites]);
-  const start=()=>{setQuiz(buildQuiz(pool,Math.min(len,pool.length)));setQi(0);setAnswered(false);setChosen(null);setTyped('');setScore(0);};
+  const pool=useMemo(()=>{let p=SL.eligibleTerms(GLOSSARY,maps); if(topic)p=p.filter(t=>t.topic===topic); if(weakSpots)p=p.filter(t=>favorites.includes(t.hebrew)||!studied.includes(t.hebrew)); else if(hardOnly)p=p.filter(t=>favorites.includes(t.hebrew)); return p;},[topic,hardOnly,weakSpots,favorites,studied]);
+  const start=()=>{const L=Math.min(len,pool.length);setQuiz(buildQuiz(pool,L));setQi(0);setAnswered(false);setChosen(null);setTyped('');setScore(0);setTimeLeft(examMode?L*15:0);};
   const item=quiz&&quiz[qi];
   const grade=ok=>{ recordAnswer(ok); if(ok){ setScore(s=>s+1); setSpark(true); setTimeout(()=>setSpark(false),700); Snd.success(); if(!studied.includes(item.term.hebrew))toggleStudied(item.term.hebrew); } else { Snd.wrong(); } };
   const answerMC=opt=>{if(answered)return;setChosen(opt);setAnswered(true);grade(opt.correct);};
   const answerType=()=>{if(answered)return;const ok=SL.checkAnswer(item,typed,maps);setAnswered(true);setChosen({correct:ok});grade(ok);};
   const nextQ=()=>{ if(qi+1>=quiz.length){ recordQuiz(score,quiz.length); if(score===quiz.length&&quiz.length>0){fireConfetti();Snd.fanfare();} setQi(quiz.length); return; } setQi(qi+1);setAnswered(false);setChosen(null);setTyped(''); };
+  // exam-mode countdown: when time runs out, jump to results with the current score
+  useEffect(()=>{ if(!examMode||!quiz||qi>=quiz.length) return; if(timeLeft<=0){ recordQuiz(score,quiz.length); setQi(quiz.length); return; } const id=setTimeout(()=>setTimeLeft(t=>t-1),1000); return ()=>clearTimeout(id); },[examMode,quiz,qi,timeLeft]); // eslint-disable-line
   if(!quiz) return (<>
     <div className="hero"><h1>מבחון</h1><p>בחירה מרובה · השלמת מושג · בדיקה עצמית</p></div>
     <div className="setup">{lockTopics && <div className="free-hint" onClick={()=>onNeedAll&&onNeedAll()}>🔓 גרסה חינמית — נושא לדוגמה. הירשמו בחינם לכל 21 הנושאים</div>}<h2>בחרו נושא</h2><TopicChips value={topic} onPick={pickTopic}/>
       <div style={{margin:'12px 0'}}><button className={`chip ${hardOnly?'on':''}`} onClick={()=>setHardOnly(h=>!h)} style={hardOnly?{background:'var(--coral-500)',color:'#fff',borderColor:'var(--coral-700)'}:undefined}><IcPin/> מושגים לחזרה בלבד ({favorites.length})</button></div>
+      <div style={{margin:'0 0 12px',display:'flex',gap:8,flexWrap:'wrap'}}>
+        <button className={`chip ${weakSpots?'on':''}`} onClick={()=>{ if(!weakSpots){ if(!needTier('weakspots'))return; setHardOnly(false);} setWeakSpots(w=>!w); }} style={weakSpots?{background:'var(--accent-strong)',color:'#fff',borderColor:'var(--accent-strong)'}:undefined}>🎯 חזרה ממוקדת</button>
+        <button className={`chip ${examMode?'on':''}`} onClick={()=>{ if(!examMode && !needTier('exam'))return; setExamMode(e=>!e); }} style={examMode?{background:'var(--accent-strong)',color:'#fff',borderColor:'var(--accent-strong)'}:undefined}>⏱️ מצב בחינה</button>
+      </div>
       <h2>מספר שאלות</h2>
       <div className="seg">{[5,10,15,20].map(n=>(<button key={n} className={`chip ${len===n?'on':''}`} onClick={()=>setLen(n)}>{n}</button>))}</div>
       <button className="btn btn-accent" style={{width:'100%'}} onClick={start} disabled={pool.length<3}>{pool.length<3?'מעט מדי מושגים בסינון הזה':`התחילו מבחון (${pool.length} מושגים) ←`}</button>
@@ -328,7 +336,7 @@ function Quiz({studied,toggleStudied,favorites,recordAnswer,recordQuiz,fireConfe
   }
   return (<>
     {spark && <div className="spark-pop">✨</div>}
-    <div className="q-top"><span>שאלה {qi+1} / {quiz.length}</span><div className="bar"><i style={{width:`${(qi/quiz.length)*100}%`}}></i></div><span className="q-score">{score} ✓</span></div>
+    <div className="q-top"><span>שאלה {qi+1} / {quiz.length}</span><div className="bar"><i style={{width:`${(qi/quiz.length)*100}%`}}></i></div><span className="q-score">{examMode?<span className={timeLeft<=15?'q-time-low':''}>⏱️ {fmtT(timeLeft)}</span>:`${score} ✓`}</span></div>
     <span className="q-kind">{item.kind==='pick-definition'?'בחרו את ההגדרה הנכונה':item.kind==='pick-term'?'בחרו את המושג הנכון':'הקלידו את המושג'}</span>
     <div className="q-q">{item.kind==='pick-definition'?<>מהי <span className="hl mnk">{termLabel(item.term)}</span>?</>:item.prompt}</div>
     <button className="chip" onClick={()=>Speak2(item.kind==='pick-definition'?item.term.hebrew:item.prompt, item.kind==='pick-definition'?item.term.nikud:null)} style={{marginBottom:10}} aria-label="הקראה"><IcSpeaker/> הקראה</button>
@@ -589,7 +597,7 @@ function App(){
         <div className="view" key={mode}>
           {mode==='glossary' && <Glossary key={glossaryTopic} initialTopic={glossaryTopic} favorites={favorites} studied={studied} toggleFav={toggleFav} toggleStudied={toggleStudied} onOpenTerm={openTerm}/>}
           {mode==='flashcards' && <Flashcards favorites={favorites} studied={studied} toggleFav={toggleFav} toggleStudied={toggleStudied} onKnow={openVerify} tier={tier} onNeedAll={()=>needTier('practice-all')}/>}
-          {mode==='quiz' && <Quiz studied={studied} toggleStudied={toggleStudied} favorites={favorites} recordAnswer={recordAnswer} recordQuiz={recordQuiz} fireConfetti={fireConfetti} tier={tier} onNeedAll={()=>needTier('practice-all')}/>}
+          {mode==='quiz' && <Quiz studied={studied} toggleStudied={toggleStudied} favorites={favorites} recordAnswer={recordAnswer} recordQuiz={recordQuiz} fireConfetti={fireConfetti} tier={tier} onNeedAll={()=>needTier('practice-all')} needTier={needTier}/>}
           {mode==='crossword' && <Crossword dark={dark}/>}
           {mode==='review' && <ReviewList favorites={favorites} studied={studied} toggleFav={toggleFav} toggleStudied={toggleStudied} goQuiz={()=>setMode('quiz')} onOpenTerm={openTerm}/>}
           {mode==='about' && <About/>}
