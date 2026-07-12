@@ -22,6 +22,9 @@ T.suite('tiers', function () {
   T.test('entitlementValid: no until -> true', function () { T.eq(SL.entitlementValid({}, NOW), true); });
   T.test('entitlementValid: future until -> true', function () { T.eq(SL.entitlementValid({ until: NOW + 1 }, NOW), true); });
   T.test('entitlementValid: past until -> false', function () { T.eq(SL.entitlementValid({ until: NOW - 1 }, NOW), false); });
+  T.test('entitlementValid: present-but-unparseable until -> false (fail closed)', function () {
+    T.eq(SL.entitlementValid({ until: 'not-a-date' }, NOW), false);
+  });
 
   T.test('canAccess: glossary is free', function () { T.eq(SL.canAccess('glossary', TIER.FREE), true); });
   T.test('canAccess: audio needs registered', function () {
