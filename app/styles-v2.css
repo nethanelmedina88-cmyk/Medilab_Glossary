@@ -223,6 +223,11 @@ html.dark .fb.ok{background:#15301c} html.dark .fb.no{background:#371a15}
 .scroll-arrow.left{left:-4px}
 .scroll-arrow.right{right:-4px}
 @media (hover:hover){.chips,.letters{scroll-behavior:smooth}}
+.gate-card{text-align:center;max-width:340px}
+.gate-emoji{font-size:44px;line-height:1;margin-bottom:6px}
+.gate-card h3{font-family:'Secular One';margin:4px 0 6px;font-size:20px}
+.gate-card p{color:var(--text-2);font-size:14px;margin:0 0 16px}
+.gate-card .btn,.gate-card .google-btn{width:100%;margin-top:8px}
 .credit{text-align:center;margin-top:18px;font-size:12px;color:var(--muted)}
 .credit a{color:var(--muted);text-decoration:underline}
 .hero h1 svg{width:24px;height:24px;vertical-align:-4px;margin-inline-end:2px}

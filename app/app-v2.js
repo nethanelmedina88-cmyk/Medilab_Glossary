@@ -1655,6 +1655,50 @@ function TermQuiz({
 }
 
 /* ---------- APP ---------- */
+function SignUpGate({
+  onClose,
+  onSignIn
+}) {
+  return /*#__PURE__*/React.createElement("div", {
+    className: "overlay",
+    onClick: onClose
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "sheet-card gate-card",
+    onClick: e => e.stopPropagation()
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "gate-emoji"
+  }, "\uD83D\uDD11"), /*#__PURE__*/React.createElement("h3", null, "\u05D4\u05D9\u05E8\u05E9\u05DE\u05D5 \u05D1\u05D7\u05D9\u05E0\u05DD \u05DB\u05D3\u05D9 \u05DC\u05E4\u05EA\u05D5\u05D7"), /*#__PURE__*/React.createElement("p", null, "\u05D7\u05E9\u05D1\u05D5\u05DF \u05D7\u05D9\u05E0\u05DE\u05D9 \u05E4\u05D5\u05EA\u05D7 \u05D0\u05EA \u05DB\u05DC \u05DE\u05E6\u05D1\u05D9 \u05D4\u05EA\u05E8\u05D2\u05D5\u05DC, \u05D4\u05D4\u05E7\u05E8\u05D0\u05D4, \u05DE\u05E2\u05E7\u05D1 \u05D4\u05D4\u05EA\u05E7\u05D3\u05DE\u05D5\u05EA \u05D5\u05D4\u05E1\u05E0\u05DB\u05E8\u05D5\u05DF \u05D1\u05D9\u05DF \u05D4\u05DE\u05DB\u05E9\u05D9\u05E8\u05D9\u05DD."), /*#__PURE__*/React.createElement("button", {
+    className: "google-btn",
+    onClick: onSignIn
+  }, "\u05D4\u05DE\u05E9\u05DA \u05E2\u05DD Google"), /*#__PURE__*/React.createElement("button", {
+    className: "btn btn-ghost",
+    onClick: onClose
+  }, "\u05D0\u05D5\u05DC\u05D9 \u05D0\u05D7\u05E8 \u05DB\u05DA")));
+}
+function Paywall({
+  onClose
+}) {
+  return /*#__PURE__*/React.createElement("div", {
+    className: "overlay",
+    onClick: onClose
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "sheet-card gate-card",
+    onClick: e => e.stopPropagation()
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "gate-emoji"
+  }, "\u2B50"), /*#__PURE__*/React.createElement("h3", null, "\u05DB\u05DC\u05D9 \u05D4\u05D1\u05D2\u05E8\u05D5\u05EA \u05D4\u05DE\u05EA\u05E7\u05D3\u05DE\u05D9\u05DD"), /*#__PURE__*/React.createElement("p", null, "\u05D4\u05EA\u05E9\u05D7\u05E5, \u05DE\u05E6\u05D1 \u05D4\u05D1\u05D7\u05D9\u05E0\u05D4 \u05D5\u05D4\u05D7\u05D6\u05E8\u05D4 \u05D4\u05DE\u05DE\u05D5\u05E7\u05D3\u05EA \u05E4\u05EA\u05D5\u05D7\u05D9\u05DD \u05D1\u05DE\u05E1\u05DC\u05D5\u05DC \u05D4\u05D1\u05D2\u05E8\u05D5\u05EA \u2014 ", /*#__PURE__*/React.createElement("b", null, "\u20AA19.90 \u05DC\u05E2\u05D5\u05E0\u05D4"), ", \u05EA\u05E9\u05DC\u05D5\u05DD \u05D7\u05D3\u05BE\u05E4\u05E2\u05DE\u05D9."), /*#__PURE__*/React.createElement("a", {
+    className: "btn btn-accent",
+    href: "https://wa.me/972524295838?text=%D7%90%D7%A9%D7%9E%D7%97%20%D7%9C%D7%A8%D7%9B%D7%95%D7%A9%20%D7%90%D7%AA%20%D7%9E%D7%A1%D7%9C%D7%95%D7%9C%20%D7%94%D7%91%D7%92%D7%A8%D7%95%D7%AA%20%D7%91%D7%A9%D7%9C%D7%99%D7%A4%D7%99%D7%9D",
+    target: "_blank",
+    rel: "noopener",
+    style: {
+      textDecoration: 'none'
+    }
+  }, "\u05DC\u05D2\u05D9\u05E9\u05D4 \u05DE\u05D5\u05E7\u05D3\u05DE\u05EA \u2014 \u05E6\u05E8\u05D5 \u05E7\u05E9\u05E8"), /*#__PURE__*/React.createElement("button", {
+    className: "btn btn-ghost",
+    onClick: onClose
+  }, "\u05E1\u05D2\u05D9\u05E8\u05D4")));
+}
 function App() {
   const [mode, setMode] = useState('glossary');
   const [glossaryTopic, setGlossaryTopic] = useState('');
@@ -1683,6 +1727,15 @@ function App() {
   const [muted, setMutedState] = useState(Snd.isMuted());
   const [user, setUser] = useState(null);
   const [sync, setSync] = useState('');
+  const [entitlement, setEntitlement] = useState(null);
+  const [gate, setGate] = useState(null);
+  const tier = useMemo(() => SL.tierOf(user, entitlement, Date.now()), [user, entitlement]);
+  // Returns true if the feature is accessible; otherwise opens the right gate and returns false.
+  function needTier(feature) {
+    if (SL.canAccess(feature, tier)) return true;
+    setGate(!user ? 'signup' : 'paywall');
+    return false;
+  }
   const [newAch, setNewAch] = useState(null);
   const [confetti, setConfetti] = useState(false);
   const loadingRef = useRef(false);
@@ -1816,8 +1869,15 @@ function App() {
     }
     const unsub = auth.onAuthStateChanged(async u => {
       setUser(u);
+      if (!u) setEntitlement(null);
       if (u && db) {
         setSync('syncing');
+        try {
+          const eDoc = await db.collection('entitlements').doc(u.uid).get();
+          setEntitlement(eDoc.exists ? eDoc.data() : null);
+        } catch (e) {
+          setEntitlement(null);
+        }
         try {
           const doc = await db.collection('users').doc(u.uid).get();
           if (doc.exists) {
@@ -1889,6 +1949,7 @@ function App() {
   };
   const signOut = async () => {
     loadingRef.current = true;
+    setEntitlement(null);
     try {
       await auth.signOut();
     } catch (e) {}
@@ -1962,6 +2023,14 @@ function App() {
   }))), /*#__PURE__*/React.createElement(Nav, {
     mode: mode,
     setMode: changeMode
+  }), gate === 'signup' && /*#__PURE__*/React.createElement(SignUpGate, {
+    onClose: () => setGate(null),
+    onSignIn: () => {
+      setGate(null);
+      signIn();
+    }
+  }), gate === 'paywall' && /*#__PURE__*/React.createElement(Paywall, {
+    onClose: () => setGate(null)
   }), qTerm && /*#__PURE__*/React.createElement(TermQuiz, {
     key: qTerm.hebrew + (qTerm.verify ? 'v' : 'e'),
     hebrew: qTerm.hebrew,

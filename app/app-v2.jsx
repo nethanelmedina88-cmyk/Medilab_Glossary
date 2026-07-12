@@ -457,6 +457,24 @@ function TermQuiz({hebrew,onClose,onResult}){
 }
 
 /* ---------- APP ---------- */
+function SignUpGate({onClose,onSignIn}){
+  return (<div className="overlay" onClick={onClose}><div className="sheet-card gate-card" onClick={e=>e.stopPropagation()}>
+    <div className="gate-emoji">🔑</div>
+    <h3>הירשמו בחינם כדי לפתוח</h3>
+    <p>חשבון חינמי פותח את כל מצבי התרגול, ההקראה, מעקב ההתקדמות והסנכרון בין המכשירים.</p>
+    <button className="google-btn" onClick={onSignIn}>המשך עם Google</button>
+    <button className="btn btn-ghost" onClick={onClose}>אולי אחר כך</button>
+  </div></div>);
+}
+function Paywall({onClose}){
+  return (<div className="overlay" onClick={onClose}><div className="sheet-card gate-card" onClick={e=>e.stopPropagation()}>
+    <div className="gate-emoji">⭐</div>
+    <h3>כלי הבגרות המתקדמים</h3>
+    <p>התשחץ, מצב הבחינה והחזרה הממוקדת פתוחים במסלול הבגרות — <b>₪19.90 לעונה</b>, תשלום חד־פעמי.</p>
+    <a className="btn btn-accent" href="https://wa.me/972524295838?text=%D7%90%D7%A9%D7%9E%D7%97%20%D7%9C%D7%A8%D7%9B%D7%95%D7%A9%20%D7%90%D7%AA%20%D7%9E%D7%A1%D7%9C%D7%95%D7%9C%20%D7%94%D7%91%D7%92%D7%A8%D7%95%D7%AA%20%D7%91%D7%A9%D7%9C%D7%99%D7%A4%D7%99%D7%9D" target="_blank" rel="noopener" style={{textDecoration:'none'}}>לגישה מוקדמת — צרו קשר</a>
+    <button className="btn btn-ghost" onClick={onClose}>סגירה</button>
+  </div></div>);
+}
 function App(){
   const [mode,setMode]=useState('glossary');
   const [glossaryTopic,setGlossaryTopic]=useState('');
@@ -472,6 +490,10 @@ function App(){
   const openVerify=h=>setQTerm({hebrew:h,verify:true});
   const [muted,setMutedState]=useState(Snd.isMuted());
   const [user,setUser]=useState(null); const [sync,setSync]=useState('');
+  const [entitlement,setEntitlement]=useState(null); const [gate,setGate]=useState(null);
+  const tier=useMemo(()=>SL.tierOf(user,entitlement,Date.now()),[user,entitlement]);
+  // Returns true if the feature is accessible; otherwise opens the right gate and returns false.
+  function needTier(feature){ if(SL.canAccess(feature,tier)) return true; setGate(!user?'signup':'paywall'); return false; }
   const [newAch,setNewAch]=useState(null); const [confetti,setConfetti]=useState(false);
   const loadingRef=useRef(false); const achInit=useRef(false);
 
@@ -511,8 +533,9 @@ function App(){
     catch(e){ console.error(e); setSync('error'); } },[favorites,studied,stats,achieved]);
   useEffect(()=>{ if(!auth)return;
     if(auth.getRedirectResult){ auth.getRedirectResult().catch(function(e){ if(e&&e.code&&e.code!=='auth/no-auth-event') console.warn('sign-in redirect:',e.code); }); }
-    const unsub=auth.onAuthStateChanged(async(u)=>{ setUser(u);
+    const unsub=auth.onAuthStateChanged(async(u)=>{ setUser(u); if(!u) setEntitlement(null);
     if(u&&db){ setSync('syncing');
+      try{ const eDoc=await db.collection('entitlements').doc(u.uid).get(); setEntitlement(eDoc.exists?eDoc.data():null); }catch(e){ setEntitlement(null); }
       try{ const doc=await db.collection('users').doc(u.uid).get();
         if(doc.exists){ const d=doc.data(); loadingRef.current=true; setFav(d.favorites||[]); setStudied(d.studied||[]); if(d.stats)setStats(s=>mergeStats(s,d.stats)); if(d.achieved)setAchieved(prev=>uniq([...prev,...d.achieved])); setTimeout(()=>{loadingRef.current=false;},600); setSync('synced'); setTimeout(()=>setSync(''),1500); }
         else { await db.collection('users').doc(u.uid).set({displayName:u.displayName,email:u.email,photoURL:u.photoURL,favorites,studied,stats,achieved,lastSync:firebase.firestore.FieldValue.serverTimestamp()},{merge:true}); setSync('synced'); setTimeout(()=>setSync(''),1500); }
@@ -532,7 +555,7 @@ function App(){
       if(c==='auth/popup-closed-by-user') return;   // user cancelled — no error popup
       alert('שגיאת התחברות: '+(e.message||e));
     } };
-  const signOut=async()=>{ loadingRef.current=true; try{ await auth.signOut(); }catch(e){} setUser(null); setTimeout(()=>{loadingRef.current=false;},600); };
+  const signOut=async()=>{ loadingRef.current=true; setEntitlement(null); try{ await auth.signOut(); }catch(e){} setUser(null); setTimeout(()=>{loadingRef.current=false;},600); };
 
   const dm=(mode==='glossary'||mode==='flashcards'||mode==='quiz')?mode:'glossary';
   return (
@@ -552,6 +575,8 @@ function App(){
         </div>
       </div>
       <Nav mode={mode} setMode={changeMode}/>
+      {gate==='signup' && <SignUpGate onClose={()=>setGate(null)} onSignIn={()=>{setGate(null);signIn();}}/>}
+      {gate==='paywall' && <Paywall onClose={()=>setGate(null)}/>}
       {qTerm && <TermQuiz key={qTerm.hebrew+(qTerm.verify?'v':'e')} hebrew={qTerm.hebrew} onClose={()=>setQTerm(null)} onResult={onQResult}/>}
     </div>
   );
