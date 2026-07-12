@@ -1718,7 +1718,9 @@ function SignUpGate({
   }, "\u05D0\u05D5\u05DC\u05D9 \u05D0\u05D7\u05E8 \u05DB\u05DA")));
 }
 function Paywall({
-  onClose
+  onClose,
+  user,
+  onSignIn
 }) {
   return /*#__PURE__*/React.createElement("div", {
     className: "overlay",
@@ -1728,7 +1730,12 @@ function Paywall({
     onClick: e => e.stopPropagation()
   }, /*#__PURE__*/React.createElement("div", {
     className: "gate-emoji"
-  }, "\u2B50"), /*#__PURE__*/React.createElement("h3", null, "\u05DB\u05DC\u05D9 \u05D4\u05D1\u05D2\u05E8\u05D5\u05EA \u05D4\u05DE\u05EA\u05E7\u05D3\u05DE\u05D9\u05DD"), /*#__PURE__*/React.createElement("p", null, "\u05D4\u05EA\u05E9\u05D7\u05E5, \u05DE\u05E6\u05D1 \u05D4\u05D1\u05D7\u05D9\u05E0\u05D4 \u05D5\u05D4\u05D7\u05D6\u05E8\u05D4 \u05D4\u05DE\u05DE\u05D5\u05E7\u05D3\u05EA \u05E4\u05EA\u05D5\u05D7\u05D9\u05DD \u05D1\u05DE\u05E1\u05DC\u05D5\u05DC \u05D4\u05D1\u05D2\u05E8\u05D5\u05EA \u2014 ", /*#__PURE__*/React.createElement("b", null, "\u20AA19.90 \u05DC\u05E2\u05D5\u05E0\u05D4"), ", \u05EA\u05E9\u05DC\u05D5\u05DD \u05D7\u05D3\u05BE\u05E4\u05E2\u05DE\u05D9."), /*#__PURE__*/React.createElement("a", {
+  }, "\u2B50"), /*#__PURE__*/React.createElement("h3", null, "\u05DE\u05E1\u05DC\u05D5\u05DC \u05D4\u05D1\u05D2\u05E8\u05D5\u05EA"), /*#__PURE__*/React.createElement("p", null, "\u05D4\u05EA\u05E9\u05D7\u05E5 \u05D5\u05DB\u05DC\u05D9 \u05D1\u05D2\u05E8\u05D5\u05EA \u05DE\u05EA\u05E7\u05D3\u05DE\u05D9\u05DD \u05E0\u05D5\u05E1\u05E4\u05D9\u05DD \u2014 ", /*#__PURE__*/React.createElement("b", null, "\u20AA19.90 \u05DC\u05E2\u05D5\u05E0\u05D4"), ", \u05EA\u05E9\u05DC\u05D5\u05DD \u05D7\u05D3\u05BE\u05E4\u05E2\u05DE\u05D9."), !user && /*#__PURE__*/React.createElement("p", {
+    className: "paywall-note"
+  }, "\u05DB\u05D3\u05D9 \u05DC\u05E9\u05DE\u05D5\u05E8 \u05D0\u05EA \u05D4\u05DE\u05E0\u05D5\u05D9 \u05E6\u05E8\u05D9\u05DA \u05EA\u05D7\u05D9\u05DC\u05D4 \u05D7\u05E9\u05D1\u05D5\u05DF:"), !user && /*#__PURE__*/React.createElement("button", {
+    className: "google-btn",
+    onClick: onSignIn
+  }, "\u05D4\u05EA\u05D7\u05D1\u05E8\u05D5 \u05E2\u05DD Google"), /*#__PURE__*/React.createElement("a", {
     className: "btn btn-accent",
     href: "https://wa.me/972524295838?text=%D7%90%D7%A9%D7%9E%D7%97%20%D7%9C%D7%A8%D7%9B%D7%95%D7%A9%20%D7%90%D7%AA%20%D7%9E%D7%A1%D7%9C%D7%95%D7%9C%20%D7%94%D7%91%D7%92%D7%A8%D7%95%D7%AA%20%D7%91%D7%A9%D7%9C%D7%99%D7%A4%D7%99%D7%9D",
     target: "_blank",
@@ -1776,7 +1783,7 @@ function App() {
   // Returns true if the feature is accessible; otherwise opens the right gate and returns false.
   function needTier(feature) {
     if (SL.canAccess(feature, tier)) return true;
-    setGate(!user ? 'signup' : 'paywall');
+    setGate((SL.FEATURE_MIN[feature] || 0) >= 2 ? 'paywall' : 'signup');
     return false;
   }
   useEffect(() => {
@@ -1916,7 +1923,7 @@ function App() {
     }
     const unsub = auth.onAuthStateChanged(async u => {
       setUser(u);
-      if (!u) setEntitlement(null);
+      setEntitlement(null); // clear first; re-fetch below for a signed-in user (avoids stale paid on account switch)
       if (u && db) {
         setSync('syncing');
         try {
@@ -2083,7 +2090,12 @@ function App() {
       signIn();
     }
   }), gate === 'paywall' && /*#__PURE__*/React.createElement(Paywall, {
-    onClose: () => setGate(null)
+    onClose: () => setGate(null),
+    user: user,
+    onSignIn: () => {
+      setGate(null);
+      signIn();
+    }
   }), qTerm && /*#__PURE__*/React.createElement(TermQuiz, {
     key: qTerm.hebrew + (qTerm.verify ? 'v' : 'e'),
     hebrew: qTerm.hebrew,

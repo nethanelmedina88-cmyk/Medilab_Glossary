@@ -475,11 +475,13 @@ function SignUpGate({onClose,onSignIn}){
     <button className="btn btn-ghost" onClick={onClose}>אולי אחר כך</button>
   </div></div>);
 }
-function Paywall({onClose}){
+function Paywall({onClose,user,onSignIn}){
   return (<div className="overlay" onClick={onClose}><div className="sheet-card gate-card" onClick={e=>e.stopPropagation()}>
     <div className="gate-emoji">⭐</div>
-    <h3>כלי הבגרות המתקדמים</h3>
-    <p>התשחץ, מצב הבחינה והחזרה הממוקדת פתוחים במסלול הבגרות — <b>₪19.90 לעונה</b>, תשלום חד־פעמי.</p>
+    <h3>מסלול הבגרות</h3>
+    <p>התשחץ וכלי בגרות מתקדמים נוספים — <b>₪19.90 לעונה</b>, תשלום חד־פעמי.</p>
+    {!user && <p className="paywall-note">כדי לשמור את המנוי צריך תחילה חשבון:</p>}
+    {!user && <button className="google-btn" onClick={onSignIn}>התחברו עם Google</button>}
     <a className="btn btn-accent" href="https://wa.me/972524295838?text=%D7%90%D7%A9%D7%9E%D7%97%20%D7%9C%D7%A8%D7%9B%D7%95%D7%A9%20%D7%90%D7%AA%20%D7%9E%D7%A1%D7%9C%D7%95%D7%9C%20%D7%94%D7%91%D7%92%D7%A8%D7%95%D7%AA%20%D7%91%D7%A9%D7%9C%D7%99%D7%A4%D7%99%D7%9D" target="_blank" rel="noopener" style={{textDecoration:'none'}}>לגישה מוקדמת — צרו קשר</a>
     <button className="btn btn-ghost" onClick={onClose}>סגירה</button>
   </div></div>);
@@ -502,7 +504,7 @@ function App(){
   const [entitlement,setEntitlement]=useState(null); const [gate,setGate]=useState(null);
   const tier=useMemo(()=>SL.tierOf(user,entitlement,Date.now()),[user,entitlement]);
   // Returns true if the feature is accessible; otherwise opens the right gate and returns false.
-  function needTier(feature){ if(SL.canAccess(feature,tier)) return true; setGate(!user?'signup':'paywall'); return false; }
+  function needTier(feature){ if(SL.canAccess(feature,tier)) return true; setGate((SL.FEATURE_MIN[feature]||0)>=2?'paywall':'signup'); return false; }
   useEffect(()=>{ _audioLocked=!SL.canAccess('audio',tier); _onAudioLock=()=>setGate('signup'); },[tier]);
   const [newAch,setNewAch]=useState(null); const [confetti,setConfetti]=useState(false);
   const loadingRef=useRef(false); const achInit=useRef(false);
@@ -543,7 +545,7 @@ function App(){
     catch(e){ console.error(e); setSync('error'); } },[favorites,studied,stats,achieved]);
   useEffect(()=>{ if(!auth)return;
     if(auth.getRedirectResult){ auth.getRedirectResult().catch(function(e){ if(e&&e.code&&e.code!=='auth/no-auth-event') console.warn('sign-in redirect:',e.code); }); }
-    const unsub=auth.onAuthStateChanged(async(u)=>{ setUser(u); if(!u) setEntitlement(null);
+    const unsub=auth.onAuthStateChanged(async(u)=>{ setUser(u); setEntitlement(null); // clear first; re-fetch below for a signed-in user (avoids stale paid on account switch)
     if(u&&db){ setSync('syncing');
       try{ const eDoc=await db.collection('entitlements').doc(u.uid).get(); setEntitlement(eDoc.exists?eDoc.data():null); }catch(e){ setEntitlement(null); }
       try{ const doc=await db.collection('users').doc(u.uid).get();
@@ -586,7 +588,7 @@ function App(){
       </div>
       <Nav mode={mode} setMode={changeMode} tier={tier}/>
       {gate==='signup' && <SignUpGate onClose={()=>setGate(null)} onSignIn={()=>{setGate(null);signIn();}}/>}
-      {gate==='paywall' && <Paywall onClose={()=>setGate(null)}/>}
+      {gate==='paywall' && <Paywall onClose={()=>setGate(null)} user={user} onSignIn={()=>{setGate(null);signIn();}}/>}
       {qTerm && <TermQuiz key={qTerm.hebrew+(qTerm.verify?'v':'e')} hebrew={qTerm.hebrew} onClose={()=>setQTerm(null)} onResult={onQResult}/>}
     </div>
   );
