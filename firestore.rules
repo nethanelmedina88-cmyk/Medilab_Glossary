@@ -7,5 +7,13 @@ service cloud.firestore {
     match /users/{uid} {
       allow read, write: if request.auth != null && request.auth.uid == uid;
     }
+    // Paid entitlements (₪19.90 season). Readable ONLY by the owner, NEVER
+    // writable from a client — grant via the Firebase console / Admin SDK / a
+    // future payment webhook only, so a user cannot self-grant a subscription.
+    // Doc shape: entitlements/{uid} = { season: "2026", until?: <ms|timestamp> }.
+    match /entitlements/{uid} {
+      allow read: if request.auth != null && request.auth.uid == uid;
+      allow write: if false;
+    }
   }
 }
