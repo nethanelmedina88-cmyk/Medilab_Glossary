@@ -1,0 +1,9 @@
+{
+  "name": "shlifim-admin",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Local admin tool to grant/renew/revoke SHLIFIM paid entitlements",
+  "dependencies": {
+    "firebase-admin": "^12.7.0"
+  }
+}

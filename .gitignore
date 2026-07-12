@@ -1,3 +1,5 @@
 node_modules/
 .superpowers/
 *.zip
+# Firebase admin service-account key — SECRET, never commit
+**/service-account*.json
