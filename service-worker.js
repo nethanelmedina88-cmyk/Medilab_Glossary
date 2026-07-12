@@ -1,4 +1,4 @@
-const CACHE_NAME = 'shlifim-v42';
+const CACHE_NAME = 'shlifim-v43';
 const FILES_TO_CACHE = [
   './',
   './index.html',
@@ -19,7 +19,8 @@ const FILES_TO_CACHE = [
   './app/styles-v2.css',
   './app/app-v2.js',
   './icon-192.png',
-  './icon-512.png'
+  './icon-512.png',
+  './intro.mp4'
 ];
 
 // Install: cache the core files
