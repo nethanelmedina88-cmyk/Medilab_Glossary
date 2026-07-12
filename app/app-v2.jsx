@@ -201,7 +201,7 @@ function TermCard({t,q,fav,studied,onFav,onStudied,onOpenTerm}){
     <div className="card-top">
       <div><div className={`term ${onOpenTerm?'link':''}`} onClick={onOpenTerm?function(){onOpenTerm(t.hebrew);}:undefined}>{t.nikud?t.nikud:highlight(t.hebrew,q)}</div>{t.english&&<div className="en">{t.english}</div>}</div>
       <div className="acts">
-        <button className="ibtn" onClick={()=>Speak(t.hebrew)} title="הקראה" aria-label="הקראה"><IcSpeaker/></button>
+        <button className="ibtn" onClick={()=>Speak(t.hebrew,t.nikud)} title="הקראה" aria-label="הקראה"><IcSpeaker/></button>
         <button className={`ibtn ${fav?'pin':''}`} onClick={onFav} title={fav?'הסר מרשימת החזרה':'סמן כמושג לחזרה (קשה לזכור)'} aria-label="לחזרה"><span className={fav?'':'pin-off'}><IcPin/></span></button>
         <button className={`ibtn ${studied?'done':''}`} onClick={()=>{ if(!studied)Snd.ding(); onStudied(); }} title={studied?'בטל נלמד':'סמן כנלמד'} aria-label="נלמד">{studied?'✓':'○'}</button>
       </div>
@@ -277,7 +277,7 @@ function Flashcards({favorites,studied,toggleFav,toggleStudied,onKnow}){
         </div>
         <div className="fc-ctrl">
           <button className="fc-nav" onClick={prev} aria-label="הקודם">→</button>
-          <button className="fc-nav" onClick={()=>Speak(flip?card.definition:card.hebrew)} aria-label="הקראה" title="הקראה"><IcSpeaker/></button>
+          <button className="fc-nav" onClick={()=>Speak(flip?card.definition:card.hebrew,flip?null:card.nikud)} aria-label="הקראה" title="הקראה"><IcSpeaker/></button>
           <button className="btn btn-accent" style={{flex:1}} onClick={()=> studied.includes(card.hebrew)?toggleStudied(card.hebrew):onKnow(card.hebrew)}>{studied.includes(card.hebrew)?'✓ נלמד':'אני יודע — בדקו אותי'}</button>
           <button className="fc-nav" style={favorites.includes(card.hebrew)?{color:'#fff',background:'var(--coral-500)',borderColor:'var(--coral-700)'}:undefined} onClick={()=>toggleFav(card.hebrew)} aria-label="לחזרה" title="מושג לחזרה"><IcPin/></button>
           <button className="fc-nav" onClick={next} aria-label="הבא">←</button>
@@ -323,7 +323,7 @@ function Quiz({studied,toggleStudied,favorites,recordAnswer,recordQuiz,fireConfe
     <div className="q-top"><span>שאלה {qi+1} / {quiz.length}</span><div className="bar"><i style={{width:`${(qi/quiz.length)*100}%`}}></i></div><span className="q-score">{score} ✓</span></div>
     <span className="q-kind">{item.kind==='pick-definition'?'בחרו את ההגדרה הנכונה':item.kind==='pick-term'?'בחרו את המושג הנכון':'הקלידו את המושג'}</span>
     <div className="q-q">{item.kind==='pick-definition'?<>מהי <span className="hl mnk">{termLabel(item.term)}</span>?</>:item.prompt}</div>
-    <button className="chip" onClick={()=>Speak(item.kind==='pick-definition'?item.term.hebrew:item.prompt)} style={{marginBottom:10}} aria-label="הקראה"><IcSpeaker/> הקראה</button>
+    <button className="chip" onClick={()=>Speak(item.kind==='pick-definition'?item.term.hebrew:item.prompt, item.kind==='pick-definition'?item.term.nikud:null)} style={{marginBottom:10}} aria-label="הקראה"><IcSpeaker/> הקראה</button>
     {item.kind==='type-answer'
       ? (<><div className="q-type-in"><input value={typed} onChange={e=>setTyped(e.target.value)} disabled={answered} placeholder="הקלידו את המושג…" onKeyDown={e=>e.key==='Enter'&&answerType()}/>{!answered&&<button className="btn btn-accent" onClick={answerType}>בדיקה</button>}</div>
         {answered && (chosen.correct?<div className="fb ok">🎉 נכון! {termLabel(item.term)}</div>:<div className="fb no">✗ התשובה: {termLabel(item.term)}</div>)}</>)
@@ -444,7 +444,7 @@ function TermQuiz({hebrew,onClose,onResult}){
   return (<div className="overlay" onClick={onClose}>
     <div className="sheet-card" onClick={e=>e.stopPropagation()}>
       <button className="od-x" onClick={onClose} aria-label="סגור">×</button>
-      <div className="od-term">{termLabel(t)} <button className="ibtn" style={{display:'inline-flex',width:34,height:34,verticalAlign:'middle'}} onClick={()=>Speak(t.hebrew)} aria-label="הקראה"><IcSpeaker/></button></div>
+      <div className="od-term">{termLabel(t)} <button className="ibtn" style={{display:'inline-flex',width:34,height:34,verticalAlign:'middle'}} onClick={()=>Speak(t.hebrew,t.nikud)} aria-label="הקראה"><IcSpeaker/></button></div>
       {t.english&&<div className="en">{t.english}</div>}
       {t.topic&&<div style={{marginTop:6}}><TopicTag topicKey={t.topic}/></div>}
       <div className="od-sec">מהי <b>{termLabel(t)}</b>? בחרו את ההגדרה הנכונה:</div>

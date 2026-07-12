@@ -615,7 +615,7 @@ function TermCard({
     className: "acts"
   }, /*#__PURE__*/React.createElement("button", {
     className: "ibtn",
-    onClick: () => Speak(t.hebrew),
+    onClick: () => Speak(t.hebrew, t.nikud),
     title: "\u05D4\u05E7\u05E8\u05D0\u05D4",
     "aria-label": "\u05D4\u05E7\u05E8\u05D0\u05D4"
   }, /*#__PURE__*/React.createElement(IcSpeaker, null)), /*#__PURE__*/React.createElement("button", {
@@ -875,7 +875,7 @@ function Flashcards({
     "aria-label": "\u05D4\u05E7\u05D5\u05D3\u05DD"
   }, "\u2192"), /*#__PURE__*/React.createElement("button", {
     className: "fc-nav",
-    onClick: () => Speak(flip ? card.definition : card.hebrew),
+    onClick: () => Speak(flip ? card.definition : card.hebrew, flip ? null : card.nikud),
     "aria-label": "\u05D4\u05E7\u05E8\u05D0\u05D4",
     title: "\u05D4\u05E7\u05E8\u05D0\u05D4"
   }, /*#__PURE__*/React.createElement(IcSpeaker, null)), /*#__PURE__*/React.createElement("button", {
@@ -1090,7 +1090,7 @@ function Quiz({
     className: "hl mnk"
   }, termLabel(item.term)), "?") : item.prompt), /*#__PURE__*/React.createElement("button", {
     className: "chip",
-    onClick: () => Speak(item.kind === 'pick-definition' ? item.term.hebrew : item.prompt),
+    onClick: () => Speak(item.kind === 'pick-definition' ? item.term.hebrew : item.prompt, item.kind === 'pick-definition' ? item.term.nikud : null),
     style: {
       marginBottom: 10
     },
@@ -1617,7 +1617,7 @@ function TermQuiz({
       height: 34,
       verticalAlign: 'middle'
     },
-    onClick: () => Speak(t.hebrew),
+    onClick: () => Speak(t.hebrew, t.nikud),
     "aria-label": "\u05D4\u05E7\u05E8\u05D0\u05D4"
   }, /*#__PURE__*/React.createElement(IcSpeaker, null))), t.english && /*#__PURE__*/React.createElement("div", {
     className: "en"

@@ -37,20 +37,23 @@ window.SLSound = (function(){
   }
   window.SLSpeakBrowser = browserSpeak; // exposed so callers/tests can spy or force it
 
-  window.SLSpeak = function (text) {
-    var key = (text == null ? '' : String(text)).trim();
+  // key = plain term (used to find the pre-recorded MP3); spoken = optional vocalized/menukad
+  // form used ONLY by the browser-voice fallback for more accurate pronunciation.
+  window.SLSpeak = function (key, spoken) {
+    key = (key == null ? '' : String(key)).trim();
+    var say = (spoken == null || spoken === '') ? key : String(spoken);
     var map = window.AUDIO_MANIFEST;
     var file = (map && key) ? map[key] : null;
-    if (!file) { window.SLSpeakBrowser(text); return; }
+    if (!file) { window.SLSpeakBrowser(say); return; }
     try {
       try { if (window.speechSynthesis) window.speechSynthesis.cancel(); } catch (e) {}
       if (!audioEl) { audioEl = new Audio(); }
       audioEl.pause();
-      audioEl.onerror = function () { window.SLSpeakBrowser(text); };
+      audioEl.onerror = function () { window.SLSpeakBrowser(say); };
       audioEl.src = file;
       var p = audioEl.play();
-      if (p && p.catch) p.catch(function () { window.SLSpeakBrowser(text); });
-    } catch (e) { window.SLSpeakBrowser(text); }
+      if (p && p.catch) p.catch(function () { window.SLSpeakBrowser(say); });
+    } catch (e) { window.SLSpeakBrowser(say); }
   };
 
   try {
