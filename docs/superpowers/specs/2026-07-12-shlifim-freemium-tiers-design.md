@@ -10,7 +10,7 @@ Introduce three access tiers to build an audience, generate leads, and offer a c
 
 1. **Free** — open to all, no login. Builds audience/reputation and SEO ("מדע קצר ולעניין").
 2. **Registered** — free, requires a Google account. Its purpose is **lead generation** (capture the student behind an account/email).
-3. **Paid** — a **one-time ₪19.90 for the bagrut season** (NOT ₪4.90/month recurring). At this micro-price, recurring billing's fees + churn + dunning ops aren't worth it; a one-time seasonal unlock matches how students actually buy (cram before the exam).
+3. **Paid** — a subscription with **two options: ₪4.99/month or ₪23.99/year (= ₪1.99/mo)**. (Superseded the earlier one-time ₪19.90 seasonal plan, 2026-07-12.) The annual option is steered as "best value" and, being charged once a year, sidesteps the per-transaction-fee problem that makes tiny monthly charges uneconomical. Billing itself is still Phase 2 — the paywall currently presents both plans as WhatsApp early-access links.
 
 **Splitting philosophy:** *feature ladder* — gate capabilities, not the dictionary itself. The glossary content stays fully open (trust, word-of-mouth, discoverability); the locks are on *tools*.
 

@@ -476,13 +476,23 @@ function SignUpGate({onClose,onSignIn}){
   </div></div>);
 }
 function Paywall({onClose,user,onSignIn}){
+  const wa=txt=>'https://wa.me/972524295838?text='+encodeURIComponent(txt);
   return (<div className="overlay" onClick={onClose}><div className="sheet-card gate-card" onClick={e=>e.stopPropagation()}>
     <div className="gate-emoji">⭐</div>
     <h3>מסלול הבגרות</h3>
-    <p>התשחץ וכלי בגרות מתקדמים נוספים — <b>₪19.90 לעונה</b>, תשלום חד־פעמי.</p>
+    <p>התשחץ וכלי בגרות מתקדמים נוספים. בחרו מסלול:</p>
     {!user && <p className="paywall-note">כדי לשמור את המנוי צריך תחילה חשבון:</p>}
     {!user && <button className="google-btn" onClick={onSignIn}>התחברו עם Google</button>}
-    <a className="btn btn-accent" href="https://wa.me/972524295838?text=%D7%90%D7%A9%D7%9E%D7%97%20%D7%9C%D7%A8%D7%9B%D7%95%D7%A9%20%D7%90%D7%AA%20%D7%9E%D7%A1%D7%9C%D7%95%D7%9C%20%D7%94%D7%91%D7%92%D7%A8%D7%95%D7%AA%20%D7%91%D7%A9%D7%9C%D7%99%D7%A4%D7%99%D7%9D" target="_blank" rel="noopener" style={{textDecoration:'none'}}>לגישה מוקדמת — צרו קשר</a>
+    <div className="plans">
+      <a className="plan" href={wa('אשמח לרכוש מנוי חודשי (₪4.99) בשליפים')} target="_blank" rel="noopener">
+        <div className="plan-per">₪4.99</div><div className="plan-unit">לחודש</div>
+      </a>
+      <a className="plan plan-best" href={wa('אשמח לרכוש מנוי שנתי (₪23.99) בשליפים')} target="_blank" rel="noopener">
+        <div className="plan-badge">המשתלם ביותר</div>
+        <div className="plan-per">₪23.99</div><div className="plan-unit">לשנה · ₪1.99 לחודש</div>
+      </a>
+    </div>
+    <p className="paywall-note" style={{marginTop:12}}>התשלום ייפתח בקרוב — כרגע לרכישה מוקדמת דרך הקישורים.</p>
     <button className="btn btn-ghost" onClick={onClose}>סגירה</button>
   </div></div>);
 }

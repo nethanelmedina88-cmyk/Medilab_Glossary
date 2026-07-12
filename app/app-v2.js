@@ -1722,6 +1722,7 @@ function Paywall({
   user,
   onSignIn
 }) {
+  const wa = txt => 'https://wa.me/972524295838?text=' + encodeURIComponent(txt);
   return /*#__PURE__*/React.createElement("div", {
     className: "overlay",
     onClick: onClose
@@ -1730,20 +1731,39 @@ function Paywall({
     onClick: e => e.stopPropagation()
   }, /*#__PURE__*/React.createElement("div", {
     className: "gate-emoji"
-  }, "\u2B50"), /*#__PURE__*/React.createElement("h3", null, "\u05DE\u05E1\u05DC\u05D5\u05DC \u05D4\u05D1\u05D2\u05E8\u05D5\u05EA"), /*#__PURE__*/React.createElement("p", null, "\u05D4\u05EA\u05E9\u05D7\u05E5 \u05D5\u05DB\u05DC\u05D9 \u05D1\u05D2\u05E8\u05D5\u05EA \u05DE\u05EA\u05E7\u05D3\u05DE\u05D9\u05DD \u05E0\u05D5\u05E1\u05E4\u05D9\u05DD \u2014 ", /*#__PURE__*/React.createElement("b", null, "\u20AA19.90 \u05DC\u05E2\u05D5\u05E0\u05D4"), ", \u05EA\u05E9\u05DC\u05D5\u05DD \u05D7\u05D3\u05BE\u05E4\u05E2\u05DE\u05D9."), !user && /*#__PURE__*/React.createElement("p", {
+  }, "\u2B50"), /*#__PURE__*/React.createElement("h3", null, "\u05DE\u05E1\u05DC\u05D5\u05DC \u05D4\u05D1\u05D2\u05E8\u05D5\u05EA"), /*#__PURE__*/React.createElement("p", null, "\u05D4\u05EA\u05E9\u05D7\u05E5 \u05D5\u05DB\u05DC\u05D9 \u05D1\u05D2\u05E8\u05D5\u05EA \u05DE\u05EA\u05E7\u05D3\u05DE\u05D9\u05DD \u05E0\u05D5\u05E1\u05E4\u05D9\u05DD. \u05D1\u05D7\u05E8\u05D5 \u05DE\u05E1\u05DC\u05D5\u05DC:"), !user && /*#__PURE__*/React.createElement("p", {
     className: "paywall-note"
   }, "\u05DB\u05D3\u05D9 \u05DC\u05E9\u05DE\u05D5\u05E8 \u05D0\u05EA \u05D4\u05DE\u05E0\u05D5\u05D9 \u05E6\u05E8\u05D9\u05DA \u05EA\u05D7\u05D9\u05DC\u05D4 \u05D7\u05E9\u05D1\u05D5\u05DF:"), !user && /*#__PURE__*/React.createElement("button", {
     className: "google-btn",
     onClick: onSignIn
-  }, "\u05D4\u05EA\u05D7\u05D1\u05E8\u05D5 \u05E2\u05DD Google"), /*#__PURE__*/React.createElement("a", {
-    className: "btn btn-accent",
-    href: "https://wa.me/972524295838?text=%D7%90%D7%A9%D7%9E%D7%97%20%D7%9C%D7%A8%D7%9B%D7%95%D7%A9%20%D7%90%D7%AA%20%D7%9E%D7%A1%D7%9C%D7%95%D7%9C%20%D7%94%D7%91%D7%92%D7%A8%D7%95%D7%AA%20%D7%91%D7%A9%D7%9C%D7%99%D7%A4%D7%99%D7%9D",
+  }, "\u05D4\u05EA\u05D7\u05D1\u05E8\u05D5 \u05E2\u05DD Google"), /*#__PURE__*/React.createElement("div", {
+    className: "plans"
+  }, /*#__PURE__*/React.createElement("a", {
+    className: "plan",
+    href: wa('אשמח לרכוש מנוי חודשי (₪4.99) בשליפים'),
     target: "_blank",
-    rel: "noopener",
+    rel: "noopener"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "plan-per"
+  }, "\u20AA4.99"), /*#__PURE__*/React.createElement("div", {
+    className: "plan-unit"
+  }, "\u05DC\u05D7\u05D5\u05D3\u05E9")), /*#__PURE__*/React.createElement("a", {
+    className: "plan plan-best",
+    href: wa('אשמח לרכוש מנוי שנתי (₪23.99) בשליפים'),
+    target: "_blank",
+    rel: "noopener"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "plan-badge"
+  }, "\u05D4\u05DE\u05E9\u05EA\u05DC\u05DD \u05D1\u05D9\u05D5\u05EA\u05E8"), /*#__PURE__*/React.createElement("div", {
+    className: "plan-per"
+  }, "\u20AA23.99"), /*#__PURE__*/React.createElement("div", {
+    className: "plan-unit"
+  }, "\u05DC\u05E9\u05E0\u05D4 \xB7 \u20AA1.99 \u05DC\u05D7\u05D5\u05D3\u05E9"))), /*#__PURE__*/React.createElement("p", {
+    className: "paywall-note",
     style: {
-      textDecoration: 'none'
+      marginTop: 12
     }
-  }, "\u05DC\u05D2\u05D9\u05E9\u05D4 \u05DE\u05D5\u05E7\u05D3\u05DE\u05EA \u2014 \u05E6\u05E8\u05D5 \u05E7\u05E9\u05E8"), /*#__PURE__*/React.createElement("button", {
+  }, "\u05D4\u05EA\u05E9\u05DC\u05D5\u05DD \u05D9\u05D9\u05E4\u05EA\u05D7 \u05D1\u05E7\u05E8\u05D5\u05D1 \u2014 \u05DB\u05E8\u05D2\u05E2 \u05DC\u05E8\u05DB\u05D9\u05E9\u05D4 \u05DE\u05D5\u05E7\u05D3\u05DE\u05EA \u05D3\u05E8\u05DA \u05D4\u05E7\u05D9\u05E9\u05D5\u05E8\u05D9\u05DD."), /*#__PURE__*/React.createElement("button", {
     className: "btn btn-ghost",
     onClick: onClose
   }, "\u05E1\u05D2\u05D9\u05E8\u05D4")));
