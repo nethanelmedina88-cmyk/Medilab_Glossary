@@ -228,6 +228,11 @@ html.dark .fb.ok{background:#15301c} html.dark .fb.no{background:#371a15}
 .gate-card h3{font-family:'Secular One';margin:4px 0 6px;font-size:20px}
 .gate-card p{color:var(--text-2);font-size:14px;margin:0 0 16px}
 .gate-card .btn,.gate-card .google-btn{width:100%;margin-top:8px}
+.tab{position:relative}
+.nav-lock{position:absolute;top:2px;inset-inline-end:calc(50% - 18px);font-size:10px;filter:grayscale(1);opacity:.85}
+.free-hint{background:var(--surface-2);border:1px dashed var(--border);border-radius:12px;padding:8px 12px;font-size:13px;color:var(--text-2);text-align:center;margin-bottom:12px;cursor:pointer}
+.tier-badge{display:inline-block;font-family:'Secular One';font-size:12px;padding:3px 10px;border-radius:999px;background:var(--surface-2);color:var(--text-2);margin-top:4px}
+.tier-badge.tier-paid{background:var(--grad);color:#fff}
 .credit{text-align:center;margin-top:18px;font-size:12px;color:var(--muted)}
 .credit a{color:var(--muted);text-decoration:underline}
 .hero h1 svg{width:24px;height:24px;vertical-align:-4px;margin-inline-end:2px}

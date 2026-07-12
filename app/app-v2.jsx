@@ -10,6 +10,9 @@ const TBK = window.TOPIC_BY_KEY || {};
 const ACH = window.ACHIEVEMENTS || [];
 const Snd = window.SLSound || { success(){},wrong(){},ding(){},pop(){},fanfare(){},setMuted(){},isMuted(){return false;} };
 const Speak = window.SLSpeak || function(){};
+// Free-tier audio gate: App keeps these in sync with the current tier (see the effect in App).
+let _audioLocked=false, _onAudioLock=null;
+function Speak2(k,s){ if(_audioLocked){ if(_onAudioLock)_onAudioLock(); return; } Speak(k,s); }
 const maps = SL.buildAliasMaps(GLOSSARY);
 const searchIndex = SL.buildSearchIndex(GLOSSARY);
 const HEB = ['א','ב','ג','ד','ה','ו','ז','ח','ט','י','כ','ל','מ','נ','ס','ע','פ','צ','ק','ר','ש','ת'];
@@ -189,8 +192,8 @@ function Header({pinCount,dark,setDark,user,onProfile,onReview,onLogo}){
     <button className="icon-toggle" onClick={()=>setDark(d=>!d)} aria-label="מצב כהה">{dark?'☀️':'🌙'}</button>
     <button className="avatar" onClick={onProfile} aria-label="אזור אישי">{user&&user.photoURL?<img src={user.photoURL} referrerPolicy="no-referrer" alt=""/>:'👤'}</button>
   </header>); }
-function Nav({mode,setMode}){ const T=[['glossary','מילון',IcList,'g'],['flashcards','כרטיסיות',IcCards,'f'],['quiz','מבחון',IcQuiz,'q'],['crossword','תשבץ',IcGrid,'x'],['about','אודות',IcInfo,'g']];
-  return (<nav className="nav">{T.map(([m,label,Ic,c])=>(<button key={m} className={`tab ${c} ${mode===m?'on':''}`} onClick={()=>setMode(m)}><Ic/>{label}<div className="pipe"></div></button>))}</nav>); }
+function Nav({mode,setMode,tier}){ const T=[['glossary','מילון',IcList,'g'],['flashcards','כרטיסיות',IcCards,'f'],['quiz','מבחון',IcQuiz,'q'],['crossword','תשבץ',IcGrid,'x'],['about','אודות',IcInfo,'g']];
+  return (<nav className="nav">{T.map(([m,label,Ic,c])=>(<button key={m} className={`tab ${c} ${mode===m?'on':''}`} onClick={()=>setMode(m)}>{!SL.canAccess(m==='crossword'?'crossword':'glossary',tier) && <span className="nav-lock">🔒</span>}<Ic/>{label}<div className="pipe"></div></button>))}</nav>); }
 
 /* ---------- GLOSSARY ---------- */
 function TermCard({t,q,fav,studied,onFav,onStudied,onOpenTerm}){
@@ -201,7 +204,7 @@ function TermCard({t,q,fav,studied,onFav,onStudied,onOpenTerm}){
     <div className="card-top">
       <div><div className={`term ${onOpenTerm?'link':''}`} onClick={onOpenTerm?function(){onOpenTerm(t.hebrew);}:undefined}>{t.nikud?t.nikud:highlight(t.hebrew,q)}</div>{t.english&&<div className="en">{t.english}</div>}</div>
       <div className="acts">
-        <button className="ibtn" onClick={()=>Speak(t.hebrew,t.nikud)} title="הקראה" aria-label="הקראה"><IcSpeaker/></button>
+        <button className="ibtn" onClick={()=>Speak2(t.hebrew,t.nikud)} title="הקראה" aria-label="הקראה"><IcSpeaker/></button>
         <button className={`ibtn ${fav?'pin':''}`} onClick={onFav} title={fav?'הסר מרשימת החזרה':'סמן כמושג לחזרה (קשה לזכור)'} aria-label="לחזרה"><span className={fav?'':'pin-off'}><IcPin/></span></button>
         <button className={`ibtn ${studied?'done':''}`} onClick={()=>{ if(!studied)Snd.ding(); onStudied(); }} title={studied?'בטל נלמד':'סמן כנלמד'} aria-label="נלמד">{studied?'✓':'○'}</button>
       </div>
@@ -246,8 +249,10 @@ function ReviewList({favorites,studied,toggleFav,toggleStudied,goQuiz,onOpenTerm
 }
 
 /* ---------- FLASHCARDS ---------- */
-function Flashcards({favorites,studied,toggleFav,toggleStudied,onKnow}){
-  const [deck,setDeck]=useState('all'); const [topic,setTopic]=useState(''); const [i,setI]=useState(0); const [flip,setFlip]=useState(false);
+function Flashcards({favorites,studied,toggleFav,toggleStudied,onKnow,tier,onNeedAll}){
+  const lockTopics=tier==='free';
+  const [deck,setDeck]=useState('all'); const [topic,setTopic]=useState(lockTopics?SL.FREE_TOPIC:''); const [i,setI]=useState(0); const [flip,setFlip]=useState(false);
+  const pickTopic=next=>{ if(lockTopics && next!==SL.FREE_TOPIC){ onNeedAll&&onNeedAll(); return; } setTopic(next); };
   const cards=useMemo(()=>{let items=GLOSSARY.filter(t=>!t.aliasOf&&!/^\s*ראה:/.test(t.definition));
     if(topic)items=items.filter(t=>t.topic===topic); if(deck==='unstudied')items=items.filter(t=>!studied.includes(t.hebrew)); if(deck==='review')items=items.filter(t=>favorites.includes(t.hebrew)); return items;},[deck,topic,studied,favorites]);
   useEffect(()=>{setI(0);setFlip(false);},[deck,topic]);
@@ -264,7 +269,8 @@ function Flashcards({favorites,studied,toggleFav,toggleStudied,onKnow}){
       <button className={`chip ${deck==='unstudied'?'on':''}`} onClick={()=>setDeck('unstudied')}>לא נלמדו</button>
       <button className={`chip ${deck==='review'?'on':''}`} onClick={()=>setDeck('review')}><IcPin/> לחזרה</button>
     </div>
-    <TopicChips value={topic} onPick={setTopic}/>
+    {lockTopics && <div className="free-hint" onClick={()=>onNeedAll&&onNeedAll()}>🔓 גרסה חינמית — נושא לדוגמה. הירשמו בחינם לכל 21 הנושאים</div>}
+    <TopicChips value={topic} onPick={pickTopic}/>
     {cards.length===0
       ? <div className="empty"><div style={{fontSize:46}}>🎴</div><h3>אין כרטיסיות בערימה הזו</h3></div>
       : (<>
@@ -277,7 +283,7 @@ function Flashcards({favorites,studied,toggleFav,toggleStudied,onKnow}){
         </div>
         <div className="fc-ctrl">
           <button className="fc-nav" onClick={prev} aria-label="הקודם">→</button>
-          <button className="fc-nav" onClick={()=>Speak(flip?card.definition:card.hebrew,flip?null:card.nikud)} aria-label="הקראה" title="הקראה"><IcSpeaker/></button>
+          <button className="fc-nav" onClick={()=>Speak2(flip?card.definition:card.hebrew,flip?null:card.nikud)} aria-label="הקראה" title="הקראה"><IcSpeaker/></button>
           <button className="btn btn-accent" style={{flex:1}} onClick={()=> studied.includes(card.hebrew)?toggleStudied(card.hebrew):onKnow(card.hebrew)}>{studied.includes(card.hebrew)?'✓ נלמד':'אני יודע — בדקו אותי'}</button>
           <button className="fc-nav" style={favorites.includes(card.hebrew)?{color:'#fff',background:'var(--coral-500)',borderColor:'var(--coral-700)'}:undefined} onClick={()=>toggleFav(card.hebrew)} aria-label="לחזרה" title="מושג לחזרה"><IcPin/></button>
           <button className="fc-nav" onClick={next} aria-label="הבא">←</button>
@@ -292,8 +298,10 @@ function buildQuiz(pool,n){ const kinds=['pick-definition','pick-term','type-ans
     if(kind==='type-answer'){const t=pool[Math.floor(Math.random()*pool.length)];if(used[t.hebrew])continue;used[t.hebrew]=1;items.push({kind,term:t,prompt:SL.defText(t),options:[]});}
     else{const it=SL.generateItem(pool,maps,kind,Math.floor(Math.random()*1e6));if(used[it.term.hebrew])continue;used[it.term.hebrew]=1;items.push(it);} }
   return items; }
-function Quiz({studied,toggleStudied,favorites,recordAnswer,recordQuiz,fireConfetti}){
-  const [topic,setTopic]=useState(''); const [len,setLen]=useState(10); const [hardOnly,setHardOnly]=useState(false);
+function Quiz({studied,toggleStudied,favorites,recordAnswer,recordQuiz,fireConfetti,tier,onNeedAll}){
+  const lockTopics=tier==='free';
+  const [topic,setTopic]=useState(lockTopics?SL.FREE_TOPIC:''); const [len,setLen]=useState(10); const [hardOnly,setHardOnly]=useState(false);
+  const pickTopic=next=>{ if(lockTopics && next!==SL.FREE_TOPIC){ onNeedAll&&onNeedAll(); return; } setTopic(next); };
   const [quiz,setQuiz]=useState(null); const [qi,setQi]=useState(0);
   const [answered,setAnswered]=useState(false); const [chosen,setChosen]=useState(null);
   const [typed,setTyped]=useState(''); const [score,setScore]=useState(0); const [spark,setSpark]=useState(false);
@@ -306,7 +314,7 @@ function Quiz({studied,toggleStudied,favorites,recordAnswer,recordQuiz,fireConfe
   const nextQ=()=>{ if(qi+1>=quiz.length){ recordQuiz(score,quiz.length); if(score===quiz.length&&quiz.length>0){fireConfetti();Snd.fanfare();} setQi(quiz.length); return; } setQi(qi+1);setAnswered(false);setChosen(null);setTyped(''); };
   if(!quiz) return (<>
     <div className="hero"><h1>מבחון</h1><p>בחירה מרובה · השלמת מושג · בדיקה עצמית</p></div>
-    <div className="setup"><h2>בחרו נושא</h2><TopicChips value={topic} onPick={setTopic}/>
+    <div className="setup">{lockTopics && <div className="free-hint" onClick={()=>onNeedAll&&onNeedAll()}>🔓 גרסה חינמית — נושא לדוגמה. הירשמו בחינם לכל 21 הנושאים</div>}<h2>בחרו נושא</h2><TopicChips value={topic} onPick={pickTopic}/>
       <div style={{margin:'12px 0'}}><button className={`chip ${hardOnly?'on':''}`} onClick={()=>setHardOnly(h=>!h)} style={hardOnly?{background:'var(--coral-500)',color:'#fff',borderColor:'var(--coral-700)'}:undefined}><IcPin/> מושגים לחזרה בלבד ({favorites.length})</button></div>
       <h2>מספר שאלות</h2>
       <div className="seg">{[5,10,15,20].map(n=>(<button key={n} className={`chip ${len===n?'on':''}`} onClick={()=>setLen(n)}>{n}</button>))}</div>
@@ -323,7 +331,7 @@ function Quiz({studied,toggleStudied,favorites,recordAnswer,recordQuiz,fireConfe
     <div className="q-top"><span>שאלה {qi+1} / {quiz.length}</span><div className="bar"><i style={{width:`${(qi/quiz.length)*100}%`}}></i></div><span className="q-score">{score} ✓</span></div>
     <span className="q-kind">{item.kind==='pick-definition'?'בחרו את ההגדרה הנכונה':item.kind==='pick-term'?'בחרו את המושג הנכון':'הקלידו את המושג'}</span>
     <div className="q-q">{item.kind==='pick-definition'?<>מהי <span className="hl mnk">{termLabel(item.term)}</span>?</>:item.prompt}</div>
-    <button className="chip" onClick={()=>Speak(item.kind==='pick-definition'?item.term.hebrew:item.prompt, item.kind==='pick-definition'?item.term.nikud:null)} style={{marginBottom:10}} aria-label="הקראה"><IcSpeaker/> הקראה</button>
+    <button className="chip" onClick={()=>Speak2(item.kind==='pick-definition'?item.term.hebrew:item.prompt, item.kind==='pick-definition'?item.term.nikud:null)} style={{marginBottom:10}} aria-label="הקראה"><IcSpeaker/> הקראה</button>
     {item.kind==='type-answer'
       ? (<><div className="q-type-in"><input value={typed} onChange={e=>setTyped(e.target.value)} disabled={answered} placeholder="הקלידו את המושג…" onKeyDown={e=>e.key==='Enter'&&answerType()}/>{!answered&&<button className="btn btn-accent" onClick={answerType}>בדיקה</button>}</div>
         {answered && (chosen.correct?<div className="fb ok">🎉 נכון! {termLabel(item.term)}</div>:<div className="fb no">✗ התשובה: {termLabel(item.term)}</div>)}</>)
@@ -384,7 +392,7 @@ function About(){
 /* ---------- PROFILE / STATS / ACHIEVEMENTS ---------- */
 function Ring({pct,color}){ const r=34,c=2*Math.PI*r,off=c*(1-pct/100);
   return (<svg width="84" height="84" viewBox="0 0 84 84" className="ring"><circle cx="42" cy="42" r={r} fill="none" stroke="var(--surface-2)" strokeWidth="9"/><circle cx="42" cy="42" r={r} fill="none" stroke={color} strokeWidth="9" strokeLinecap="round" strokeDasharray={c} strokeDashoffset={off} transform="rotate(-90 42 42)"/><text x="42" y="48" textAnchor="middle" fontFamily="Secular One" fontWeight="800" fontSize="20" fill="var(--text)">{pct}%</text></svg>); }
-function Profile({user,studied,favorites,stats,sync,signIn,signOut,onTopic,muted,toggleSound}){
+function Profile({user,studied,favorites,stats,sync,signIn,signOut,onTopic,muted,toggleSound,tier}){
   const m=metrics(studied,favorites,stats);
   const earned=earnedIds(m); const earnedSet={}; earned.forEach(id=>earnedSet[id]=1);
   const pct=Math.round(m.studied/TOTAL*100); const acc=Math.round(m.accuracy*100);
@@ -393,6 +401,7 @@ function Profile({user,studied,favorites,stats,sync,signIn,signOut,onTopic,muted
     <div className="hero"><h1>אזור אישי</h1></div>
     <div className="prof-card">
       <div className="av">{user&&user.photoURL?<img src={user.photoURL} referrerPolicy="no-referrer" alt=""/>:'👤'}</div>
+      <div className={`tier-badge tier-${tier}`}>{tier===SL.TIER.PAID?'מסלול בגרות ✓':tier===SL.TIER.REGISTERED?'מסלול הרשמה':'אורח'}</div>
       {user ? (<><div className="prof-name">{user.displayName||'תלמיד/ה'}</div><div className="prof-email">{user.email}</div>
         {sync && <div style={{marginTop:8}}><span className="sync-pill">{sync==='syncing'?'מסנכרן…':sync==='synced'?'✓ מסונכרן':'שגיאת סנכרון'}</span></div>}
         <button className="signout" onClick={signOut}>התנתק</button></>)
@@ -444,7 +453,7 @@ function TermQuiz({hebrew,onClose,onResult}){
   return (<div className="overlay" onClick={onClose}>
     <div className="sheet-card" onClick={e=>e.stopPropagation()}>
       <button className="od-x" onClick={onClose} aria-label="סגור">×</button>
-      <div className="od-term">{termLabel(t)} <button className="ibtn" style={{display:'inline-flex',width:34,height:34,verticalAlign:'middle'}} onClick={()=>Speak(t.hebrew,t.nikud)} aria-label="הקראה"><IcSpeaker/></button></div>
+      <div className="od-term">{termLabel(t)} <button className="ibtn" style={{display:'inline-flex',width:34,height:34,verticalAlign:'middle'}} onClick={()=>Speak2(t.hebrew,t.nikud)} aria-label="הקראה"><IcSpeaker/></button></div>
       {t.english&&<div className="en">{t.english}</div>}
       {t.topic&&<div style={{marginTop:6}}><TopicTag topicKey={t.topic}/></div>}
       <div className="od-sec">מהי <b>{termLabel(t)}</b>? בחרו את ההגדרה הנכונה:</div>
@@ -478,7 +487,7 @@ function Paywall({onClose}){
 function App(){
   const [mode,setMode]=useState('glossary');
   const [glossaryTopic,setGlossaryTopic]=useState('');
-  const changeMode=m=>{ if(m==='glossary')setGlossaryTopic(''); setMode(m); };
+  const changeMode=m=>{ if(m==='crossword' && !needTier('crossword')) return; if(m==='glossary')setGlossaryTopic(''); setMode(m); };
   const openTopic=key=>{ setGlossaryTopic(key); setMode('glossary'); };
   const [dark,setDark]=useLocal('ml-dark',false);
   const [favorites,setFav]=useLocal('ml-favorites',[]);
@@ -494,6 +503,7 @@ function App(){
   const tier=useMemo(()=>SL.tierOf(user,entitlement,Date.now()),[user,entitlement]);
   // Returns true if the feature is accessible; otherwise opens the right gate and returns false.
   function needTier(feature){ if(SL.canAccess(feature,tier)) return true; setGate(!user?'signup':'paywall'); return false; }
+  useEffect(()=>{ _audioLocked=!SL.canAccess('audio',tier); _onAudioLock=()=>setGate('signup'); },[tier]);
   const [newAch,setNewAch]=useState(null); const [confetti,setConfetti]=useState(false);
   const loadingRef=useRef(false); const achInit=useRef(false);
 
@@ -566,15 +576,15 @@ function App(){
       <div className="scroll">
         <div className="view" key={mode}>
           {mode==='glossary' && <Glossary key={glossaryTopic} initialTopic={glossaryTopic} favorites={favorites} studied={studied} toggleFav={toggleFav} toggleStudied={toggleStudied} onOpenTerm={openTerm}/>}
-          {mode==='flashcards' && <Flashcards favorites={favorites} studied={studied} toggleFav={toggleFav} toggleStudied={toggleStudied} onKnow={openVerify}/>}
-          {mode==='quiz' && <Quiz studied={studied} toggleStudied={toggleStudied} favorites={favorites} recordAnswer={recordAnswer} recordQuiz={recordQuiz} fireConfetti={fireConfetti}/>}
+          {mode==='flashcards' && <Flashcards favorites={favorites} studied={studied} toggleFav={toggleFav} toggleStudied={toggleStudied} onKnow={openVerify} tier={tier} onNeedAll={()=>needTier('practice-all')}/>}
+          {mode==='quiz' && <Quiz studied={studied} toggleStudied={toggleStudied} favorites={favorites} recordAnswer={recordAnswer} recordQuiz={recordQuiz} fireConfetti={fireConfetti} tier={tier} onNeedAll={()=>needTier('practice-all')}/>}
           {mode==='crossword' && <Crossword dark={dark}/>}
           {mode==='review' && <ReviewList favorites={favorites} studied={studied} toggleFav={toggleFav} toggleStudied={toggleStudied} goQuiz={()=>setMode('quiz')} onOpenTerm={openTerm}/>}
           {mode==='about' && <About/>}
-          {mode==='profile' && <Profile user={user} studied={studied} favorites={favorites} stats={stats} sync={sync} signIn={signIn} signOut={signOut} onTopic={openTopic} muted={muted} toggleSound={toggleSound}/>}
+          {mode==='profile' && <Profile user={user} studied={studied} favorites={favorites} stats={stats} sync={sync} signIn={signIn} signOut={signOut} onTopic={openTopic} muted={muted} toggleSound={toggleSound} tier={tier}/>}
         </div>
       </div>
-      <Nav mode={mode} setMode={changeMode}/>
+      <Nav mode={mode} setMode={changeMode} tier={tier}/>
       {gate==='signup' && <SignUpGate onClose={()=>setGate(null)} onSignIn={()=>{setGate(null);signIn();}}/>}
       {gate==='paywall' && <Paywall onClose={()=>setGate(null)}/>}
       {qTerm && <TermQuiz key={qTerm.hebrew+(qTerm.verify?'v':'e')} hebrew={qTerm.hebrew} onClose={()=>setQTerm(null)} onResult={onQResult}/>}

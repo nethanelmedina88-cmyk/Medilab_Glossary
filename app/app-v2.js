@@ -25,6 +25,16 @@ const Snd = window.SLSound || {
   }
 };
 const Speak = window.SLSpeak || function () {};
+// Free-tier audio gate: App keeps these in sync with the current tier (see the effect in App).
+let _audioLocked = false,
+  _onAudioLock = null;
+function Speak2(k, s) {
+  if (_audioLocked) {
+    if (_onAudioLock) _onAudioLock();
+    return;
+  }
+  Speak(k, s);
+}
 const maps = SL.buildAliasMaps(GLOSSARY);
 const searchIndex = SL.buildSearchIndex(GLOSSARY);
 const HEB = ['א', 'ב', 'ג', 'ד', 'ה', 'ו', 'ז', 'ח', 'ט', 'י', 'כ', 'ל', 'מ', 'נ', 'ס', 'ע', 'פ', 'צ', 'ק', 'ר', 'ש', 'ת'];
@@ -570,7 +580,8 @@ function Header({
 }
 function Nav({
   mode,
-  setMode
+  setMode,
+  tier
 }) {
   const T = [['glossary', 'מילון', IcList, 'g'], ['flashcards', 'כרטיסיות', IcCards, 'f'], ['quiz', 'מבחון', IcQuiz, 'q'], ['crossword', 'תשבץ', IcGrid, 'x'], ['about', 'אודות', IcInfo, 'g']];
   return /*#__PURE__*/React.createElement("nav", {
@@ -579,7 +590,9 @@ function Nav({
     key: m,
     className: `tab ${c} ${mode === m ? 'on' : ''}`,
     onClick: () => setMode(m)
-  }, /*#__PURE__*/React.createElement(Ic, null), label, /*#__PURE__*/React.createElement("div", {
+  }, !SL.canAccess(m === 'crossword' ? 'crossword' : 'glossary', tier) && /*#__PURE__*/React.createElement("span", {
+    className: "nav-lock"
+  }, "\uD83D\uDD12"), /*#__PURE__*/React.createElement(Ic, null), label, /*#__PURE__*/React.createElement("div", {
     className: "pipe"
   }))));
 }
@@ -615,7 +628,7 @@ function TermCard({
     className: "acts"
   }, /*#__PURE__*/React.createElement("button", {
     className: "ibtn",
-    onClick: () => Speak(t.hebrew, t.nikud),
+    onClick: () => Speak2(t.hebrew, t.nikud),
     title: "\u05D4\u05E7\u05E8\u05D0\u05D4",
     "aria-label": "\u05D4\u05E7\u05E8\u05D0\u05D4"
   }, /*#__PURE__*/React.createElement(IcSpeaker, null)), /*#__PURE__*/React.createElement("button", {
@@ -761,12 +774,22 @@ function Flashcards({
   studied,
   toggleFav,
   toggleStudied,
-  onKnow
+  onKnow,
+  tier,
+  onNeedAll
 }) {
+  const lockTopics = tier === 'free';
   const [deck, setDeck] = useState('all');
-  const [topic, setTopic] = useState('');
+  const [topic, setTopic] = useState(lockTopics ? SL.FREE_TOPIC : '');
   const [i, setI] = useState(0);
   const [flip, setFlip] = useState(false);
+  const pickTopic = next => {
+    if (lockTopics && next !== SL.FREE_TOPIC) {
+      onNeedAll && onNeedAll();
+      return;
+    }
+    setTopic(next);
+  };
   const cards = useMemo(() => {
     let items = GLOSSARY.filter(t => !t.aliasOf && !/^\s*ראה:/.test(t.definition));
     if (topic) items = items.filter(t => t.topic === topic);
@@ -821,9 +844,12 @@ function Flashcards({
   }, "\u05DC\u05D0 \u05E0\u05DC\u05DE\u05D3\u05D5"), /*#__PURE__*/React.createElement("button", {
     className: `chip ${deck === 'review' ? 'on' : ''}`,
     onClick: () => setDeck('review')
-  }, /*#__PURE__*/React.createElement(IcPin, null), " \u05DC\u05D7\u05D6\u05E8\u05D4")), /*#__PURE__*/React.createElement(TopicChips, {
+  }, /*#__PURE__*/React.createElement(IcPin, null), " \u05DC\u05D7\u05D6\u05E8\u05D4")), lockTopics && /*#__PURE__*/React.createElement("div", {
+    className: "free-hint",
+    onClick: () => onNeedAll && onNeedAll()
+  }, "\uD83D\uDD13 \u05D2\u05E8\u05E1\u05D4 \u05D7\u05D9\u05E0\u05DE\u05D9\u05EA \u2014 \u05E0\u05D5\u05E9\u05D0 \u05DC\u05D3\u05D5\u05D2\u05DE\u05D4. \u05D4\u05D9\u05E8\u05E9\u05DE\u05D5 \u05D1\u05D7\u05D9\u05E0\u05DD \u05DC\u05DB\u05DC 21 \u05D4\u05E0\u05D5\u05E9\u05D0\u05D9\u05DD"), /*#__PURE__*/React.createElement(TopicChips, {
     value: topic,
-    onPick: setTopic
+    onPick: pickTopic
   }), cards.length === 0 ? /*#__PURE__*/React.createElement("div", {
     className: "empty"
   }, /*#__PURE__*/React.createElement("div", {
@@ -875,7 +901,7 @@ function Flashcards({
     "aria-label": "\u05D4\u05E7\u05D5\u05D3\u05DD"
   }, "\u2192"), /*#__PURE__*/React.createElement("button", {
     className: "fc-nav",
-    onClick: () => Speak(flip ? card.definition : card.hebrew, flip ? null : card.nikud),
+    onClick: () => Speak2(flip ? card.definition : card.hebrew, flip ? null : card.nikud),
     "aria-label": "\u05D4\u05E7\u05E8\u05D0\u05D4",
     title: "\u05D4\u05E7\u05E8\u05D0\u05D4"
   }, /*#__PURE__*/React.createElement(IcSpeaker, null)), /*#__PURE__*/React.createElement("button", {
@@ -935,11 +961,21 @@ function Quiz({
   favorites,
   recordAnswer,
   recordQuiz,
-  fireConfetti
+  fireConfetti,
+  tier,
+  onNeedAll
 }) {
-  const [topic, setTopic] = useState('');
+  const lockTopics = tier === 'free';
+  const [topic, setTopic] = useState(lockTopics ? SL.FREE_TOPIC : '');
   const [len, setLen] = useState(10);
   const [hardOnly, setHardOnly] = useState(false);
+  const pickTopic = next => {
+    if (lockTopics && next !== SL.FREE_TOPIC) {
+      onNeedAll && onNeedAll();
+      return;
+    }
+    setTopic(next);
+  };
   const [quiz, setQuiz] = useState(null);
   const [qi, setQi] = useState(0);
   const [answered, setAnswered] = useState(false);
@@ -1008,9 +1044,12 @@ function Quiz({
     className: "hero"
   }, /*#__PURE__*/React.createElement("h1", null, "\u05DE\u05D1\u05D7\u05D5\u05DF"), /*#__PURE__*/React.createElement("p", null, "\u05D1\u05D7\u05D9\u05E8\u05D4 \u05DE\u05E8\u05D5\u05D1\u05D4 \xB7 \u05D4\u05E9\u05DC\u05DE\u05EA \u05DE\u05D5\u05E9\u05D2 \xB7 \u05D1\u05D3\u05D9\u05E7\u05D4 \u05E2\u05E6\u05DE\u05D9\u05EA")), /*#__PURE__*/React.createElement("div", {
     className: "setup"
-  }, /*#__PURE__*/React.createElement("h2", null, "\u05D1\u05D7\u05E8\u05D5 \u05E0\u05D5\u05E9\u05D0"), /*#__PURE__*/React.createElement(TopicChips, {
+  }, lockTopics && /*#__PURE__*/React.createElement("div", {
+    className: "free-hint",
+    onClick: () => onNeedAll && onNeedAll()
+  }, "\uD83D\uDD13 \u05D2\u05E8\u05E1\u05D4 \u05D7\u05D9\u05E0\u05DE\u05D9\u05EA \u2014 \u05E0\u05D5\u05E9\u05D0 \u05DC\u05D3\u05D5\u05D2\u05DE\u05D4. \u05D4\u05D9\u05E8\u05E9\u05DE\u05D5 \u05D1\u05D7\u05D9\u05E0\u05DD \u05DC\u05DB\u05DC 21 \u05D4\u05E0\u05D5\u05E9\u05D0\u05D9\u05DD"), /*#__PURE__*/React.createElement("h2", null, "\u05D1\u05D7\u05E8\u05D5 \u05E0\u05D5\u05E9\u05D0"), /*#__PURE__*/React.createElement(TopicChips, {
     value: topic,
-    onPick: setTopic
+    onPick: pickTopic
   }), /*#__PURE__*/React.createElement("div", {
     style: {
       margin: '12px 0'
@@ -1090,7 +1129,7 @@ function Quiz({
     className: "hl mnk"
   }, termLabel(item.term)), "?") : item.prompt), /*#__PURE__*/React.createElement("button", {
     className: "chip",
-    onClick: () => Speak(item.kind === 'pick-definition' ? item.term.hebrew : item.prompt, item.kind === 'pick-definition' ? item.term.nikud : null),
+    onClick: () => Speak2(item.kind === 'pick-definition' ? item.term.hebrew : item.prompt, item.kind === 'pick-definition' ? item.term.nikud : null),
     style: {
       marginBottom: 10
     },
@@ -1352,7 +1391,8 @@ function Profile({
   signOut,
   onTopic,
   muted,
-  toggleSound
+  toggleSound,
+  tier
 }) {
   const m = metrics(studied, favorites, stats);
   const earned = earnedIds(m);
@@ -1375,7 +1415,9 @@ function Profile({
     src: user.photoURL,
     referrerPolicy: "no-referrer",
     alt: ""
-  }) : '👤'), user ? /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("div", {
+  }) : '👤'), /*#__PURE__*/React.createElement("div", {
+    className: `tier-badge tier-${tier}`
+  }, tier === SL.TIER.PAID ? 'מסלול בגרות ✓' : tier === SL.TIER.REGISTERED ? 'מסלול הרשמה' : 'אורח'), user ? /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("div", {
     className: "prof-name"
   }, user.displayName || 'תלמיד/ה'), /*#__PURE__*/React.createElement("div", {
     className: "prof-email"
@@ -1617,7 +1659,7 @@ function TermQuiz({
       height: 34,
       verticalAlign: 'middle'
     },
-    onClick: () => Speak(t.hebrew, t.nikud),
+    onClick: () => Speak2(t.hebrew, t.nikud),
     "aria-label": "\u05D4\u05E7\u05E8\u05D0\u05D4"
   }, /*#__PURE__*/React.createElement(IcSpeaker, null))), t.english && /*#__PURE__*/React.createElement("div", {
     className: "en"
@@ -1703,6 +1745,7 @@ function App() {
   const [mode, setMode] = useState('glossary');
   const [glossaryTopic, setGlossaryTopic] = useState('');
   const changeMode = m => {
+    if (m === 'crossword' && !needTier('crossword')) return;
     if (m === 'glossary') setGlossaryTopic('');
     setMode(m);
   };
@@ -1736,6 +1779,10 @@ function App() {
     setGate(!user ? 'signup' : 'paywall');
     return false;
   }
+  useEffect(() => {
+    _audioLocked = !SL.canAccess('audio', tier);
+    _onAudioLock = () => setGate('signup');
+  }, [tier]);
   const [newAch, setNewAch] = useState(null);
   const [confetti, setConfetti] = useState(false);
   const loadingRef = useRef(false);
@@ -1992,14 +2039,18 @@ function App() {
     studied: studied,
     toggleFav: toggleFav,
     toggleStudied: toggleStudied,
-    onKnow: openVerify
+    onKnow: openVerify,
+    tier: tier,
+    onNeedAll: () => needTier('practice-all')
   }), mode === 'quiz' && /*#__PURE__*/React.createElement(Quiz, {
     studied: studied,
     toggleStudied: toggleStudied,
     favorites: favorites,
     recordAnswer: recordAnswer,
     recordQuiz: recordQuiz,
-    fireConfetti: fireConfetti
+    fireConfetti: fireConfetti,
+    tier: tier,
+    onNeedAll: () => needTier('practice-all')
   }), mode === 'crossword' && /*#__PURE__*/React.createElement(Crossword, {
     dark: dark
   }), mode === 'review' && /*#__PURE__*/React.createElement(ReviewList, {
@@ -2019,10 +2070,12 @@ function App() {
     signOut: signOut,
     onTopic: openTopic,
     muted: muted,
-    toggleSound: toggleSound
+    toggleSound: toggleSound,
+    tier: tier
   }))), /*#__PURE__*/React.createElement(Nav, {
     mode: mode,
-    setMode: changeMode
+    setMode: changeMode,
+    tier: tier
   }), gate === 'signup' && /*#__PURE__*/React.createElement(SignUpGate, {
     onClose: () => setGate(null),
     onSignIn: () => {
