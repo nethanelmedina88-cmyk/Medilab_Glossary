@@ -1,4 +1,4 @@
-const CACHE_NAME = 'shlifim-v43';
+const CACHE_NAME = 'shlifim-v44';
 const FILES_TO_CACHE = [
   './',
   './index.html',
@@ -12,6 +12,7 @@ const FILES_TO_CACHE = [
   './lib/search.js',
   './lib/quiz.js',
   './lib/validate.js',
+  './lib/tiers.js',
   './app/achievements.js',
   './audio/manifest.js',
   './app/sound.js',
