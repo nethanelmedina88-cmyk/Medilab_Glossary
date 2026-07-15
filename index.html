@@ -24,8 +24,6 @@
 #intro{position:fixed;inset:0;z-index:99999;background:#fff;display:flex;align-items:center;justify-content:center;opacity:1;transition:opacity .55s ease}
 #intro.hide{opacity:0;pointer-events:none}
 #intro video{width:100%;height:100%;object-fit:contain;background:#fff}
-#introSkip{position:absolute;bottom:22px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,.06);color:#444;border:none;border-radius:20px;padding:8px 20px;font:600 14px 'Assistant',system-ui,sans-serif;cursor:pointer;-webkit-tap-highlight-color:transparent}
-#introSkip:hover{background:rgba(0,0,0,.1)}
 </style>
 </head>
 <body>
@@ -33,7 +31,6 @@
   <video id="introVid" muted autoplay playsinline preload="auto">
     <source src="intro.mp4" type="video/mp4">
   </video>
-  <button id="introSkip" type="button">דלג ›</button>
 </div>
 <div id="root"><div class="splash"><img src="logo.jpg" alt="MediLab"/><div class="splash-bar"><i></i></div></div></div>
 <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
@@ -56,19 +53,23 @@
 <script src="app/mlicons.js"></script>
 <script src="app/app-v2.js"></script>
 <script>
-/* intro video: play once on entry, then fade out to reveal the app. Always dismissable + self-healing. */
+/* intro video: play once per calendar day, then fade out to reveal the app. Self-healing. */
 (function(){
   var intro=document.getElementById('intro'); if(!intro) return;
-  var vid=document.getElementById('introVid'), skip=document.getElementById('introSkip'), done=false;
+  var vid=document.getElementById('introVid'), done=false;
   function hide(){ if(done) return; done=true; intro.classList.add('hide'); try{ vid && vid.pause(); }catch(e){} setTimeout(function(){ if(intro && intro.parentNode) intro.parentNode.removeChild(intro); },600); }
+  // show only on the first entry of the day — skip on refreshes / later entries the same day
+  var today=new Date().toDateString(), last=null;
+  try{ last=localStorage.getItem('ml-intro-day'); }catch(e){}
+  if(last===today){ if(intro.parentNode) intro.parentNode.removeChild(intro); return; }
+  try{ localStorage.setItem('ml-intro-day', today); }catch(e){}
   if(vid){
     vid.addEventListener('ended', hide);
     vid.addEventListener('error', hide);
     var p = vid.play && vid.play();
-    if(p && p.catch) p.catch(function(){ /* autoplay blocked: leave it up, user taps Skip or the safety timer fires */ });
+    if(p && p.catch) p.catch(function(){ /* autoplay blocked: safety timer will dismiss */ });
   } else { hide(); }
-  if(skip) skip.addEventListener('click', hide);
-  intro.addEventListener('click', function(e){ if(e.target!==skip) hide(); }); // tap anywhere to skip
+  intro.addEventListener('click', hide); // tap anywhere to dismiss (no visible button)
   setTimeout(hide, 7000); // safety: never trap the user even if the video stalls
 })();
 </script>
