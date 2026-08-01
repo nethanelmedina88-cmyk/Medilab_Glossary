@@ -83,7 +83,8 @@
 
   .win{position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:rgba(10,15,22,.55);z-index:50}
   .win.on{display:flex}
-  .win .card{background:var(--surface);border-radius:22px;padding:26px 22px;text-align:center;max-width:330px;box-shadow:0 22px 55px rgba(0,0,0,.35)}
+  .win .card{position:relative;background:var(--surface);border-radius:22px;padding:26px 22px;text-align:center;max-width:330px;box-shadow:0 22px 55px rgba(0,0,0,.35)}
+  .win .wx{position:absolute;top:8px;inset-inline-start:10px;background:none;border:none;font-size:20px;line-height:1;color:var(--text-3);cursor:pointer;padding:4px}
   .win .em{font-size:52px} .win h2{font-family:'Secular One';margin:6px 0 4px}
   .win .stat{display:flex;gap:16px;justify-content:center;margin:12px 0 16px}
   .win .stat div b{font-family:'Secular One';font-size:20px;display:block;color:var(--blue-strong)}
@@ -136,6 +137,7 @@
 </div>
 
 <div class="win" id="win"><div class="card">
+  <button class="wx" id="wclose" aria-label="סגירה">✕</button>
   <div class="em">🎉</div><h2>כל הכבוד!</h2>
   <div class="stat"><div><b id="wtime">0:00</b><span>זמן</span></div><div><b id="whints">0</b><span>רמזים</span></div><div><b id="wwords">0</b><span>מילים</span></div></div>
   <button class="btn pri" style="width:100%" id="wnew">תשבץ חדש</button>
@@ -248,8 +250,17 @@
   var model=null, inputs={}, sel={entry:null,cellIdx:0}, timer={t:0,iv:null,started:false}, hints=0;
   var solved={}, entryById={}, progFocus=false, prevCellKey=null;
   function ck(r,c){ return r+','+c; }
-  function focusCell(inp){ progFocus=true; try{ inp.focus(); inp.scrollIntoView({block:'center',behavior:'smooth'}); }catch(e){} progFocus=false; }
+  function focusCell(inp){ progFocus=true; try{ inp.focus({preventScroll:true}); }catch(e){ try{inp.focus();}catch(e2){} } progFocus=false; }
   function isSolved(e){ return !!solved[e.dir+e.num]; }
+  // a cell is "locked" once it belongs to a correctly-solved (green) word — its letter must not change
+  function locked(r,c){ return Object.keys(solved).some(function(sid){ var se=entryById[sid]; return se && se.cells.some(function(q){return q[0]===r&&q[1]===c;}); }); }
+  // size the grid so the WHOLE puzzle fits on screen (no scrolling), based on columns/rows + available space
+  function fitGrid(){ if(!model) return; var grid=document.getElementById('grid'); var wrap=grid.parentNode;
+    var availW=wrap.clientWidth-14, top=wrap.getBoundingClientRect().top;
+    var availH=window.innerHeight-top-96;   // reserve room for the action buttons + clues below
+    var cell=Math.floor(Math.min(availW/model.cols, availH/model.rows));
+    cell=Math.max(16,Math.min(cell,40));
+    document.documentElement.style.setProperty('--cell',cell+'px'); }
 
   function render(){
     var grid=document.getElementById('grid');
@@ -273,6 +284,7 @@
       grid.appendChild(div);
     }
     renderClues();
+    fitGrid();
     entryById={}; solved={}; prevCellKey=null; model.entries.forEach(function(e){ entryById[e.dir+e.num]=e; });
     // select first entry
     var first=model.entries.slice().sort(function(a,b){return a.num-b.num || (a.dir<b.dir?-1:1);})[0];
@@ -322,21 +334,26 @@
     if(es.length>1 && sel.entry && prevCellKey===key){ var other=es.filter(function(x){return x!==sel.entry;})[0]; if(other){ applySel(other,r,c); focusCell(inputs[key]); } }
     prevCellKey=key; }
   function onKey(ev){ var inp=ev.target;
-    if(ev.key==='Backspace'){ ev.preventDefault(); if(inp.value){ inp.value=''; inp.parentNode.classList.remove('ok','bad'); } else advance(-1); markDone(); }
+    if(ev.key==='Backspace'){ ev.preventDefault(); var br=+inp.dataset.r,bc=+inp.dataset.c;
+      if(locked(br,bc)){ advance(-1); }                                            // don't erase a solved (green) letter
+      else if(inp.value){ inp.value=''; inp.parentNode.classList.remove('ok','bad'); } else advance(-1); markDone(); }
     else if(ev.key==='ArrowRight'){ ev.preventDefault(); focusRC(+inp.dataset.r,+inp.dataset.c-1); }
     else if(ev.key==='ArrowLeft'){ ev.preventDefault(); focusRC(+inp.dataset.r,+inp.dataset.c+1); }
     else if(ev.key==='ArrowUp'){ ev.preventDefault(); focusRC(+inp.dataset.r-1,+inp.dataset.c); }
     else if(ev.key==='ArrowDown'){ ev.preventDefault(); focusRC(+inp.dataset.r+1,+inp.dataset.c); }
     else if(/^[א-ת]$/.test(ev.key)){ ev.preventDefault(); typeCh(norm(ev.key)); }
   }
-  function onInput(ev){ var v=norm(ev.target.value); if(v){ ev.target.value=''; typeCh(v.slice(-1)); } else ev.target.value=''; }
+  function onInput(ev){ if(locked(+ev.target.dataset.r,+ev.target.dataset.c)){ ev.target.value=''; advance(1); return; } var v=norm(ev.target.value); if(v){ ev.target.value=''; typeCh(v.slice(-1)); } else ev.target.value=''; }
   function focusRC(r,c){ var inp=inputs[ck(r,c)]; if(inp){ inp.focus(); } }
   function startTimer(){ if(timer.started) return; timer.started=true; timer.iv=setInterval(function(){ timer.t++; document.getElementById('timerT').textContent=fmt(timer.t); },1000); }
   function fmt(s){ var m=Math.floor(s/60); return m+':'+('0'+(s%60)).slice(-2); }
 
   function typeCh(ch){
     startTimer();
-    if(!sel.entry) return; var p=sel.entry.cells[sel.cellIdx]; if(!p) return;
+    if(!sel.entry) return;
+    var p=sel.entry.cells[sel.cellIdx];
+    while(p && locked(p[0],p[1])){ sel.cellIdx++; p=sel.entry.cells[sel.cellIdx]; }   // skip locked (green) letters
+    if(!p){ if(wordComplete(sel.entry)) nextClue(1,true); return; }
     var inp=inputs[ck(p[0],p[1])]; inp.value=ch; inp.parentNode.classList.remove('ok','bad');
     entriesAt(p[0],p[1]).forEach(function(e){ evalWord(e,true); });   // immediate feedback
     advance(1); maybeWin();
@@ -352,10 +369,10 @@
   }
   function markBad(e,on){ e.cells.forEach(function(p){ var el=inputs[ck(p[0],p[1])].parentNode;
     if(on){ if(!el.classList.contains('ok')) el.classList.add('bad'); } else el.classList.remove('bad'); }); }
-  function setWordOk(e,on){ e.cells.forEach(function(p){ var el=inputs[ck(p[0],p[1])].parentNode;
-    if(on){ el.classList.add('ok'); el.classList.remove('bad'); }
+  function setWordOk(e,on){ e.cells.forEach(function(p){ var inp=inputs[ck(p[0],p[1])]; var el=inp.parentNode;
+    if(on){ el.classList.add('ok'); el.classList.remove('bad'); inp.readOnly=true; }   // lock: green letters can't be edited
     else { var covered=Object.keys(solved).some(function(sid){ var se=entryById[sid]; return se&&se.cells.some(function(q){return q[0]===p[0]&&q[1]===p[1];}); });
-      if(!covered) el.classList.remove('ok'); } }); }
+      inp.readOnly=covered; if(!covered) el.classList.remove('ok'); } }); }
   function markClueDone(e,on){ var cl=document.querySelector('.clue[data-id="'+(e.dir+e.num)+'"]'); if(cl) cl.classList.toggle('done',on); }
   function wordDing(){ try{ var a=new (window.AudioContext||window.webkitAudioContext)();
     [660,988].forEach(function(f,i){ var o=a.createOscillator(),g=a.createGain(); o.type='triangle'; o.frequency.value=f; o.connect(g); g.connect(a.destination);
@@ -390,7 +407,7 @@
     var inp=inputs[ck(p[0],p[1])]; inp.value=model.cells[ck(p[0],p[1])].ans; inp.parentNode.classList.remove('bad'); inp.parentNode.classList.add('ok');
     hints++; document.getElementById('hintsT').textContent=hints;
     entriesAt(p[0],p[1]).forEach(function(e){ evalWord(e,false); }); advance(1); maybeWin(); }
-  function clearAll(){ solved={}; Object.keys(model.cells).forEach(function(k){ inputs[k].value=''; inputs[k].parentNode.classList.remove('ok','bad'); }); markDone(); }
+  function clearAll(){ solved={}; Object.keys(model.cells).forEach(function(k){ inputs[k].value=''; inputs[k].readOnly=false; inputs[k].parentNode.classList.remove('ok','bad'); }); markDone(); }
 
   function win(){ if(timer.iv){ clearInterval(timer.iv); timer.iv=null; }
     document.getElementById('wtime').textContent=fmt(timer.t);
@@ -435,7 +452,10 @@
     var dk=document.getElementById('dark'); var isDark=false; try{ isDark=localStorage.getItem('ml-cw-dark')==='1'; }catch(e){}
     function applyDark(){ document.documentElement.classList.toggle('dark',isDark); dk.textContent=isDark?'☀️':'🌙'; }
     applyDark(); dk.addEventListener('click',function(){ isDark=!isDark; try{localStorage.setItem('ml-cw-dark',isDark?'1':'0');}catch(e){} applyDark(); });
-    buildPuzzle();
+    document.getElementById('wclose').addEventListener('click',function(){ document.getElementById('win').classList.remove('on'); });   // dismiss the win / "next puzzle" prompt
+    window.addEventListener('resize',fitGrid);
+    window.addEventListener('orientationchange',function(){ setTimeout(fitGrid,250); });
+    buildPuzzle(); setTimeout(fitGrid,60);
   }
   if(GLOSSARY.length) boot();
 })();
