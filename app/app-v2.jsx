@@ -190,10 +190,10 @@ function Header({pinCount,dark,setDark,user,onProfile,onReview,onLogo}){
     <div className="hdr-spacer"></div>
     <button className="streak" onClick={onReview} title="מושגים לחזרה" style={pinCount?{color:'var(--coral-700)',borderColor:'var(--coral-500)'}:undefined}><IcPin/> {pinCount||0}</button>
     <button className="icon-toggle" onClick={()=>setDark(d=>!d)} aria-label="מצב כהה">{dark?'☀️':'🌙'}</button>
-    <button className="avatar" onClick={onProfile} aria-label="אזור אישי">{user&&user.photoURL?<img src={user.photoURL} referrerPolicy="no-referrer" alt=""/>:'👤'}</button>
+    <button className="icon-toggle" onClick={onLogo} aria-label="אודות" title="אודות">ℹ️</button>
   </header>); }
-function Nav({mode,setMode,tier}){ const T=[['glossary','מילון',IcList,'g'],['flashcards','כרטיסיות',IcCards,'f'],['quiz','מבחון',IcQuiz,'q'],['crossword','תשבץ',IcGrid,'x'],['about','אודות',IcInfo,'g']];
-  return (<nav className="nav">{T.map(([m,label,Ic,c])=>(<button key={m} className={`tab ${c} ${mode===m?'on':''}`} onClick={()=>setMode(m)}>{!SL.canAccess(m==='crossword'?'crossword':'glossary',tier) && <span className="nav-lock">🔒</span>}<Ic/>{label}<div className="pipe"></div></button>))}</nav>); }
+function Nav({mode,setMode,tier,user}){ const T=[['glossary','מילון',IcList,'g'],['flashcards','כרטיסיות',IcCards,'f'],['quiz','מבחון',IcQuiz,'q'],['crossword','תשבץ',IcGrid,'x'],['profile','אזור אישי',null,'g']];
+  return (<nav className="nav">{T.map(([m,label,Ic,c])=>(<button key={m} className={`tab ${c} ${mode===m?'on':''}`} onClick={()=>setMode(m)}>{!SL.canAccess(m==='crossword'?'crossword':'glossary',tier) && <span className="nav-lock">🔒</span>}{m==='profile'?<span className="nav-av">{user&&user.photoURL?<img src={user.photoURL} referrerPolicy="no-referrer" alt=""/>:'👤'}</span>:<Ic/>}{label}<div className="pipe"></div></button>))}</nav>); }
 
 /* ---------- GLOSSARY ---------- */
 function TermCard({t,q,fav,studied,onFav,onStudied,onOpenTerm}){
@@ -608,7 +608,7 @@ function App(){
           {mode==='profile' && <Profile user={user} studied={studied} favorites={favorites} stats={stats} sync={sync} signIn={signIn} signOut={signOut} onTopic={openTopic} muted={muted} toggleSound={toggleSound} tier={tier}/>}
         </div>
       </div>
-      <Nav mode={mode} setMode={changeMode} tier={tier}/>
+      <Nav mode={mode} setMode={changeMode} tier={tier} user={user}/>
       {gate==='signup' && <SignUpGate onClose={()=>setGate(null)} onSignIn={()=>{setGate(null);signIn();}}/>}
       {gate==='paywall' && <Paywall onClose={()=>setGate(null)} user={user} onSignIn={()=>{setGate(null);signIn();}}/>}
       {qTerm && <TermQuiz key={qTerm.hebrew+(qTerm.verify?'v':'e')} hebrew={qTerm.hebrew} onClose={()=>setQTerm(null)} onResult={onQResult}/>}

@@ -569,21 +569,19 @@ function Header({
     onClick: () => setDark(d => !d),
     "aria-label": "\u05DE\u05E6\u05D1 \u05DB\u05D4\u05D4"
   }, dark ? '☀️' : '🌙'), /*#__PURE__*/React.createElement("button", {
-    className: "avatar",
-    onClick: onProfile,
-    "aria-label": "\u05D0\u05D6\u05D5\u05E8 \u05D0\u05D9\u05E9\u05D9"
-  }, user && user.photoURL ? /*#__PURE__*/React.createElement("img", {
-    src: user.photoURL,
-    referrerPolicy: "no-referrer",
-    alt: ""
-  }) : '👤'));
+    className: "icon-toggle",
+    onClick: onLogo,
+    "aria-label": "\u05D0\u05D5\u05D3\u05D5\u05EA",
+    title: "\u05D0\u05D5\u05D3\u05D5\u05EA"
+  }, "\u2139\uFE0F"));
 }
 function Nav({
   mode,
   setMode,
-  tier
+  tier,
+  user
 }) {
-  const T = [['glossary', 'מילון', IcList, 'g'], ['flashcards', 'כרטיסיות', IcCards, 'f'], ['quiz', 'מבחון', IcQuiz, 'q'], ['crossword', 'תשבץ', IcGrid, 'x'], ['about', 'אודות', IcInfo, 'g']];
+  const T = [['glossary', 'מילון', IcList, 'g'], ['flashcards', 'כרטיסיות', IcCards, 'f'], ['quiz', 'מבחון', IcQuiz, 'q'], ['crossword', 'תשבץ', IcGrid, 'x'], ['profile', 'אזור אישי', null, 'g']];
   return /*#__PURE__*/React.createElement("nav", {
     className: "nav"
   }, T.map(([m, label, Ic, c]) => /*#__PURE__*/React.createElement("button", {
@@ -592,7 +590,13 @@ function Nav({
     onClick: () => setMode(m)
   }, !SL.canAccess(m === 'crossword' ? 'crossword' : 'glossary', tier) && /*#__PURE__*/React.createElement("span", {
     className: "nav-lock"
-  }, "\uD83D\uDD12"), /*#__PURE__*/React.createElement(Ic, null), label, /*#__PURE__*/React.createElement("div", {
+  }, "\uD83D\uDD12"), m === 'profile' ? /*#__PURE__*/React.createElement("span", {
+    className: "nav-av"
+  }, user && user.photoURL ? /*#__PURE__*/React.createElement("img", {
+    src: user.photoURL,
+    referrerPolicy: "no-referrer",
+    alt: ""
+  }) : '👤') : /*#__PURE__*/React.createElement(Ic, null), label, /*#__PURE__*/React.createElement("div", {
     className: "pipe"
   }))));
 }
@@ -2155,7 +2159,8 @@ function App() {
   }))), /*#__PURE__*/React.createElement(Nav, {
     mode: mode,
     setMode: changeMode,
-    tier: tier
+    tier: tier,
+    user: user
   }), gate === 'signup' && /*#__PURE__*/React.createElement(SignUpGate, {
     onClose: () => setGate(null),
     onSignIn: () => {
