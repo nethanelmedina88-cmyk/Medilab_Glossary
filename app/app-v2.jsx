@@ -575,14 +575,18 @@ function App(){
 
   const signIn=async()=>{ if(!auth){alert('אין חיבור לאינטרנט');return;}
     try{
-      if(IS_IOS||IS_STANDALONE){ await auth.signInWithRedirect(googleProvider); }   // popups fail on iOS Safari / standalone PWAs
-      else { await auth.signInWithPopup(googleProvider); }
+      // Popup returns the credential to the app via postMessage (same-origin), so it works
+      // even under browser storage partitioning. signInWithRedirect is NOT used as the primary
+      // path because our app origin (github.io) differs from authDomain (firebaseapp.com):
+      // after the redirect the partitioned auth result can't be read back and the user stays
+      // signed-out ("guest"). Redirect stays only as a last-resort fallback if a popup is blocked.
+      await auth.signInWithPopup(googleProvider);
     }catch(e){
       const c=e&&e.code;
-      if(c==='auth/popup-blocked'||c==='auth/cancelled-popup-request'||c==='auth/operation-not-supported-in-this-environment'){
+      if(c==='auth/popup-closed-by-user'||c==='auth/cancelled-popup-request') return;   // user cancelled — no error
+      if(c==='auth/popup-blocked'||c==='auth/operation-not-supported-in-this-environment'){
         try{ await auth.signInWithRedirect(googleProvider); return; }catch(e2){ alert('שגיאת התחברות: '+(e2.message||e2)); return; }
       }
-      if(c==='auth/popup-closed-by-user') return;   // user cancelled — no error popup
       alert('שגיאת התחברות: '+(e.message||e));
     } };
   const signOut=async()=>{ loadingRef.current=true; setEntitlement(null); try{ await auth.signOut(); }catch(e){} setUser(null); setTimeout(()=>{loadingRef.current=false;},600); };
