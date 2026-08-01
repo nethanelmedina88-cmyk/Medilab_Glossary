@@ -59,7 +59,7 @@
   html.dark .cell{border-color:#33424e;background:#0f1922}
   .cell.block{border:none;background:transparent}
   .cell input{width:100%;height:100%;border:none;background:transparent;text-align:center;font-family:'Secular One';font-weight:700;
-    font-size:calc(var(--cell)*.5);color:var(--text);outline:none;padding:0;caret-color:transparent;cursor:pointer}
+    font-size:calc(var(--cell)*.64);color:var(--text);outline:none;padding:0;caret-color:transparent;cursor:pointer}
   .cell .num{position:absolute;top:0;right:2px;font-size:calc(var(--cell)*.24);color:var(--text-3);font-weight:800;line-height:1.1}
   .cell .arr{position:absolute;bottom:0;left:2px;font-size:calc(var(--cell)*.3);color:var(--blue);line-height:1}
   .cell.selword{background:#EAF6FB} html.dark .cell.selword{background:#13283a}
@@ -259,7 +259,7 @@
     var availW=wrap.clientWidth-14, top=wrap.getBoundingClientRect().top;
     var availH=window.innerHeight-top-96;   // reserve room for the action buttons + clues below
     var cell=Math.floor(Math.min(availW/model.cols, availH/model.rows));
-    cell=Math.max(16,Math.min(cell,40));
+    cell=Math.max(26,Math.min(cell,44));   // never shrink below a readable size (letters stay legible; grid may scroll a touch on huge puzzles)
     document.documentElement.style.setProperty('--cell',cell+'px'); }
 
   function render(){
