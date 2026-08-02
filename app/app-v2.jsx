@@ -29,6 +29,10 @@ function metrics(studied,favorites,stats){
     answered, correct, accuracy:answered?correct/answered:0, quizzes:stats.quizzes||0, perfect:stats.perfect||0,
     topicsCompleted:tc, topicDone, usedDark:!!stats.usedDark, cwSolved:stats.cwSolved||0 };
 }
+// Goal-gradient: always show a NEAR target instead of the distant total, so the bar
+// never reads "0 / 464". Milestones are real thresholds — nothing is faked.
+const MILESTONES=[10,25,50,100,150,200,300];
+function nextGoal(n,total){ for(let i=0;i<MILESTONES.length;i++){ if(n<MILESTONES[i]&&MILESTONES[i]<total) return MILESTONES[i]; } return total; }
 const earnedIds=m=>ACH.filter(a=>{try{return a.check(m);}catch(e){return false;}}).map(a=>a.id);
 const uniq=arr=>Array.from(new Set(arr));
 const fmtSec=s=>Math.floor(s/60)+':'+('0'+(Math.round(s)%60)).slice(-2);
@@ -318,6 +322,12 @@ function Quiz({studied,toggleStudied,favorites,recordAnswer,recordQuiz,fireConfe
   useEffect(()=>{ if(!examMode||!quiz||qi>=quiz.length) return; if(timeLeft<=0){ recordQuiz(score,quiz.length); setQi(quiz.length); return; } const id=setTimeout(()=>setTimeLeft(t=>t-1),1000); return ()=>clearTimeout(id); },[examMode,quiz,qi,timeLeft]); // eslint-disable-line
   if(!quiz) return (<>
     <div className="hero"><h1>מבחון</h1><p>בחירה מרובה · השלמת מושג · בדיקה עצמית</p></div>
+    {/* smart default: a ready-to-go quiz, so nobody has to fill a form first */}
+    <div className="quickstart">
+      <div className="qs-txt"><b>מבחון מוכן לכם</b><span>{len} שאלות · {topic||'כל הנושאים'}{hardOnly?' · לחזרה בלבד':''}{weakSpots?' · חזרה ממוקדת':''}{examMode?' · מצב בחינה':''}</span></div>
+      <button className="btn btn-accent" onClick={start} disabled={pool.length<3}>יאללה ←</button>
+    </div>
+    <p className="qs-or">או שנו את ההגדרות לפי הטעם שלכם:</p>
     <div className="setup">{lockTopics && <div className="free-hint" onClick={()=>onNeedAll&&onNeedAll()}>🔓 גרסה חינמית — נושא לדוגמה. הירשמו בחינם לכל 21 הנושאים</div>}<h2>בחרו נושא</h2><TopicChips value={topic} onPick={pickTopic}/>
       <div style={{margin:'12px 0'}}><button className={`chip ${hardOnly?'on':''}`} onClick={()=>setHardOnly(h=>!h)} style={hardOnly?{background:'var(--coral-500)',color:'#fff',borderColor:'var(--coral-700)'}:undefined}><IcPin/> מושגים לחזרה בלבד ({favorites.length})</button></div>
       <div style={{margin:'0 0 12px',display:'flex',gap:8,flexWrap:'wrap'}}>
@@ -325,7 +335,7 @@ function Quiz({studied,toggleStudied,favorites,recordAnswer,recordQuiz,fireConfe
         <button className={`chip ${examMode?'on':''}`} onClick={()=>{ if(!examMode && !needTier('exam'))return; setExamMode(e=>!e); }} style={examMode?{background:'var(--accent-strong)',color:'#fff',borderColor:'var(--accent-strong)'}:undefined}>⏱️ מצב בחינה</button>
       </div>
       <h2>מספר שאלות</h2>
-      <div className="seg">{[5,10,15,20].map(n=>(<button key={n} className={`chip ${len===n?'on':''}`} onClick={()=>setLen(n)}>{n}</button>))}</div>
+      <div className="seg">{[5,10,15,20].map(n=>(<button key={n} className={`chip ${len===n?'on':''}`} onClick={()=>setLen(n)}>{n}{n===10&&<i className="rec">מומלץ</i>}</button>))}</div>
       <button className="btn btn-accent" style={{width:'100%'}} onClick={start} disabled={pool.length<3}>{pool.length<3?'מעט מדי מושגים בסינון הזה':`התחילו מבחון (${pool.length} מושגים) ←`}</button>
     </div></>);
   if(qi>=quiz.length){ const pct=Math.round(score/quiz.length*100);
@@ -407,9 +417,28 @@ function About(){
 /* ---------- PROFILE / STATS / ACHIEVEMENTS ---------- */
 function Ring({pct,color}){ const r=34,c=2*Math.PI*r,off=c*(1-pct/100);
   return (<svg width="84" height="84" viewBox="0 0 84 84" className="ring"><circle cx="42" cy="42" r={r} fill="none" stroke="var(--surface-2)" strokeWidth="9"/><circle cx="42" cy="42" r={r} fill="none" stroke={color} strokeWidth="9" strokeLinecap="round" strokeDasharray={c} strokeDashoffset={off} transform="rotate(-90 42 42)"/><text x="42" y="48" textAnchor="middle" fontFamily="Secular One" fontWeight="800" fontSize="20" fill="var(--text)">{pct}%</text></svg>); }
+// Honest head start: step 1 is genuinely complete — you are looking at the app right now.
+function Journey({m}){
+  const steps=[
+    {t:'פתחתם את שליפים', done:true},
+    {t:'מושג ראשון', done:m.studied>=1},
+    {t:'10 מושגים', done:m.studied>=10},
+    {t:'מבחון ראשון', done:m.quizzes>=1},
+    {t:'נושא שלם', done:m.topicsCompleted>=1}
+  ];
+  const done=steps.filter(s=>s.done).length;
+  const next=steps.find(s=>!s.done);
+  return (<div className="journey">
+    <div className="jr-head"><b>המסע שלכם לבגרות</b><span>{done}/{steps.length}</span></div>
+    <div className="jr-track">{steps.map((s,i)=>(<div key={i} className={`jr-step ${s.done?'on':''}`}><i>{s.done?'✓':i+1}</i><span>{s.t}</span></div>))}</div>
+    {next && <p className="jr-next">היעד הבא: <b>{next.t}</b> — כמעט שם 💪</p>}
+  </div>);
+}
 function Profile({user,studied,favorites,stats,sync,signIn,signOut,onTopic,muted,toggleSound,tier}){
   const m=metrics(studied,favorites,stats);
   const earned=earnedIds(m); const earnedSet={}; earned.forEach(id=>earnedSet[id]=1);
+  const goal=nextGoal(m.studied,TOTAL);
+  const goalPct=Math.min(100,Math.round(m.studied/goal*100));
   const pct=Math.round(m.studied/TOTAL*100); const acc=Math.round(m.accuracy*100);
   const perTopic=TOPICS.map(t=>({t,total:topicTotals[t.key]||0,done:studied.filter(h=>topicOf[h]===t.key).length})).filter(x=>x.total>0);
   return (<>
@@ -425,14 +454,18 @@ function Profile({user,studied,favorites,stats,sync,signIn,signOut,onTopic,muted
             <svg width="18" height="18" viewBox="0 0 48 48"><path fill="#4285F4" d="M45 24c0-1.6-.1-3.1-.4-4.5H24v9h11.8c-.5 2.7-2 5-4.4 6.6v5.5h7.1C42.7 36.8 45 31 45 24z"/><path fill="#34A853" d="M24 46c5.9 0 10.9-2 14.5-5.4l-7.1-5.5c-2 1.3-4.5 2.1-7.4 2.1-5.7 0-10.5-3.8-12.2-9H4.5v5.7C8.1 41.1 15.4 46 24 46z"/><path fill="#FBBC05" d="M11.8 28.2c-.4-1.3-.7-2.7-.7-4.2s.2-2.9.7-4.2v-5.7H4.5C3 17 2 20.4 2 24s1 7 2.5 9.9l7.3-5.7z"/><path fill="#EA4335" d="M24 11.5c3.2 0 6 1.1 8.3 3.2l6.2-6.2C34.9 5 29.9 3 24 3 15.4 3 8.1 7.9 4.5 14.1l7.3 5.7c1.7-5.2 6.5-9 12.2-9z"/></svg>
             התחברות עם Google</button></>)}
     </div>
+    <Journey m={m}/>
     <div className="prof-card" style={{display:'flex',alignItems:'center',justifyContent:'space-between',textAlign:'right',padding:'14px 16px'}}>
       <span style={{fontWeight:700}}><IcSpeaker/> צלילי משוב</span>
       <button className="chip" onClick={toggleSound} style={muted?undefined:{background:'var(--green-500)',color:'#fff',borderColor:'var(--green-700)'}}>{muted?'כבוי 🔇':'דלוק 🔊'}</button>
     </div>
-    <div className="ring-wrap"><Ring pct={pct} color="#3FA9D6"/><div className="mini-stats">
-      <div className="stat-box"><b>{m.studied}</b><span>נלמדו / {TOTAL}</span></div>
+    <div className="ring-wrap"><Ring pct={goalPct} color="#3FA9D6"/><div className="mini-stats">
+      <div className="stat-box"><b>{m.studied}/{goal}</b><span>ליעד הקרוב</span></div>
       <div className="stat-box"><b>{m.hard}</b><span><IcPin/> לחזרה</span></div>
     </div></div>
+    <p className="goal-note">{m.studied<goal
+      ? <>עוד <b>{goal-m.studied}</b> מושגים והיעד נסגר · בסך הכול {m.studied} מתוך {TOTAL} ({pct}%)</>
+      : <>סיימתם את כל {TOTAL} המושגים 🎉</>}</p>
     <div className="perf">
       <div className="stat-box"><b>{acc}%</b><span>דייקנות במבחנים</span></div>
       <div className="stat-box"><b>{m.answered}</b><span>שאלות נענו</span></div>
@@ -481,12 +514,21 @@ function TermQuiz({hebrew,onClose,onResult}){
 }
 
 /* ---------- APP ---------- */
-function SignUpGate({onClose,onSignIn}){
+function SignUpGate({onClose,onSignIn,studied,favorites}){
+  const built=(studied||0)+(favorites||0);
   return (<div className="overlay" onClick={onClose}><div className="sheet-card gate-card" onClick={e=>e.stopPropagation()}>
-    <div className="gate-emoji">🔑</div>
-    <h3>הירשמו בחינם כדי לפתוח</h3>
-    <p>חשבון חינמי פותח את כל מצבי התרגול, ההקראה, מעקב ההתקדמות והסנכרון בין המכשירים.</p>
+    <div className="gate-emoji">{built>0?'💾':'🔑'}</div>
+    <h3>{built>0?'אל תאבדו את מה שבניתם':'הירשמו בחינם כדי לפתוח'}</h3>
+    {built>0 && <div className="gate-built">
+      <div><b>{studied}</b><span>מושגים שלמדתם</span></div>
+      <div><b>{favorites}</b><span>מושגים שסימנתם</span></div>
+    </div>}
+    {built>0 && <p className="gate-loss">ההתקדמות הזו שמורה <b>רק במכשיר הזה</b>. ניקוי הדפדפן או מעבר לטלפון אחר — והכול נעלם.</p>}
+    <p>{built>0
+      ? 'חשבון חינמי שומר הכול בענן, ובנוסף פותח את כל מצבי התרגול וההקראה.'
+      : 'המילון פתוח לכם בחינם וללא הרשמה. חשבון חינמי מוסיף את כל מצבי התרגול, ההקראה, מעקב ההתקדמות והסנכרון בין המכשירים.'}</p>
     <button className="google-btn" onClick={onSignIn}>המשך עם Google</button>
+    <p className="gate-fine">חינם לחלוטין · בלי סיסמה · פחות מ‑10 שניות</p>
     <button className="btn btn-ghost" onClick={onClose}>אולי אחר כך</button>
   </div></div>);
 }
@@ -495,16 +537,23 @@ function Paywall({onClose,user,onSignIn}){
   return (<div className="overlay" onClick={onClose}><div className="sheet-card gate-card" onClick={e=>e.stopPropagation()}>
     <div className="gate-emoji">⭐</div>
     <h3>מסלול הבגרות</h3>
-    <p>התשחץ וכלי בגרות מתקדמים נוספים. בחרו מסלול:</p>
+    <p>התשבץ וכלי בגרות מתקדמים נוספים.</p>
+    <div className="anchor-row">
+      <div className="anchor-item"><span>שלושת ספרי העזר המודפסים</span><b className="num-ltr">₪313</b></div>
+      <div className="anchor-item"><span>ספר השאלות בלבד</span><b className="num-ltr">₪149</b></div>
+    </div>
+    <p className="anchor-lead">ומסלול הבגרות באפליקציה, לשנה שלמה:</p>
     {!user && <p className="paywall-note">כדי לשמור את המנוי צריך תחילה חשבון:</p>}
     {!user && <button className="google-btn" onClick={onSignIn}>התחברו עם Google</button>}
     <div className="plans">
       <a className="plan" href={wa('אשמח לרכוש מנוי חודשי (₪4.99) בשליפים')} target="_blank" rel="noopener">
-        <div className="plan-per">₪4.99</div><div className="plan-unit">לחודש</div>
+        <div className="plan-per num-ltr">₪4.99</div><div className="plan-unit">לחודש</div>
+        <div className="plan-year">₪59.88 לשנה</div>
       </a>
       <a className="plan plan-best" href={wa('אשמח לרכוש מנוי שנתי (₪23.99) בשליפים')} target="_blank" rel="noopener">
         <div className="plan-badge">המשתלם ביותר</div>
-        <div className="plan-per">₪23.99</div><div className="plan-unit">לשנה · ₪1.99 לחודש</div>
+        <div className="plan-per num-ltr">₪1.99</div><div className="plan-unit">לחודש</div>
+        <div className="plan-year">חיוב שנתי ₪23.99 · חוסכים ₪35.89</div>
       </a>
     </div>
     <p className="paywall-note" style={{marginTop:12}}>התשלום ייפתח בקרוב — כרגע לרכישה מוקדמת דרך הקישורים.</p>
@@ -616,7 +665,7 @@ function App(){
         </div>
       </div>
       <Nav mode={mode} setMode={changeMode} tier={tier} user={user}/>
-      {gate==='signup' && <SignUpGate onClose={()=>setGate(null)} onSignIn={()=>{setGate(null);signIn();}}/>}
+      {gate==='signup' && <SignUpGate onClose={()=>setGate(null)} onSignIn={()=>{setGate(null);signIn();}} studied={studied.length} favorites={favorites.length}/>}
       {gate==='paywall' && <Paywall onClose={()=>setGate(null)} user={user} onSignIn={()=>{setGate(null);signIn();}}/>}
       {qTerm && <TermQuiz key={qTerm.hebrew+(qTerm.verify?'v':'e')} hebrew={qTerm.hebrew} onClose={()=>setQTerm(null)} onResult={onQResult}/>}
     </div>

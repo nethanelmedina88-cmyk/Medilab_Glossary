@@ -244,6 +244,51 @@ html.dark .fb.ok{background:#15301c} html.dark .fb.no{background:#371a15}
 .plan-badge{position:absolute;top:-9px;background:var(--coral-500);color:#fff;font-family:'Secular One';font-size:10px;padding:2px 8px;border-radius:999px;white-space:nowrap}
 .plan-per{font-family:'Secular One';font-weight:800;font-size:22px;line-height:1}
 .plan-unit{font-size:12px;opacity:.85}
+.plan-year{font-size:10.5px;opacity:.75;margin-top:4px;line-height:1.3}
+.num-ltr{direction:ltr;unicode-bidi:embed;display:inline-block}
+/* contrast effect: real anchor prices shown right before the small subscription price */
+.anchor-row{display:flex;gap:8px;margin:2px 0 10px}
+.anchor-item{flex:1;background:var(--surface-2);border:1px solid var(--border);border-radius:12px;padding:9px 8px;text-align:center}
+.anchor-item span{display:block;font-size:10.5px;color:var(--text-3);line-height:1.3;margin-bottom:3px}
+.anchor-item b{font-family:'Secular One';font-size:17px;color:var(--text-3);text-decoration:line-through;text-decoration-thickness:1.5px}
+.anchor-lead{font-size:13px;color:var(--text-2);margin:0 0 6px!important;font-weight:700}
+/* ownership + loss aversion on the sign-up gate */
+.gate-built{display:flex;gap:8px;margin:4px 0 12px}
+.gate-built div{flex:1;background:var(--accent-soft);border-radius:12px;padding:10px 6px}
+.gate-built b{display:block;font-family:'Secular One';font-size:24px;line-height:1.1;color:var(--accent-strong)}
+.gate-built span{font-size:11px;color:var(--text-2)}
+.gate-loss{background:#FFF4E5;border:1px solid #F4A52A;border-radius:12px;padding:10px 12px;
+  font-size:12.5px!important;color:#7a4d00!important;margin:0 0 12px!important;line-height:1.5}
+html.dark .gate-loss{background:#3a2a10;border-color:#8a6520;color:#f0d5a8!important}
+.gate-fine{font-size:11.5px!important;color:var(--text-3)!important;margin:8px 0 0!important}
+/* goal-gradient: near milestone instead of a distant total */
+.journey{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-lg);padding:14px 16px;box-shadow:var(--e1);margin-bottom:14px}
+.jr-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;font-size:14px}
+.jr-head b{font-family:'Secular One';font-weight:400}
+.jr-head span{font-size:12px;color:var(--text-3);font-weight:700}
+.jr-track{display:flex;gap:4px}
+.jr-step{flex:1;text-align:center;position:relative}
+.jr-step i{position:relative;z-index:1;display:flex;align-items:center;justify-content:center;width:26px;height:26px;margin:0 auto 5px;
+  border-radius:50%;background:var(--surface-2);color:var(--text-3);font-style:normal;font-size:12px;font-weight:800;
+  border:2px solid var(--border);transition:all var(--base)}
+.jr-step.on i{background:var(--green-500,#5CB85C);border-color:var(--green-700,#3F8C3F);color:#fff}
+.jr-step span{display:block;font-size:9.5px;color:var(--text-3);line-height:1.25}
+.jr-step.on span{color:var(--text-2);font-weight:700}
+.jr-step:not(:last-child)::after{content:'';position:absolute;top:13px;left:-50%;width:100%;height:2px;background:var(--border)}
+.jr-step.on:not(:last-child)::after{background:var(--green-500,#5CB85C)}
+.jr-next{font-size:12.5px;color:var(--text-2);margin:11px 0 0;text-align:center}
+.jr-next b{color:var(--accent-strong)}
+.goal-note{text-align:center;font-size:12.5px;color:var(--text-2);margin:-4px 0 14px}
+.goal-note b{color:var(--accent-strong);font-size:14px}
+/* smart defaults: ready-made quiz so the setup form is optional, not mandatory */
+.quickstart{display:flex;align-items:center;gap:12px;background:var(--accent-soft);border:1.5px solid var(--accent);
+  border-radius:var(--r-lg);padding:14px 16px;margin-bottom:10px}
+.qs-txt{flex:1;min-width:0}
+.qs-txt b{display:block;font-family:'Secular One';font-weight:400;font-size:15px}
+.qs-txt span{display:block;font-size:11.5px;color:var(--text-2);margin-top:2px}
+.quickstart .btn{flex:0 0 auto;padding:11px 18px;white-space:nowrap}
+.qs-or{text-align:center;font-size:12px;color:var(--text-3);margin:0 0 12px}
+.chip .rec{display:block;font-style:normal;font-size:8.5px;font-weight:700;opacity:.75;line-height:1;margin-top:2px}
 .q-time-low{color:var(--coral-500);font-weight:800}
 .credit{text-align:center;margin-top:18px;font-size:12px;color:var(--muted)}
 .credit a{color:var(--muted);text-decoration:underline}

@@ -86,6 +86,15 @@ function metrics(studied, favorites, stats) {
     cwSolved: stats.cwSolved || 0
   };
 }
+// Goal-gradient: always show a NEAR target instead of the distant total, so the bar
+// never reads "0 / 464". Milestones are real thresholds — nothing is faked.
+const MILESTONES = [10, 25, 50, 100, 150, 200, 300];
+function nextGoal(n, total) {
+  for (let i = 0; i < MILESTONES.length; i++) {
+    if (n < MILESTONES[i] && MILESTONES[i] < total) return MILESTONES[i];
+  }
+  return total;
+}
 const earnedIds = m => ACH.filter(a => {
   try {
     return a.check(m);
@@ -1065,6 +1074,16 @@ function Quiz({
   if (!quiz) return /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("div", {
     className: "hero"
   }, /*#__PURE__*/React.createElement("h1", null, "\u05DE\u05D1\u05D7\u05D5\u05DF"), /*#__PURE__*/React.createElement("p", null, "\u05D1\u05D7\u05D9\u05E8\u05D4 \u05DE\u05E8\u05D5\u05D1\u05D4 \xB7 \u05D4\u05E9\u05DC\u05DE\u05EA \u05DE\u05D5\u05E9\u05D2 \xB7 \u05D1\u05D3\u05D9\u05E7\u05D4 \u05E2\u05E6\u05DE\u05D9\u05EA")), /*#__PURE__*/React.createElement("div", {
+    className: "quickstart"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "qs-txt"
+  }, /*#__PURE__*/React.createElement("b", null, "\u05DE\u05D1\u05D7\u05D5\u05DF \u05DE\u05D5\u05DB\u05DF \u05DC\u05DB\u05DD"), /*#__PURE__*/React.createElement("span", null, len, " \u05E9\u05D0\u05DC\u05D5\u05EA \xB7 ", topic || 'כל הנושאים', hardOnly ? ' · לחזרה בלבד' : '', weakSpots ? ' · חזרה ממוקדת' : '', examMode ? ' · מצב בחינה' : '')), /*#__PURE__*/React.createElement("button", {
+    className: "btn btn-accent",
+    onClick: start,
+    disabled: pool.length < 3
+  }, "\u05D9\u05D0\u05DC\u05DC\u05D4 \u2190")), /*#__PURE__*/React.createElement("p", {
+    className: "qs-or"
+  }, "\u05D0\u05D5 \u05E9\u05E0\u05D5 \u05D0\u05EA \u05D4\u05D4\u05D2\u05D3\u05E8\u05D5\u05EA \u05DC\u05E4\u05D9 \u05D4\u05D8\u05E2\u05DD \u05E9\u05DC\u05DB\u05DD:"), /*#__PURE__*/React.createElement("div", {
     className: "setup"
   }, lockTopics && /*#__PURE__*/React.createElement("div", {
     className: "free-hint",
@@ -1122,7 +1141,9 @@ function Quiz({
     key: n,
     className: `chip ${len === n ? 'on' : ''}`,
     onClick: () => setLen(n)
-  }, n))), /*#__PURE__*/React.createElement("button", {
+  }, n, n === 10 && /*#__PURE__*/React.createElement("i", {
+    className: "rec"
+  }, "\u05DE\u05D5\u05DE\u05DC\u05E5")))), /*#__PURE__*/React.createElement("button", {
     className: "btn btn-accent",
     style: {
       width: '100%'
@@ -1457,6 +1478,41 @@ function Ring({
     fill: "var(--text)"
   }, pct, "%"));
 }
+// Honest head start: step 1 is genuinely complete — you are looking at the app right now.
+function Journey({
+  m
+}) {
+  const steps = [{
+    t: 'פתחתם את שליפים',
+    done: true
+  }, {
+    t: 'מושג ראשון',
+    done: m.studied >= 1
+  }, {
+    t: '10 מושגים',
+    done: m.studied >= 10
+  }, {
+    t: 'מבחון ראשון',
+    done: m.quizzes >= 1
+  }, {
+    t: 'נושא שלם',
+    done: m.topicsCompleted >= 1
+  }];
+  const done = steps.filter(s => s.done).length;
+  const next = steps.find(s => !s.done);
+  return /*#__PURE__*/React.createElement("div", {
+    className: "journey"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "jr-head"
+  }, /*#__PURE__*/React.createElement("b", null, "\u05D4\u05DE\u05E1\u05E2 \u05E9\u05DC\u05DB\u05DD \u05DC\u05D1\u05D2\u05E8\u05D5\u05EA"), /*#__PURE__*/React.createElement("span", null, done, "/", steps.length)), /*#__PURE__*/React.createElement("div", {
+    className: "jr-track"
+  }, steps.map((s, i) => /*#__PURE__*/React.createElement("div", {
+    key: i,
+    className: `jr-step ${s.done ? 'on' : ''}`
+  }, /*#__PURE__*/React.createElement("i", null, s.done ? '✓' : i + 1), /*#__PURE__*/React.createElement("span", null, s.t)))), next && /*#__PURE__*/React.createElement("p", {
+    className: "jr-next"
+  }, "\u05D4\u05D9\u05E2\u05D3 \u05D4\u05D1\u05D0: ", /*#__PURE__*/React.createElement("b", null, next.t), " \u2014 \u05DB\u05DE\u05E2\u05D8 \u05E9\u05DD \uD83D\uDCAA"));
+}
 function Profile({
   user,
   studied,
@@ -1474,6 +1530,8 @@ function Profile({
   const earned = earnedIds(m);
   const earnedSet = {};
   earned.forEach(id => earnedSet[id] = 1);
+  const goal = nextGoal(m.studied, TOTAL);
+  const goalPct = Math.min(100, Math.round(m.studied / goal * 100));
   const pct = Math.round(m.studied / TOTAL * 100);
   const acc = Math.round(m.accuracy * 100);
   const perTopic = TOPICS.map(t => ({
@@ -1532,7 +1590,9 @@ function Profile({
   }), /*#__PURE__*/React.createElement("path", {
     fill: "#EA4335",
     d: "M24 11.5c3.2 0 6 1.1 8.3 3.2l6.2-6.2C34.9 5 29.9 3 24 3 15.4 3 8.1 7.9 4.5 14.1l7.3 5.7c1.7-5.2 6.5-9 12.2-9z"
-  })), "\u05D4\u05EA\u05D7\u05D1\u05E8\u05D5\u05EA \u05E2\u05DD Google"))), /*#__PURE__*/React.createElement("div", {
+  })), "\u05D4\u05EA\u05D7\u05D1\u05E8\u05D5\u05EA \u05E2\u05DD Google"))), /*#__PURE__*/React.createElement(Journey, {
+    m: m
+  }), /*#__PURE__*/React.createElement("div", {
     className: "prof-card",
     style: {
       display: 'flex',
@@ -1556,15 +1616,17 @@ function Profile({
   }, muted ? 'כבוי 🔇' : 'דלוק 🔊')), /*#__PURE__*/React.createElement("div", {
     className: "ring-wrap"
   }, /*#__PURE__*/React.createElement(Ring, {
-    pct: pct,
+    pct: goalPct,
     color: "#3FA9D6"
   }), /*#__PURE__*/React.createElement("div", {
     className: "mini-stats"
   }, /*#__PURE__*/React.createElement("div", {
     className: "stat-box"
-  }, /*#__PURE__*/React.createElement("b", null, m.studied), /*#__PURE__*/React.createElement("span", null, "\u05E0\u05DC\u05DE\u05D3\u05D5 / ", TOTAL)), /*#__PURE__*/React.createElement("div", {
+  }, /*#__PURE__*/React.createElement("b", null, m.studied, "/", goal), /*#__PURE__*/React.createElement("span", null, "\u05DC\u05D9\u05E2\u05D3 \u05D4\u05E7\u05E8\u05D5\u05D1")), /*#__PURE__*/React.createElement("div", {
     className: "stat-box"
-  }, /*#__PURE__*/React.createElement("b", null, m.hard), /*#__PURE__*/React.createElement("span", null, /*#__PURE__*/React.createElement(IcPin, null), " \u05DC\u05D7\u05D6\u05E8\u05D4")))), /*#__PURE__*/React.createElement("div", {
+  }, /*#__PURE__*/React.createElement("b", null, m.hard), /*#__PURE__*/React.createElement("span", null, /*#__PURE__*/React.createElement(IcPin, null), " \u05DC\u05D7\u05D6\u05E8\u05D4")))), /*#__PURE__*/React.createElement("p", {
+    className: "goal-note"
+  }, m.studied < goal ? /*#__PURE__*/React.createElement(React.Fragment, null, "\u05E2\u05D5\u05D3 ", /*#__PURE__*/React.createElement("b", null, goal - m.studied), " \u05DE\u05D5\u05E9\u05D2\u05D9\u05DD \u05D5\u05D4\u05D9\u05E2\u05D3 \u05E0\u05E1\u05D2\u05E8 \xB7 \u05D1\u05E1\u05DA \u05D4\u05DB\u05D5\u05DC ", m.studied, " \u05DE\u05EA\u05D5\u05DA ", TOTAL, " (", pct, "%)") : /*#__PURE__*/React.createElement(React.Fragment, null, "\u05E1\u05D9\u05D9\u05DE\u05EA\u05DD \u05D0\u05EA \u05DB\u05DC ", TOTAL, " \u05D4\u05DE\u05D5\u05E9\u05D2\u05D9\u05DD \uD83C\uDF89")), /*#__PURE__*/React.createElement("div", {
     className: "perf"
   }, /*#__PURE__*/React.createElement("div", {
     className: "stat-box"
@@ -1775,8 +1837,11 @@ function TermQuiz({
 /* ---------- APP ---------- */
 function SignUpGate({
   onClose,
-  onSignIn
+  onSignIn,
+  studied,
+  favorites
 }) {
+  const built = (studied || 0) + (favorites || 0);
   return /*#__PURE__*/React.createElement("div", {
     className: "overlay",
     onClick: onClose
@@ -1785,10 +1850,16 @@ function SignUpGate({
     onClick: e => e.stopPropagation()
   }, /*#__PURE__*/React.createElement("div", {
     className: "gate-emoji"
-  }, "\uD83D\uDD11"), /*#__PURE__*/React.createElement("h3", null, "\u05D4\u05D9\u05E8\u05E9\u05DE\u05D5 \u05D1\u05D7\u05D9\u05E0\u05DD \u05DB\u05D3\u05D9 \u05DC\u05E4\u05EA\u05D5\u05D7"), /*#__PURE__*/React.createElement("p", null, "\u05D7\u05E9\u05D1\u05D5\u05DF \u05D7\u05D9\u05E0\u05DE\u05D9 \u05E4\u05D5\u05EA\u05D7 \u05D0\u05EA \u05DB\u05DC \u05DE\u05E6\u05D1\u05D9 \u05D4\u05EA\u05E8\u05D2\u05D5\u05DC, \u05D4\u05D4\u05E7\u05E8\u05D0\u05D4, \u05DE\u05E2\u05E7\u05D1 \u05D4\u05D4\u05EA\u05E7\u05D3\u05DE\u05D5\u05EA \u05D5\u05D4\u05E1\u05E0\u05DB\u05E8\u05D5\u05DF \u05D1\u05D9\u05DF \u05D4\u05DE\u05DB\u05E9\u05D9\u05E8\u05D9\u05DD."), /*#__PURE__*/React.createElement("button", {
+  }, built > 0 ? '💾' : '🔑'), /*#__PURE__*/React.createElement("h3", null, built > 0 ? 'אל תאבדו את מה שבניתם' : 'הירשמו בחינם כדי לפתוח'), built > 0 && /*#__PURE__*/React.createElement("div", {
+    className: "gate-built"
+  }, /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("b", null, studied), /*#__PURE__*/React.createElement("span", null, "\u05DE\u05D5\u05E9\u05D2\u05D9\u05DD \u05E9\u05DC\u05DE\u05D3\u05EA\u05DD")), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("b", null, favorites), /*#__PURE__*/React.createElement("span", null, "\u05DE\u05D5\u05E9\u05D2\u05D9\u05DD \u05E9\u05E1\u05D9\u05DE\u05E0\u05EA\u05DD"))), built > 0 && /*#__PURE__*/React.createElement("p", {
+    className: "gate-loss"
+  }, "\u05D4\u05D4\u05EA\u05E7\u05D3\u05DE\u05D5\u05EA \u05D4\u05D6\u05D5 \u05E9\u05DE\u05D5\u05E8\u05D4 ", /*#__PURE__*/React.createElement("b", null, "\u05E8\u05E7 \u05D1\u05DE\u05DB\u05E9\u05D9\u05E8 \u05D4\u05D6\u05D4"), ". \u05E0\u05D9\u05E7\u05D5\u05D9 \u05D4\u05D3\u05E4\u05D3\u05E4\u05DF \u05D0\u05D5 \u05DE\u05E2\u05D1\u05E8 \u05DC\u05D8\u05DC\u05E4\u05D5\u05DF \u05D0\u05D7\u05E8 \u2014 \u05D5\u05D4\u05DB\u05D5\u05DC \u05E0\u05E2\u05DC\u05DD."), /*#__PURE__*/React.createElement("p", null, built > 0 ? 'חשבון חינמי שומר הכול בענן, ובנוסף פותח את כל מצבי התרגול וההקראה.' : 'המילון פתוח לכם בחינם וללא הרשמה. חשבון חינמי מוסיף את כל מצבי התרגול, ההקראה, מעקב ההתקדמות והסנכרון בין המכשירים.'), /*#__PURE__*/React.createElement("button", {
     className: "google-btn",
     onClick: onSignIn
-  }, "\u05D4\u05DE\u05E9\u05DA \u05E2\u05DD Google"), /*#__PURE__*/React.createElement("button", {
+  }, "\u05D4\u05DE\u05E9\u05DA \u05E2\u05DD Google"), /*#__PURE__*/React.createElement("p", {
+    className: "gate-fine"
+  }, "\u05D7\u05D9\u05E0\u05DD \u05DC\u05D7\u05DC\u05D5\u05D8\u05D9\u05DF \xB7 \u05D1\u05DC\u05D9 \u05E1\u05D9\u05E1\u05DE\u05D4 \xB7 \u05E4\u05D7\u05D5\u05EA \u05DE\u201110 \u05E9\u05E0\u05D9\u05D5\u05EA"), /*#__PURE__*/React.createElement("button", {
     className: "btn btn-ghost",
     onClick: onClose
   }, "\u05D0\u05D5\u05DC\u05D9 \u05D0\u05D7\u05E8 \u05DB\u05DA")));
@@ -1807,7 +1878,19 @@ function Paywall({
     onClick: e => e.stopPropagation()
   }, /*#__PURE__*/React.createElement("div", {
     className: "gate-emoji"
-  }, "\u2B50"), /*#__PURE__*/React.createElement("h3", null, "\u05DE\u05E1\u05DC\u05D5\u05DC \u05D4\u05D1\u05D2\u05E8\u05D5\u05EA"), /*#__PURE__*/React.createElement("p", null, "\u05D4\u05EA\u05E9\u05D7\u05E5 \u05D5\u05DB\u05DC\u05D9 \u05D1\u05D2\u05E8\u05D5\u05EA \u05DE\u05EA\u05E7\u05D3\u05DE\u05D9\u05DD \u05E0\u05D5\u05E1\u05E4\u05D9\u05DD. \u05D1\u05D7\u05E8\u05D5 \u05DE\u05E1\u05DC\u05D5\u05DC:"), !user && /*#__PURE__*/React.createElement("p", {
+  }, "\u2B50"), /*#__PURE__*/React.createElement("h3", null, "\u05DE\u05E1\u05DC\u05D5\u05DC \u05D4\u05D1\u05D2\u05E8\u05D5\u05EA"), /*#__PURE__*/React.createElement("p", null, "\u05D4\u05EA\u05E9\u05D1\u05E5 \u05D5\u05DB\u05DC\u05D9 \u05D1\u05D2\u05E8\u05D5\u05EA \u05DE\u05EA\u05E7\u05D3\u05DE\u05D9\u05DD \u05E0\u05D5\u05E1\u05E4\u05D9\u05DD."), /*#__PURE__*/React.createElement("div", {
+    className: "anchor-row"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "anchor-item"
+  }, /*#__PURE__*/React.createElement("span", null, "\u05E9\u05DC\u05D5\u05E9\u05EA \u05E1\u05E4\u05E8\u05D9 \u05D4\u05E2\u05D6\u05E8 \u05D4\u05DE\u05D5\u05D3\u05E4\u05E1\u05D9\u05DD"), /*#__PURE__*/React.createElement("b", {
+    className: "num-ltr"
+  }, "\u20AA313")), /*#__PURE__*/React.createElement("div", {
+    className: "anchor-item"
+  }, /*#__PURE__*/React.createElement("span", null, "\u05E1\u05E4\u05E8 \u05D4\u05E9\u05D0\u05DC\u05D5\u05EA \u05D1\u05DC\u05D1\u05D3"), /*#__PURE__*/React.createElement("b", {
+    className: "num-ltr"
+  }, "\u20AA149"))), /*#__PURE__*/React.createElement("p", {
+    className: "anchor-lead"
+  }, "\u05D5\u05DE\u05E1\u05DC\u05D5\u05DC \u05D4\u05D1\u05D2\u05E8\u05D5\u05EA \u05D1\u05D0\u05E4\u05DC\u05D9\u05E7\u05E6\u05D9\u05D4, \u05DC\u05E9\u05E0\u05D4 \u05E9\u05DC\u05DE\u05D4:"), !user && /*#__PURE__*/React.createElement("p", {
     className: "paywall-note"
   }, "\u05DB\u05D3\u05D9 \u05DC\u05E9\u05DE\u05D5\u05E8 \u05D0\u05EA \u05D4\u05DE\u05E0\u05D5\u05D9 \u05E6\u05E8\u05D9\u05DA \u05EA\u05D7\u05D9\u05DC\u05D4 \u05D7\u05E9\u05D1\u05D5\u05DF:"), !user && /*#__PURE__*/React.createElement("button", {
     className: "google-btn",
@@ -1820,10 +1903,12 @@ function Paywall({
     target: "_blank",
     rel: "noopener"
   }, /*#__PURE__*/React.createElement("div", {
-    className: "plan-per"
+    className: "plan-per num-ltr"
   }, "\u20AA4.99"), /*#__PURE__*/React.createElement("div", {
     className: "plan-unit"
-  }, "\u05DC\u05D7\u05D5\u05D3\u05E9")), /*#__PURE__*/React.createElement("a", {
+  }, "\u05DC\u05D7\u05D5\u05D3\u05E9"), /*#__PURE__*/React.createElement("div", {
+    className: "plan-year"
+  }, "\u20AA59.88 \u05DC\u05E9\u05E0\u05D4")), /*#__PURE__*/React.createElement("a", {
     className: "plan plan-best",
     href: wa('אשמח לרכוש מנוי שנתי (₪23.99) בשליפים'),
     target: "_blank",
@@ -1831,10 +1916,12 @@ function Paywall({
   }, /*#__PURE__*/React.createElement("div", {
     className: "plan-badge"
   }, "\u05D4\u05DE\u05E9\u05EA\u05DC\u05DD \u05D1\u05D9\u05D5\u05EA\u05E8"), /*#__PURE__*/React.createElement("div", {
-    className: "plan-per"
-  }, "\u20AA23.99"), /*#__PURE__*/React.createElement("div", {
+    className: "plan-per num-ltr"
+  }, "\u20AA1.99"), /*#__PURE__*/React.createElement("div", {
     className: "plan-unit"
-  }, "\u05DC\u05E9\u05E0\u05D4 \xB7 \u20AA1.99 \u05DC\u05D7\u05D5\u05D3\u05E9"))), /*#__PURE__*/React.createElement("p", {
+  }, "\u05DC\u05D7\u05D5\u05D3\u05E9"), /*#__PURE__*/React.createElement("div", {
+    className: "plan-year"
+  }, "\u05D7\u05D9\u05D5\u05D1 \u05E9\u05E0\u05EA\u05D9 \u20AA23.99 \xB7 \u05D7\u05D5\u05E1\u05DB\u05D9\u05DD \u20AA35.89"))), /*#__PURE__*/React.createElement("p", {
     className: "paywall-note",
     style: {
       marginTop: 12
@@ -2186,7 +2273,9 @@ function App() {
     onSignIn: () => {
       setGate(null);
       signIn();
-    }
+    },
+    studied: studied.length,
+    favorites: favorites.length
   }), gate === 'paywall' && /*#__PURE__*/React.createElement(Paywall, {
     onClose: () => setGate(null),
     user: user,
