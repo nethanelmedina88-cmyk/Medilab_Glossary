@@ -105,5 +105,17 @@ if('serviceWorker' in navigator){
   });
 }
 </script>
+<div id="cookiebar" role="dialog" aria-label="הודעת עוגיות" style="display:none;position:fixed;inset-inline:0;bottom:0;z-index:9999;background:#15212C;color:#fff;padding:14px 16px;box-shadow:0 -6px 24px rgba(0,0,0,.3);font-family:'Assistant',system-ui,sans-serif">
+  <div style="max-width:520px;margin:0 auto;display:flex;gap:12px;align-items:center;flex-wrap:wrap;justify-content:center;font-size:14px">
+    <span style="flex:1;min-width:200px">אנו משתמשים בעוגיות ובאחסון מקומי לתפעול האפליקציה ולשמירת ההעדפות שלך. <a href="legal.html#privacy" style="color:#F4A52A">מדיניות הפרטיות</a></span>
+    <button id="cookieok" style="background:#F4A52A;color:#15212C;border:none;border-radius:10px;padding:9px 22px;font-weight:700;font-family:inherit;font-size:14px;cursor:pointer">אישור</button>
+  </div>
+</div>
+<script>
+(function(){ try{ if(localStorage.getItem('sl-cookie-ok')==='1') return; }catch(e){}
+  var bar=document.getElementById('cookiebar'); if(!bar) return; bar.style.display='block';
+  var btn=document.getElementById('cookieok'); if(btn) btn.addEventListener('click',function(){ try{localStorage.setItem('sl-cookie-ok','1');}catch(e){} bar.style.display='none'; });
+})();
+</script>
 </body>
 </html>

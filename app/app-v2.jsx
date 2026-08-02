@@ -394,6 +394,13 @@ function About(){
     </div>
     <div style={{textAlign:'center',marginTop:14}}><a className="btn btn-ghost" href="https://nethanelmedina88-cmyk.github.io/Bio_MediLab/" target="_blank" rel="noopener" style={{textDecoration:'none'}}>לאתר המלא ←</a></div>
     <p className="credit">אייקונים: <a href="https://github.com/jdecked/twemoji" target="_blank" rel="noopener">Twemoji</a> · רישיון CC-BY 4.0</p>
+    <div className="legal-links">
+      <a href="legal.html#terms" target="_blank" rel="noopener">תנאי שימוש</a>
+      <a href="legal.html#privacy" target="_blank" rel="noopener">מדיניות פרטיות</a>
+      <a href="legal.html#accessibility" target="_blank" rel="noopener">הצהרת נגישות</a>
+      <a href="legal.html#refund" target="_blank" rel="noopener">ביטולים והחזרים</a>
+    </div>
+    <p className="credit">© 2026 MediLab · נתנאל יוחאי מדינה · כל הזכויות שמורות</p>
   </>);
 }
 

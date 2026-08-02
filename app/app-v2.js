@@ -1393,7 +1393,27 @@ function About() {
     href: "https://github.com/jdecked/twemoji",
     target: "_blank",
     rel: "noopener"
-  }, "Twemoji"), " \xB7 \u05E8\u05D9\u05E9\u05D9\u05D5\u05DF CC-BY 4.0"));
+  }, "Twemoji"), " \xB7 \u05E8\u05D9\u05E9\u05D9\u05D5\u05DF CC-BY 4.0"), /*#__PURE__*/React.createElement("div", {
+    className: "legal-links"
+  }, /*#__PURE__*/React.createElement("a", {
+    href: "legal.html#terms",
+    target: "_blank",
+    rel: "noopener"
+  }, "\u05EA\u05E0\u05D0\u05D9 \u05E9\u05D9\u05DE\u05D5\u05E9"), /*#__PURE__*/React.createElement("a", {
+    href: "legal.html#privacy",
+    target: "_blank",
+    rel: "noopener"
+  }, "\u05DE\u05D3\u05D9\u05E0\u05D9\u05D5\u05EA \u05E4\u05E8\u05D8\u05D9\u05D5\u05EA"), /*#__PURE__*/React.createElement("a", {
+    href: "legal.html#accessibility",
+    target: "_blank",
+    rel: "noopener"
+  }, "\u05D4\u05E6\u05D4\u05E8\u05EA \u05E0\u05D2\u05D9\u05E9\u05D5\u05EA"), /*#__PURE__*/React.createElement("a", {
+    href: "legal.html#refund",
+    target: "_blank",
+    rel: "noopener"
+  }, "\u05D1\u05D9\u05D8\u05D5\u05DC\u05D9\u05DD \u05D5\u05D4\u05D7\u05D6\u05E8\u05D9\u05DD")), /*#__PURE__*/React.createElement("p", {
+    className: "credit"
+  }, "\xA9 2026 MediLab \xB7 \u05E0\u05EA\u05E0\u05D0\u05DC \u05D9\u05D5\u05D7\u05D0\u05D9 \u05DE\u05D3\u05D9\u05E0\u05D4 \xB7 \u05DB\u05DC \u05D4\u05D6\u05DB\u05D5\u05D9\u05D5\u05EA \u05E9\u05DE\u05D5\u05E8\u05D5\u05EA"));
 }
 
 /* ---------- PROFILE / STATS / ACHIEVEMENTS ---------- */
