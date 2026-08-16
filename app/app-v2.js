@@ -1725,17 +1725,47 @@ function Profile({
     className: "ach-head"
   }, /*#__PURE__*/React.createElement("h2", null, "\u05D4\u05D9\u05E9\u05D2\u05D9\u05DD \uD83C\uDFC6"), /*#__PURE__*/React.createElement("span", {
     className: "cnt"
-  }, earned.length, "/", ACH.length)), /*#__PURE__*/React.createElement("div", {
+  }, earned.length, "/", ACH.length)), /*#__PURE__*/React.createElement("p", {
+    className: "sec-sub",
+    style: {
+      marginTop: 2
+    }
+  }, "\u05DB\u05DC \u05D2\u05D1\u05D9\u05E2 \u05E0\u05E2\u05D5\u05DC \u05DE\u05E8\u05D0\u05D4 \u05D1\u05D3\u05D9\u05D5\u05E7 \u05DE\u05D4 \u05E6\u05E8\u05D9\u05DA \u05DC\u05E2\u05E9\u05D5\u05EA \u05DB\u05D3\u05D9 \u05DC\u05D4\u05E9\u05D9\u05D2 \u05D0\u05D5\u05EA\u05D5"), /*#__PURE__*/React.createElement("div", {
     className: "ach-grid"
-  }, ACH.map(a => /*#__PURE__*/React.createElement("div", {
-    key: a.id,
-    className: `ach ${earnedSet[a.id] ? 'on' : ''}`,
-    title: a.desc
-  }, /*#__PURE__*/React.createElement("span", {
-    className: "em"
-  }, a.emoji), /*#__PURE__*/React.createElement("span", {
-    className: "t"
-  }, a.title)))));
+  }, ACH.map(a => {
+    const on = !!earnedSet[a.id];
+    let have = 0,
+      need = 0,
+      pct = 0,
+      showBar = false;
+    if (!on && a.prog) {
+      const p = a.prog(m) || [0, 0];
+      need = p[1] || 0;
+      have = Math.max(0, Math.min(p[0] || 0, need));
+      pct = need ? Math.round(have / need * 100) : 0;
+      showBar = need > 1;
+    }
+    return /*#__PURE__*/React.createElement("div", {
+      key: a.id,
+      className: `ach ${on ? 'on' : ''}`
+    }, /*#__PURE__*/React.createElement("span", {
+      className: "em"
+    }, a.emoji), /*#__PURE__*/React.createElement("div", {
+      className: "ach-txt"
+    }, /*#__PURE__*/React.createElement("span", {
+      className: "t"
+    }, a.title), /*#__PURE__*/React.createElement("span", {
+      className: "d"
+    }, on ? a.desc : a.todo), showBar && /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("span", {
+      className: "ach-bar"
+    }, /*#__PURE__*/React.createElement("i", {
+      style: {
+        width: pct + '%'
+      }
+    })), /*#__PURE__*/React.createElement("span", {
+      className: "ach-n"
+    }, have, " \u05DE\u05EA\u05D5\u05DA ", need))));
+  })));
 }
 
 /* ---------- TERM QUESTION (active recall on a single term) ---------- */

@@ -481,7 +481,20 @@ function Profile({user,studied,favorites,stats,sync,signIn,signOut,onTopic,muted
     <div style={{marginTop:6}}>{perTopic.map(({t,total,done})=>{const p=Math.round(done/total*100);
       return (<div className="topic-prog click" key={t.key} onClick={()=>onTopic(t.key)}><div className="lab"><span><TopicIcon tp={t}/> {t.label} ›</span><span>{done}/{total}</span></div><div className="tbar"><i style={{width:p+'%',background:t.primary}}></i></div></div>);})}</div>
     <div className="ach-head"><h2>הישגים 🏆</h2><span className="cnt">{earned.length}/{ACH.length}</span></div>
-    <div className="ach-grid">{ACH.map(a=>(<div key={a.id} className={`ach ${earnedSet[a.id]?'on':''}`} title={a.desc}><span className="em">{a.emoji}</span><span className="t">{a.title}</span></div>))}</div>
+    <p className="sec-sub" style={{marginTop:2}}>כל גביע נעול מראה בדיוק מה צריך לעשות כדי להשיג אותו</p>
+    <div className="ach-grid">{ACH.map(a=>{
+      const on=!!earnedSet[a.id];
+      let have=0,need=0,pct=0,showBar=false;
+      if(!on && a.prog){ const p=a.prog(m)||[0,0]; need=p[1]||0; have=Math.max(0,Math.min(p[0]||0,need)); pct=need?Math.round(have/need*100):0; showBar=need>1; }
+      return (<div key={a.id} className={`ach ${on?'on':''}`}>
+        <span className="em">{a.emoji}</span>
+        <div className="ach-txt">
+          <span className="t">{a.title}</span>
+          <span className="d">{on?a.desc:a.todo}</span>
+          {showBar && <><span className="ach-bar"><i style={{width:pct+'%'}}></i></span><span className="ach-n">{have} מתוך {need}</span></>}
+        </div>
+      </div>);
+    })}</div>
   </>);
 }
 

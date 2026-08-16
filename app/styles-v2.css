@@ -399,15 +399,26 @@ html.dark .term .hl, html.dark .q-q .hl, html.dark .fc-term .hl{
 .ach-head{display:flex;align-items:baseline;gap:8px;margin:22px 0 4px}
 .ach-head h2{font-family:'Secular One';font-weight:700;font-size:19px}
 .ach-head .cnt{font-size:13px;color:var(--text-3);font-weight:700;margin-inline-start:auto}
-.ach-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:8px}
-.ach{aspect-ratio:1/1.05;border-radius:var(--r-md);background:var(--surface);border:1px solid var(--border);
-  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;padding:5px 4px;text-align:center;box-shadow:var(--e1);position:relative}
-.ach .em{font-size:23px;filter:grayscale(1);opacity:.38;transition:.2s}
-.ach .t{font-size:8.5px;font-weight:700;line-height:1.12;color:var(--text-3)}
-.ach.on{background:linear-gradient(180deg,var(--accent-soft),var(--surface));border-color:var(--accent)}
+/* Badges carry their own instructions: a locked badge states what to DO and how close
+   you are. The old 4-up icon tiles hid that in a title tooltip, which never appears on a phone. */
+.ach-grid{display:grid;grid-template-columns:1fr;gap:8px;margin-top:8px}
+@media (min-width:430px){ .ach-grid{grid-template-columns:repeat(2,1fr)} }
+.ach{border-radius:var(--r-md);background:var(--surface);border:1px solid var(--border);
+  display:flex;align-items:flex-start;gap:10px;padding:11px 12px;text-align:start;box-shadow:var(--e1);position:relative}
+.ach .em{font-size:25px;line-height:1.1;flex:0 0 auto;filter:grayscale(1);opacity:.38;transition:.2s}
+.ach-txt{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
+.ach .t{font-size:13px;font-weight:800;line-height:1.2;color:var(--text-2);font-family:'Secular One';font-weight:400}
+/* --text-3 only reaches 3.1:1 here; the instruction is the whole point of the card, so it
+   uses --text-2 to clear the 4.5:1 AA floor for small text */
+.ach .d{font-size:11.5px;line-height:1.4;color:var(--text-2)}
+.ach-bar{display:block;height:5px;border-radius:99px;background:var(--surface-2);overflow:hidden;margin-top:5px}
+.ach-bar i{display:block;height:100%;border-radius:99px;background:var(--accent);transition:width .45s var(--ease)}
+.ach-n{font-size:10.5px;font-weight:700;color:var(--text-2);margin-top:2px}
+.ach.on{background:linear-gradient(180deg,var(--accent-soft),var(--surface));border-color:var(--accent);padding-inline-end:26px}
 .ach.on .em{filter:none;opacity:1;animation:popIn .4s var(--ease) backwards}
 .ach.on .t{color:var(--text)}
-.ach.on::after{content:"✓";position:absolute;top:3px;left:4px;font-size:9px;font-weight:800;color:var(--green-700)}
+.ach.on .d{color:var(--text-2)}
+.ach.on::after{content:"✓";position:absolute;top:8px;left:9px;font-size:13px;font-weight:800;color:var(--green-700)}
 
 /* performance grid */
 .perf{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}
