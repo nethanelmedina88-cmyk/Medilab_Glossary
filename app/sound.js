@@ -30,10 +30,31 @@ window.SLSound = (function(){
   try{ ['pointerdown','keydown'].forEach(function(ev){
     window.addEventListener(ev, prime, {once:true, passive:true}); }); }catch(e){}
 
+  // A correct answer can unlock an achievement in the same instant, which would stack the win
+  // sound on top of the trophy sound. Fade the win out instead of cutting it — an abrupt pause
+  // mid-waveform makes an audible click.
+  var fadeTimer={};
+  function cancelFade(name){
+    if(fadeTimer[name]){ clearInterval(fadeTimer[name]); fadeTimer[name]=null; }
+    if(sfxEl[name]) sfxEl[name].volume=SFX_VOL[name]||1;
+  }
+  function duck(name, ms){
+    var a=sfxEl[name];
+    if(!a || a.paused) return;
+    cancelFade(name);
+    var base=SFX_VOL[name]||1, steps=6, i=0;
+    fadeTimer[name]=setInterval(function(){
+      i++;
+      try{ a.volume=Math.max(0, base*(1-i/steps)); }catch(e){}
+      if(i>=steps){ cancelFade(name); try{ a.pause(); a.currentTime=0; }catch(e){} }
+    }, Math.max(10, ms/steps));
+  }
+
   function play(name, fallback){
     if(muted) return;
     try{
       var a=el(name);
+      cancelFade(name);           // a restart must not be killed by a fade still in flight
       a.pause();
       a.currentTime=0;            // restart instead of overlapping on rapid answers
       var p=a.play();
@@ -44,12 +65,13 @@ window.SLSound = (function(){
   return {
     success:function(){ play('correct', toneSuccess); },   // student answered correctly
     wrong:function(){ play('wrong', toneWrong); },         // student made a mistake
-    trophy:function(){ play('trophy', toneFanfare); },     // student earned an achievement
+    // the trophy is the bigger moment — it takes the stage from the answer sounds
+    trophy:function(){ duck('correct',120); duck('wrong',120); play('trophy', toneFanfare); },
     ding:function(){ if(muted) return; blip(880,0,0.13,'triangle',0.16); blip(1175,0.07,0.18,'triangle',0.12); },
     pop:function(){ if(muted) return; blip(523,0,0.08,'sine',0.14); blip(784,0.06,0.12,'sine',0.11); },
     fanfare:function(){ if(muted) return; toneFanfare(); },
     setMuted:function(m){ muted=!!m; try{ localStorage.setItem('ml-muted', JSON.stringify(muted)); }catch(e){}
-      if(muted){ try{ Object.keys(sfxEl).forEach(function(n){ sfxEl[n].pause(); }); }catch(e){} } },
+      if(muted){ try{ Object.keys(sfxEl).forEach(function(n){ cancelFade(n); sfxEl[n].pause(); }); }catch(e){} } },
     isMuted:function(){ return muted; }
   };
 })();
