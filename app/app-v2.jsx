@@ -609,7 +609,7 @@ function App(){
     // achieved is monotonic — once earned, always earned (never re-celebrate, never drop on a transient stats dip).
     if(!achInit.current || loadingRef.current){ achInit.current=true; setAchieved(prev=>uniq([...prev,...earned])); return; }
     const fresh=earned.filter(id=>!achieved.includes(id));
-    if(fresh.length){ const a=ACH.find(x=>x.id===fresh[0]); if(a){ setNewAch(a); setConfetti(true); Snd.fanfare();
+    if(fresh.length){ const a=ACH.find(x=>x.id===fresh[0]); if(a){ setNewAch(a); setConfetti(true); Snd.trophy();
       setTimeout(()=>setNewAch(null),3600); setTimeout(()=>setConfetti(false),1900); } setAchieved(prev=>uniq([...prev,...earned])); }
   },[studied,favorites,stats]); // eslint-disable-line
 

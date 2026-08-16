@@ -2065,7 +2065,7 @@ function App() {
       if (a) {
         setNewAch(a);
         setConfetti(true);
-        Snd.fanfare();
+        Snd.trophy();
         setTimeout(() => setNewAch(null), 3600);
         setTimeout(() => setConfetti(false), 1900);
       }
