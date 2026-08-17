@@ -50,7 +50,10 @@ input{font-family:inherit}
 
 /* app frame */
 .app{max-width:520px;margin:0 auto;min-height:100vh;display:flex;flex-direction:column;position:relative;background:var(--bg)}
-.scroll{flex:1;overflow-y:auto;padding:0 16px 120px}
+/* --kb is the on-screen keyboard height, published by syncKeyboardInset(). Without it a quiz
+   question fits the screen exactly, leaving nothing to scroll and no way to lift the answer
+   field out from under the keyboard. It is 0 whenever the keyboard is closed. */
+.scroll{flex:1;overflow-y:auto;padding:0 16px calc(120px + var(--kb,0px))}
 
 /* ============ HEADER ============ */
 .hdr{position:sticky;top:0;z-index:20;display:flex;align-items:center;gap:10px;padding:14px 16px 12px;

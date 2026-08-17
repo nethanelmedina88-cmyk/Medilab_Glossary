@@ -58,6 +58,61 @@ let auth=null,db=null,googleProvider=null;
 try{ if(window.firebase){ if(!firebase.apps.length)firebase.initializeApp(FB_CONFIG); auth=firebase.auth(); db=firebase.firestore(); googleProvider=new firebase.auth.GoogleAuthProvider(); googleProvider.setCustomParameters({prompt:'select_account'}); } }catch(e){ console.warn('firebase',e); }
 
 function useLocal(key,init){ const [v,setV]=useState(()=>{try{const s=localStorage.getItem(key);return s!=null?JSON.parse(s):init;}catch{return init;}}); useEffect(()=>{try{localStorage.setItem(key,JSON.stringify(v));}catch{}},[key,v]); return [v,setV]; }
+// The on-screen keyboard covers the bottom of the screen. getBoundingClientRect() is in layout
+// coordinates, and on iOS the layout viewport does NOT shrink when the keyboard opens — only
+// visualViewport does — so we measure the visible band as [offsetTop, offsetTop+height] and
+// scroll the app's own .scroll container until the element sits inside it.
+// Publish the keyboard height as --kb. A quiz question exactly fills the screen, so .scroll has
+// ZERO scrollable room — scrolling alone can never lift the field out from under the keyboard.
+// The CSS adds --kb to .scroll's bottom padding, which creates the room to scroll into.
+function syncKeyboardInset(){
+  try{
+    const vv=window.visualViewport;
+    const kb=vv?Math.max(0,Math.round(window.innerHeight-vv.height-vv.offsetTop)):0;
+    document.documentElement.style.setProperty('--kb',kb+'px');
+    return kb;
+  }catch(e){ return 0; }
+}
+// .scroll carries overflow-y:auto but is flex:1 inside a min-height:100vh .app, so it grows with
+// its content and never actually scrolls — the page scrolls at the window level. Pick whichever
+// ancestor genuinely has room to move.
+function scrollerFor(el){
+  let n=el&&el.parentElement;
+  while(n&&n!==document.body&&n!==document.documentElement){
+    const oy=getComputedStyle(n).overflowY;
+    if((oy==='auto'||oy==='scroll')&&n.scrollHeight-n.clientHeight>1) return n;
+    n=n.parentElement;
+  }
+  return window;
+}
+function keepAboveKeyboard(el){
+  if(!el) return;
+  const run=()=>{
+    try{
+      syncKeyboardInset();                       // make the room first…
+      const vv=window.visualViewport;
+      const top=vv?vv.offsetTop:0;
+      const bottom=top+(vv?vv.height:window.innerHeight);
+      const r=el.getBoundingClientRect();
+      const over=r.bottom-(bottom-18);
+      // …then scroll into it. 'auto', not 'smooth': a smooth scroll racing the keyboard
+      // animation often never lands.
+      if(over>0) scrollerFor(el).scrollBy({top:over,behavior:'auto'});
+    }catch(e){}
+  };
+  // two passes: some Android keyboards report the resized viewport only after the animation
+  setTimeout(run,300); setTimeout(run,650);
+}
+// Also react whenever the keyboard actually opens/resizes, not just on focus.
+try{
+  if(window.visualViewport){
+    window.visualViewport.addEventListener('resize',function(){
+      const a=document.activeElement;
+      if(a&&(a.tagName==='INPUT'||a.tagName==='TEXTAREA')) keepAboveKeyboard(a.closest('.q-type-in')||a);
+      else syncKeyboardInset();   // keyboard closed → drop the extra padding again
+    });
+  }
+}catch(e){}
 function highlight(text,q){ if(!q)return text; const i=(text||'').toLowerCase().indexOf(q.toLowerCase()); if(i<0)return text; return <>{text.slice(0,i)}<mark className="hl">{text.slice(i,i+q.length)}</mark>{text.slice(i+q.length)}</>; }
 
 /* icons — Twemoji (CC-BY 4.0) supplied via window.MLICONS (app/mlicons.js) */
@@ -351,7 +406,10 @@ function Quiz({studied,toggleStudied,favorites,recordAnswer,recordQuiz,fireConfe
     <div className="q-q">{item.kind==='pick-definition'?<>מהי <span className="hl mnk">{termLabel(item.term)}</span>?</>:item.prompt}</div>
     <button className="chip" onClick={()=>Speak2(item.kind==='pick-definition'?item.term.hebrew:item.prompt, item.kind==='pick-definition'?item.term.nikud:null)} style={{marginBottom:10}} aria-label="הקראה"><IcSpeaker/> הקראה</button>
     {item.kind==='type-answer'
-      ? (<><div className="q-type-in"><input value={typed} onChange={e=>setTyped(e.target.value)} disabled={answered} placeholder="הקלידו את המושג…" onKeyDown={e=>e.key==='Enter'&&answerType()}/>{!answered&&<button className="btn btn-accent" onClick={answerType}>בדיקה</button>}</div>
+      ? (<><div className="q-type-in"><input value={typed} onChange={e=>setTyped(e.target.value)} disabled={answered} placeholder="הקלידו את המושג…"
+          enterKeyHint="done" autoComplete="off" autoCorrect="off"
+          onFocus={e=>keepAboveKeyboard(e.target.closest('.q-type-in'))}
+          onKeyDown={e=>e.key==='Enter'&&answerType()}/>{!answered&&<button className="btn btn-accent" onClick={answerType}>בדיקה</button>}</div>
         {answered && (chosen.correct?<div className="fb ok">🎉 נכון! {termLabel(item.term)}</div>:<div className="fb no">✗ התשובה: {termLabel(item.term)}</div>)}</>)
       : item.options.map((o,idx)=>{let cls='opt';if(answered){if(o.correct)cls+=' correct';else if(chosen===o)cls+=' wrong';}
           return <button key={idx} className={cls} onClick={()=>answerMC(o)} disabled={answered}><span className="mk">{answered&&o.correct?'✓':String.fromCharCode(1488+idx)}</span><span>{o.text}</span></button>;})}
@@ -636,7 +694,15 @@ function App(){
     if(u&&db){ setSync('syncing');
       try{ const eDoc=await db.collection('entitlements').doc(u.uid).get(); setEntitlement(eDoc.exists?eDoc.data():null); }catch(e){ setEntitlement(null); }
       try{ const doc=await db.collection('users').doc(u.uid).get();
-        if(doc.exists){ const d=doc.data(); loadingRef.current=true; setFav(d.favorites||[]); setStudied(d.studied||[]); if(d.stats)setStats(s=>mergeStats(s,d.stats)); if(d.achieved)setAchieved(prev=>uniq([...prev,...d.achieved])); setTimeout(()=>{loadingRef.current=false;},600); setSync('synced'); setTimeout(()=>setSync(''),1500); }
+        if(doc.exists){ const d=doc.data(); loadingRef.current=true;
+          // UNION, never replace. Overwriting local with the cloud copy silently destroyed every
+          // term studied as a guest (or offline since the last sync) the moment you signed in —
+          // the opposite of what the sign-up gate promises. stats/achieved already merged; these
+          // two did not.
+          setFav(prev=>uniq([...(d.favorites||[]),...prev]));
+          setStudied(prev=>uniq([...(d.studied||[]),...prev]));
+          if(d.stats)setStats(s=>mergeStats(s,d.stats)); if(d.achieved)setAchieved(prev=>uniq([...prev,...d.achieved]));
+          setTimeout(()=>{loadingRef.current=false;},600); setSync('synced'); setTimeout(()=>setSync(''),1500); }
         else { await db.collection('users').doc(u.uid).set({displayName:u.displayName,email:u.email,photoURL:u.photoURL,favorites,studied,stats,achieved,lastSync:firebase.firestore.FieldValue.serverTimestamp()},{merge:true}); setSync('synced'); setTimeout(()=>setSync(''),1500); }
       }catch(e){ console.error(e); setSync('error'); } }
   }); return unsub; },[]);
@@ -658,7 +724,14 @@ function App(){
       }
       alert('שגיאת התחברות: '+(e.message||e));
     } };
-  const signOut=async()=>{ loadingRef.current=true; setEntitlement(null); try{ await auth.signOut(); }catch(e){} setUser(null); setTimeout(()=>{loadingRef.current=false;},600); };
+  const signOut=async()=>{
+    // Flush everything to the account BEFORE dropping the session. Without this, progress made
+    // since the last write lives only on this device and never follows the user to the next one.
+    try{ if(db&&auth.currentUser) await saveUserData(auth.currentUser.uid); }catch(e){}
+    loadingRef.current=true; setEntitlement(null);
+    try{ await auth.signOut(); }catch(e){}
+    setUser(null); setTimeout(()=>{loadingRef.current=false;},600);
+  };
 
   const dm=(mode==='glossary'||mode==='flashcards'||mode==='quiz')?mode:'glossary';
   return (

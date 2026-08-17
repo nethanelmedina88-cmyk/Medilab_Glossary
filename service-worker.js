@@ -1,4 +1,4 @@
-const CACHE_NAME = 'shlifim-v59';
+const CACHE_NAME = 'shlifim-v60';
 const FILES_TO_CACHE = [
   './',
   './index.html',

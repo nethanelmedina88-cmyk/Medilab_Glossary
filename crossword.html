@@ -125,7 +125,7 @@
   <div class="gridwrap"><div class="grid" id="grid"></div></div>
 
   <div class="actions">
-    <button class="btn g" id="check"><svg viewBox="0 0 24 24" fill="none"><path d="M5 12.5l4.2 4.2L19 7" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>בדיקה</button>
+    <button class="btn g" id="nextw"><svg viewBox="0 0 24 24" fill="none"><path d="M14.5 6.5L9 12l5.5 5.5" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>מילה הבאה</button>
     <button class="btn y" id="hint"><svg viewBox="0 0 24 24" fill="none"><path d="M9.5 18.5h5M10.5 21h3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><path d="M12 3a6 6 0 00-3.6 10.8c.5.4.9 1 1 1.7h5.2c.1-.7.5-1.3 1-1.7A6 6 0 0012 3z" fill="currentColor"/></svg>רמז</button>
     <button class="btn" id="clear"><svg viewBox="0 0 24 24" fill="none"><path d="M5 7h14M9.5 7V5.6A1.6 1.6 0 0111.1 4h1.8A1.6 1.6 0 0114.5 5.6V7M7 7l.9 12.4A1.6 1.6 0 009.5 21h5a1.6 1.6 0 001.6-1.6L17 7" stroke="#F0654F" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>ניקוי</button>
   </div>
@@ -399,10 +399,6 @@
     var cl=document.querySelector('.clue[data-id="'+(e.dir+e.num)+'"]'); if(cl) cl.classList.toggle('done',done); }); }
   function maybeWin(){ var all=Object.keys(model.cells).every(function(k){ return norm(inputs[k].value||'')===model.cells[k].ans; }); if(all) win(); }
 
-  function check(){ var allRight=true, any=false;
-    Object.keys(model.cells).forEach(function(k){ var inp=inputs[k], got=norm(inp.value); inp.parentNode.classList.remove('ok','bad');
-      if(!got){ allRight=false; return; } any=true; if(got===model.cells[k].ans) inp.parentNode.classList.add('ok'); else { inp.parentNode.classList.add('bad'); allRight=false; } });
-    markDone(); if(allRight&&any) win(); }
   function hint(){ startTimer(); if(!sel.entry) return; var p=sel.entry.cells[sel.cellIdx]||sel.entry.cells[firstEmptyIdx(sel.entry)]; if(!p) return;
     var inp=inputs[ck(p[0],p[1])]; inp.value=model.cells[ck(p[0],p[1])].ans; inp.parentNode.classList.remove('bad'); inp.parentNode.classList.add('ok');
     hints++; document.getElementById('hintsT').textContent=hints;
@@ -444,7 +440,10 @@
     document.getElementById('wnew').addEventListener('click',function(){ document.getElementById('win').classList.remove('on'); buildPuzzle(); });
     sel2.addEventListener('change',buildPuzzle);
     document.getElementById('diff').addEventListener('change',buildPuzzle);
-    document.getElementById('check').addEventListener('click',check);
+    // Words verify themselves the moment they are filled (see evalWord), so a "check" button
+    // had nothing to do. Jumping to the next unsolved clue is the real mobile pain point:
+    // with the keyboard up, hunting for the next empty word is awkward.
+    document.getElementById('nextw').addEventListener('click',function(){ startTimer(); nextClue(1,true); });
     document.getElementById('hint').addEventListener('click',hint);
     document.getElementById('clear').addEventListener('click',clearAll);
     document.getElementById('prev').addEventListener('click',function(){ nextClue(-1,false); });
