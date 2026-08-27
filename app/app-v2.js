@@ -1332,6 +1332,101 @@ function Crossword({
     src: "crossword.html?embed=1&dark=" + (dark ? 1 : 0)
   }));
 }
+
+/* ---------- ABOUT: content mirrored from medilabacademy.com ---------- */
+const SITE = 'https://medilabacademy.com';
+const CLASSROOM = [{
+  src: 'classroom-1.webp',
+  alt: 'שיעור על מבנה ה-DNA בכיתה'
+}, {
+  src: 'classroom-2.webp',
+  alt: 'תלמידים בחלוקי מעבדה בפעילות בחוץ'
+}, {
+  src: 'classroom-3.webp',
+  alt: 'תמונת סוף שנה עם הכיתה'
+}, {
+  src: 'classroom-4.webp',
+  alt: 'עבודה בקבוצות בשיעור'
+}, {
+  src: 'classroom-5.webp',
+  alt: 'הרצאה מול הכיתה'
+}, {
+  src: 'classroom-6.webp',
+  alt: 'חגיגת סיום שנה'
+}];
+const TESTIMONIALS = [{
+  n: 'תהל ח׳',
+  g: 85,
+  t: 'המבחן הראשון שלי נגמר ב-40, והחלטתי שאני שונאת את זה — אבל נתנאל לא הסכים. השלמנו ביחד יותר משנה של פערים.'
+}, {
+  n: 'אמלי ס׳',
+  g: 88,
+  t: 'כשהיה לי קשה, הוא תמיד דאג להבין מה הקושי האמיתי. בלי העזרה שלו לא הייתי מגיעה לציון שהגעתי אליו.'
+}, {
+  n: 'יונתן מ׳',
+  g: 89,
+  t: 'הסביר את החומר בצורה הכי ברורה, ותמיד ענה על שאלות גם מחוץ לשיעור. אצל נתנאל אפשר להגיד: מי שרצה — הצליח.'
+}, {
+  n: 'שון ס׳',
+  g: 95,
+  t: 'מביא את הלימודים בצורה נגישה עם דוגמאות מהעולם האמיתי, ומצית אהבה למדעים ולביולוגיה בפרט.'
+}, {
+  n: 'איתן ו׳',
+  g: 97,
+  t: 'היכולת להפוך כל שיעור לחוויה היא נדירה, והוא מעמיק הרבה מעבר לתוכנית הלימודים — מתוך תשוקה אמיתית לידע.'
+}, {
+  n: 'רוני ב׳',
+  g: 98,
+  t: 'יודע למצוא את הדימוי המדויק שמסביר גם נושאים מורכבים, ומעביר שיעורים בצחוק ובחן.'
+}, {
+  n: 'דניאלה ק׳',
+  g: 98,
+  t: 'מצגות מרתקות, מחקרים וניסויים מדהימים. הפקנו המון ידע ובעיקר אין-סוף סקרנות.'
+}, {
+  n: 'נועה א׳',
+  g: 100,
+  t: 'הפך את המקצוע מתחום אפור ומשעמם למקצוע הכי מעניין שלמדתי בתיכון.'
+}, {
+  n: 'יולי א׳',
+  g: 100,
+  t: 'קשוב, סבלני, בגובה העיניים — והיה מוכן לעצור ולהסביר שוב, גם מיליון פעם בדרכים שונות.'
+}];
+// 5s per photo. Honours prefers-reduced-motion: an auto-advancing carousel is exactly the
+// kind of motion that setting exists to stop, so there we show one photo and let the dots drive.
+function Classroom() {
+  const [i, setI] = useState(0);
+  const [paused, setPaused] = useState(false);
+  useEffect(() => {
+    let reduce = false;
+    try {
+      reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    } catch (e) {}
+    if (reduce || paused) return;
+    const id = setInterval(() => setI(n => (n + 1) % CLASSROOM.length), 5000);
+    return () => clearInterval(id);
+  }, [paused]);
+  return /*#__PURE__*/React.createElement("div", {
+    className: "cr-wrap"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "cr-stage",
+    onClick: () => setPaused(p => !p),
+    title: paused ? 'המשך' : 'עצירה'
+  }, CLASSROOM.map((s, n) => /*#__PURE__*/React.createElement("img", {
+    key: s.src,
+    src: s.src,
+    alt: s.alt,
+    loading: "lazy",
+    className: 'cr-img' + (n === i ? ' on' : ''),
+    "aria-hidden": n !== i
+  }))), /*#__PURE__*/React.createElement("div", {
+    className: "cr-dots"
+  }, CLASSROOM.map((s, n) => /*#__PURE__*/React.createElement("button", {
+    key: n,
+    className: 'cr-dot' + (n === i ? ' on' : ''),
+    onClick: () => setI(n),
+    "aria-label": 'תמונה ' + (n + 1) + ' מתוך ' + CLASSROOM.length
+  }))));
+}
 function About() {
   return /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("div", {
     className: "hero"
@@ -1347,33 +1442,65 @@ function About() {
     className: "about-name"
   }, "\u05E0\u05E2\u05D9\u05DD \u05DC\u05D4\u05DB\u05D9\u05E8 \u2014 \u05E0\u05EA\u05E0\u05D0\u05DC \uD83D\uDC4B"))), /*#__PURE__*/React.createElement("p", {
     className: "about-body"
-  }, "\u05DE\u05D5\u05E8\u05D4 \u05DC\u05D1\u05D9\u05D5\u05DC\u05D5\u05D2\u05D9\u05D4 \u05D5\u05DC\u05D1\u05D9\u05D5\u05D8\u05DB\u05E0\u05D5\u05DC\u05D5\u05D2\u05D9\u05D4 \u05E2\u05DD ", /*#__PURE__*/React.createElement("b", null, "10 \u05E9\u05E0\u05D5\u05EA \u05E0\u05D9\u05E1\u05D9\u05D5\u05DF \u05D1\u05EA\u05D9\u05DB\u05D5\u05DF"), ", \u05DE\u05D2\u05D9\u05E9 \u05EA\u05DC\u05DE\u05D9\u05D3\u05D9\u05DD \u05DC\u05D1\u05D2\u05E8\u05D5\u05EA \u05D1\u05D1\u05D9\u05D5\u05DC\u05D5\u05D2\u05D9\u05D4 (5 \u05D9\u05D7\u05F4\u05DC) \u05D5\u05D1\u05D1\u05D9\u05D5\u05D8\u05DB\u05E0\u05D5\u05DC\u05D5\u05D2\u05D9\u05D4 (10 \u05D9\u05D7\u05F4\u05DC)."), /*#__PURE__*/React.createElement("p", {
+  }, "\u05DE\u05D5\u05E8\u05D4 \u05DC\u05D1\u05D9\u05D5\u05DC\u05D5\u05D2\u05D9\u05D4 \u05D5\u05DC\u05D1\u05D9\u05D5\u05D8\u05DB\u05E0\u05D5\u05DC\u05D5\u05D2\u05D9\u05D4 \u05E2\u05DD ", /*#__PURE__*/React.createElement("b", null, "10 \u05E9\u05E0\u05D5\u05EA \u05E0\u05D9\u05E1\u05D9\u05D5\u05DF \u05D1\u05D4\u05DB\u05E0\u05D4 \u05DC\u05D1\u05D2\u05E8\u05D5\u05EA"), " \u05D1\u05D1\u05D9\u05D5\u05DC\u05D5\u05D2\u05D9\u05D4 (5 \u05D9\u05D7\u05F4\u05DC) \u05D5\u05D1\u05D1\u05D9\u05D5\u05D8\u05DB\u05E0\u05D5\u05DC\u05D5\u05D2\u05D9\u05D4 (10 \u05D9\u05D7\u05F4\u05DC)."), /*#__PURE__*/React.createElement("p", {
     className: "about-body"
-  }, /*#__PURE__*/React.createElement("b", null, "\u05DE\u05E2\u05D1\u05D9\u05E8 \u05E9\u05D9\u05E2\u05D5\u05E8\u05D9\u05DD \u05E4\u05E8\u05D8\u05D9\u05D9\u05DD \u2014 \u05D9\u05D7\u05D9\u05D3\u05E0\u05D9\u05D9\u05DD (\u05D0\u05D7\u05D3-\u05E2\u05DC-\u05D0\u05D7\u05D3) \u05D5\u05D1\u05E7\u05D1\u05D5\u05E6\u05D5\u05EA \u05E7\u05D8\u05E0\u05D5\u05EA"), ", \u05D1\u05D6\u05D5\u05DD \u05D0\u05D5 \u05E4\u05E8\u05D5\u05E0\u05D8\u05DC\u05D9 \u05D1\u05DE\u05E8\u05DB\u05D6 \u05DC\u05DE\u05D9\u05D3\u05D4. \u05DC\u05D9\u05D5\u05D5\u05D9 \u05D0\u05D9\u05E9\u05D9, \u05DE\u05D5\u05EA\u05D0\u05DD \u05DC\u05E8\u05DE\u05D4 \u05D5\u05DC\u05E7\u05E6\u05D1 \u05E9\u05DC \u05DB\u05DC \u05EA\u05DC\u05DE\u05D9\u05D3 \u2014 \u05E2\u05D3 \u05D4\u05D1\u05D2\u05E8\u05D5\u05EA. \uD83D\uDCC8"), /*#__PURE__*/React.createElement("div", {
+  }, /*#__PURE__*/React.createElement("b", null, "\u05E9\u05D9\u05E2\u05D5\u05E8\u05D9\u05DD \u05D0\u05D7\u05D3-\u05E2\u05DC-\u05D0\u05D7\u05D3 \u05D0\u05D5 \u05D1\u05E7\u05D1\u05D5\u05E6\u05D5\u05EA \u05E7\u05D8\u05E0\u05D5\u05EA"), " \u2014 \u05DE\u05E7\u05D5\u05D5\u05DF \u05D1\u05D6\u05D5\u05DD \u05D0\u05D5 \u05E4\u05E8\u05D5\u05E0\u05D8\u05DC\u05D9 \u05D1\u05DE\u05E8\u05DB\u05D6 \u05F4\u05DB\u05D9\u05D5\u05D5\u05E0\u05D9\u05DD\u05F4 \u05D1\u05D0\u05E9\u05D3\u05D5\u05D3. \u05E9\u05D9\u05D7\u05EA \u05D4\u05D9\u05DB\u05E8\u05D5\u05EA \u05E8\u05D0\u05E9\u05D5\u05E0\u05D4 \u05EA\u05DE\u05D9\u05D3 \u05E2\u05DC \u05D7\u05E9\u05D1\u05D5\u05E0\u05D9. \uD83D\uDCC8"), /*#__PURE__*/React.createElement("div", {
     className: "quote"
   }, "\u05F4\u05D0\u05E0\u05D9 \u05DE\u05D0\u05DE\u05D9\u05DF \u05E9\u05DC\u05DB\u05DC \u05EA\u05DC\u05DE\u05D9\u05D3 \u05D9\u05E9 \u05D3\u05E8\u05DA \u05DE\u05E9\u05DC\u05D5 \u05DC\u05D4\u05D1\u05D9\u05DF, \u05D5\u05D4\u05EA\u05E4\u05E7\u05D9\u05D3 \u05E9\u05DC\u05D9 \u05D4\u05D5\u05D0 \u05DC\u05DE\u05E6\u05D5\u05D0 \u05D0\u05D5\u05EA\u05D4.\u05F4"), /*#__PURE__*/React.createElement("div", {
     className: "stat-row"
   }, /*#__PURE__*/React.createElement("div", {
     className: "stat-box"
-  }, /*#__PURE__*/React.createElement("b", null, "10"), /*#__PURE__*/React.createElement("span", null, "\u05E9\u05E0\u05D5\u05EA \u05D4\u05D5\u05E8\u05D0\u05D4")), /*#__PURE__*/React.createElement("div", {
+  }, /*#__PURE__*/React.createElement("b", null, "94"), /*#__PURE__*/React.createElement("span", null, "\u05E6\u05D9\u05D5\u05DF \u05DE\u05DE\u05D5\u05E6\u05E2")), /*#__PURE__*/React.createElement("div", {
     className: "stat-box"
-  }, /*#__PURE__*/React.createElement("b", null, "1,600+"), /*#__PURE__*/React.createElement("span", null, "\u05E9\u05D0\u05DC\u05D5\u05EA \u05D1\u05D2\u05E8\u05D5\u05EA")), /*#__PURE__*/React.createElement("div", {
+  }, /*#__PURE__*/React.createElement("b", null, "100"), /*#__PURE__*/React.createElement("span", null, "\u05D4\u05E6\u05D9\u05D5\u05DF \u05D4\u05D2\u05D1\u05D5\u05D4")), /*#__PURE__*/React.createElement("div", {
     className: "stat-box"
-  }, /*#__PURE__*/React.createElement("b", null, "3"), /*#__PURE__*/React.createElement("span", null, "\u05E1\u05E4\u05E8\u05D9 \u05E2\u05D6\u05E8"))), /*#__PURE__*/React.createElement("div", {
+  }, /*#__PURE__*/React.createElement("b", null, "10+"), /*#__PURE__*/React.createElement("span", null, "\u05E9\u05E0\u05D5\u05EA \u05E0\u05D9\u05E1\u05D9\u05D5\u05DF"))), /*#__PURE__*/React.createElement("div", {
     className: "degrees"
   }, /*#__PURE__*/React.createElement("div", {
     className: "degree"
   }, /*#__PURE__*/React.createElement("span", {
     className: "tag"
-  }, "B.Sc"), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("b", null, "\u05EA\u05D5\u05D0\u05E8 \u05E8\u05D0\u05E9\u05D5\u05DF \u05D1\u05D1\u05D9\u05D5\u05DC\u05D5\u05D2\u05D9\u05D4"), /*#__PURE__*/React.createElement("span", null, "\u05D0\u05D5\u05E0\u05D9\u05D1\u05E8\u05E1\u05D9\u05D8\u05EA \u05D7\u05D9\u05E4\u05D4"))), /*#__PURE__*/React.createElement("div", {
+  }, "B.Sc"), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("b", null, "\u05D1\u05D9\u05D5\u05DC\u05D5\u05D2\u05D9\u05D4"), /*#__PURE__*/React.createElement("span", null, "\u05D0\u05D5\u05E0\u05D9\u05D1\u05E8\u05E1\u05D9\u05D8\u05EA \u05D7\u05D9\u05E4\u05D4"))), /*#__PURE__*/React.createElement("div", {
     className: "degree"
   }, /*#__PURE__*/React.createElement("span", {
     className: "tag"
-  }, "M.Teach"), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("b", null, "\u05EA\u05D5\u05D0\u05E8 \u05E9\u05E0\u05D9 \u05D1\u05D4\u05D5\u05E8\u05D0\u05EA \u05D4\u05DE\u05D3\u05E2\u05D9\u05DD"), /*#__PURE__*/React.createElement("span", null, "\u05DE\u05DB\u05DC\u05DC\u05EA \u05D0\u05D5\u05E8\u05E0\u05D9\u05DD"))), /*#__PURE__*/React.createElement("div", {
+  }, "M.Teach"), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("b", null, "\u05D4\u05D5\u05E8\u05D0\u05EA \u05D1\u05D9\u05D5\u05DC\u05D5\u05D2\u05D9\u05D4"), /*#__PURE__*/React.createElement("span", null, "\u05DE\u05DB\u05DC\u05DC\u05EA \u05D0\u05D5\u05E8\u05E0\u05D9\u05DD"))), /*#__PURE__*/React.createElement("div", {
     className: "degree"
   }, /*#__PURE__*/React.createElement("span", {
     className: "tag"
-  }, "M.Sc"), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("b", null, "\u05EA\u05D5\u05D0\u05E8 \u05E9\u05E0\u05D9 \u05D1\u05D1\u05D9\u05D5\u05D8\u05DB\u05E0\u05D5\u05DC\u05D5\u05D2\u05D9\u05D4"), /*#__PURE__*/React.createElement("span", null, "\u05DE\u05DB\u05D5\u05DF \u05D5\u05D9\u05E6\u05DE\u05DF \u05DC\u05DE\u05D3\u05E2")))), /*#__PURE__*/React.createElement("h2", {
+  }, "M.Sc"), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("b", null, "\u05D4\u05D5\u05E8\u05D0\u05EA \u05D4\u05DE\u05D3\u05E2\u05D9\u05DD"), /*#__PURE__*/React.createElement("span", null, "\u05DE\u05DB\u05D5\u05DF \u05D5\u05D9\u05E6\u05DE\u05DF \u05DC\u05DE\u05D3\u05E2")))), /*#__PURE__*/React.createElement("h2", {
+    className: "sec-title"
+  }, "\u05D4\u05DC\u05D5\u05DE\u05D3\u05D4 \u05D4\u05DE\u05DC\u05D0\u05D4 \uD83C\uDF93"), /*#__PURE__*/React.createElement("p", {
+    className: "sec-sub"
+  }, "\u05E9\u05DC\u05D9\u05E4\u05D9\u05DD \u05D4\u05D5\u05D0 \u05D4\u05DE\u05D5\u05E0\u05D7\u05D5\u05DF. \u05D1\u05D0\u05EA\u05E8 \u05DE\u05D7\u05DB\u05D4 \u05DB\u05DC \u05D4\u05E9\u05D0\u05E8."), /*#__PURE__*/React.createElement("div", {
+    className: "lomda"
+  }, /*#__PURE__*/React.createElement("p", null, "\u05DB\u05DC \u05EA\u05EA-\u05E0\u05D5\u05E9\u05D0 \u05DE\u05E7\u05D1\u05DC \u05D3\u05E8\u05D2\u05EA \u05E9\u05DC\u05D9\u05D8\u05D4 \u05E9\u05E2\u05D5\u05DC\u05D4 \u05E8\u05E7 \u05DE\u05EA\u05E9\u05D5\u05D1\u05D5\u05EA \u05E0\u05DB\u05D5\u05E0\u05D5\u05EA \u05E2\u05DC \u05E9\u05D0\u05DC\u05D5\u05EA \u05D1\u05D2\u05E8\u05D5\u05EA \u05D0\u05DE\u05D9\u05EA\u05D9\u05D5\u05EA \u2014 \u05DB\u05DA \u05E8\u05D5\u05D0\u05D9\u05DD \u05D1\u05D3\u05D9\u05D5\u05E7 \u05DE\u05D4 \u05E2\u05D5\u05D3 \u05DC\u05D0 \u05E1\u05D2\u05D5\u05E8, \u05D1\u05DE\u05E7\u05D5\u05DD \u05DC\u05D4\u05E8\u05D2\u05D9\u05E9 \u05E9\u05E7\u05E8\u05D0\u05EA\u05DD."), /*#__PURE__*/React.createElement("div", {
+    className: "lomda-stats"
+  }, /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("b", null, "893"), /*#__PURE__*/React.createElement("span", null, "\u05E9\u05D0\u05DC\u05D5\u05EA \u05D1\u05D2\u05E8\u05D5\u05EA \u05D0\u05DE\u05D9\u05EA\u05D9\u05D5\u05EA")), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("b", null, "24"), /*#__PURE__*/React.createElement("span", null, "\u05E4\u05E8\u05E7\u05D9\u05DD \xB7 3 \u05E7\u05D5\u05E8\u05E1\u05D9 \u05DC\u05D9\u05D1\u05D4")), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("b", null, "1971\u20132025"), /*#__PURE__*/React.createElement("span", null, "\u05E9\u05E0\u05D5\u05EA \u05DE\u05D5\u05E2\u05D3\u05D9\u05DD"))), /*#__PURE__*/React.createElement("ul", {
+    className: "lomda-list"
+  }, /*#__PURE__*/React.createElement("li", null, "\u05D4\u05E1\u05D1\u05E8 \u05DC\u05DB\u05DC \u05EA\u05E9\u05D5\u05D1\u05D4 \u2014 \u05E0\u05DB\u05D5\u05E0\u05D4 \u05D0\u05D5 \u05E9\u05D2\u05D5\u05D9\u05D4 \u2014 \u05E9\u05DE\u05E8\u05D0\u05D4 \u05D0\u05D9\u05E4\u05D4 \u05D1\u05D3\u05D9\u05D5\u05E7 \u05E0\u05E4\u05DC\u05EA\u05DD"), /*#__PURE__*/React.createElement("li", null, "\u05E9\u05DC\u05D5\u05E9\u05D4 \u05E8\u05DE\u05D6\u05D9\u05DD \u05DE\u05D3\u05D5\u05E8\u05D2\u05D9\u05DD \u05D1\u05DB\u05DC \u05E9\u05D0\u05DC\u05D4 \u05E9\u05E0\u05EA\u05E7\u05E2\u05EA\u05DD \u05D1\u05D4"), /*#__PURE__*/React.createElement("li", null, "\u05E9\u05D0\u05DC\u05D4 \u05D0\u05D9\u05E9\u05D9\u05EA \u05DC\u05DE\u05D5\u05E8\u05D4 \u05E2\u05DC \u05DB\u05DC \u05E9\u05D0\u05DC\u05D4, \u05E2\u05DD \u05EA\u05E9\u05D5\u05D1\u05D4 \u05D1\u05D3\u05E8\u05DA \u05DB\u05DC\u05DC \u05D1\u05D0\u05D5\u05EA\u05D5 \u05D9\u05D5\u05DD"), /*#__PURE__*/React.createElement("li", null, "\u05DE\u05E4\u05EA \u05DE\u05E1\u05E2 \u05D0\u05D9\u05E9\u05D9\u05EA \u05D1-24 \u05E4\u05E8\u05E7\u05D9\u05DD, \u05D5\u05DE\u05D3\u05DC\u05D9\u05D4 \u05E2\u05DC \u05DB\u05DC \u05E4\u05E8\u05E7 \u05E9\u05E0\u05E1\u05D2\u05E8")), /*#__PURE__*/React.createElement("a", {
+    className: "btn btn-accent lomda-cta",
+    href: SITE + '/start',
+    target: "_blank",
+    rel: "noopener"
+  }, "14 \u05D9\u05D5\u05DD \u05D7\u05D9\u05E0\u05DD, \u05D1\u05DC\u05D9 \u05DB\u05E8\u05D8\u05D9\u05E1 \u05D0\u05E9\u05E8\u05D0\u05D9 \u2190")), /*#__PURE__*/React.createElement("h2", {
+    className: "sec-title"
+  }, "\u05DE\u05D4 \u05EA\u05DC\u05DE\u05D9\u05D3\u05D9\u05DD \u05DB\u05D5\u05EA\u05D1\u05D9\u05DD \uD83D\uDCAC"), /*#__PURE__*/React.createElement("p", {
+    className: "sec-sub"
+  }, "\u05D2\u05D5\u05E8\u05E8\u05D9\u05DD \u05DC\u05E6\u05D3\u05D3\u05D9\u05DD \xB7 \u05D4\u05E6\u05D9\u05D5\u05DF \u05E9\u05E7\u05D9\u05D1\u05DC\u05D5 \u05D1\u05D1\u05D2\u05E8\u05D5\u05EA \u05DE\u05D5\u05E4\u05D9\u05E2 \u05DC\u05E6\u05D3 \u05D4\u05E9\u05DD"), /*#__PURE__*/React.createElement(Scroller, {
+    className: "tsts"
+  }, TESTIMONIALS.map((t, i) => /*#__PURE__*/React.createElement("figure", {
+    className: "tst",
+    key: i
+  }, /*#__PURE__*/React.createElement("blockquote", null, t.t), /*#__PURE__*/React.createElement("figcaption", null, /*#__PURE__*/React.createElement("span", {
+    className: "tst-n"
+  }, t.n), /*#__PURE__*/React.createElement("span", {
+    className: "tst-g"
+  }, t.g))))), /*#__PURE__*/React.createElement("h2", {
+    className: "sec-title"
+  }, "\u05E8\u05D2\u05E2\u05D9\u05DD \u05DE\u05D4\u05DB\u05D9\u05EA\u05D4 \uD83D\uDCF8"), /*#__PURE__*/React.createElement("p", {
+    className: "sec-sub"
+  }, "\u05E2\u05E9\u05E8 \u05E9\u05E0\u05D9\u05DD \u05E9\u05DC \u05E9\u05D9\u05E2\u05D5\u05E8\u05D9\u05DD, \u05DE\u05E2\u05D1\u05D3\u05D5\u05EA \u05D5\u05E1\u05D5\u05E4\u05D9 \u05E9\u05E0\u05D4"), /*#__PURE__*/React.createElement(Classroom, null), /*#__PURE__*/React.createElement("h2", {
     className: "sec-title"
   }, "\u05E9\u05DC\u05D5\u05E9\u05EA \u05D4\u05E1\u05E4\u05E8\u05D9\u05DD \u05E9\u05DB\u05EA\u05D1\u05EA\u05D9 \uD83D\uDCDA"), /*#__PURE__*/React.createElement("p", {
     className: "sec-sub"
@@ -1385,11 +1512,12 @@ function About() {
     target: "_blank",
     rel: "noopener"
   }, /*#__PURE__*/React.createElement("img", {
-    src: "book-questions.png",
-    alt: "\u05E1\u05E4\u05E8 \u05D4\u05E9\u05D0\u05DC\u05D5\u05EA"
+    src: "book-questions.jpg",
+    alt: "\u05DB\u05E8\u05D9\u05DB\u05EA \u05E1\u05E4\u05E8 \u05D4\u05E9\u05D0\u05DC\u05D5\u05EA",
+    loading: "lazy"
   }), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("span", {
     className: "tag"
-  }, "\u05DE\u05D4\u05D3\u05D5\u05E8\u05D4 II"), /*#__PURE__*/React.createElement("h4", null, "\u05E1\u05E4\u05E8 \u05D4\u05E9\u05D0\u05DC\u05D5\u05EA"), /*#__PURE__*/React.createElement("p", null, "1,674 \u05E9\u05D0\u05DC\u05D5\u05EA \u05D1\u05D2\u05E8\u05D5\u05EA \u05D1\u05E0\u05D5\u05E9\u05D0\u05D9 \u05D4\u05DC\u05D9\u05D1\u05D4 \u05D5\u05D4\u05D4\u05E2\u05DE\u05E7\u05D4."), /*#__PURE__*/React.createElement("span", {
+  }, "\u05DE\u05D4\u05D3\u05D5\u05E8\u05D4 II"), /*#__PURE__*/React.createElement("h4", null, "\u05E1\u05E4\u05E8 \u05D4\u05E9\u05D0\u05DC\u05D5\u05EA"), /*#__PURE__*/React.createElement("p", null, "1,706 \u05E9\u05D0\u05DC\u05D5\u05EA \u05D1\u05D2\u05E8\u05D5\u05EA, \u05DC\u05E4\u05D9 \u05E0\u05D5\u05E9\u05D0 \u05D5\u05EA\u05EA-\u05E0\u05D5\u05E9\u05D0."), /*#__PURE__*/React.createElement("span", {
     className: "price"
   }, "\u20AA149"))), /*#__PURE__*/React.createElement("a", {
     className: "book",
@@ -1397,11 +1525,12 @@ function About() {
     target: "_blank",
     rel: "noopener"
   }, /*#__PURE__*/React.createElement("img", {
-    src: "book-research.png",
-    alt: "\u05E7\u05D8\u05E2\u05D9 \u05DE\u05D7\u05E7\u05E8"
+    src: "book-research.jpg",
+    alt: "\u05DB\u05E8\u05D9\u05DB\u05EA \u05E7\u05D8\u05E2\u05D9 \u05DE\u05D7\u05E7\u05E8",
+    loading: "lazy"
   }), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("span", {
     className: "tag"
-  }, "\u05E4\u05D5\u05E8\u05DE\u05D8 \u05D1\u05D2\u05E8\u05D5\u05EA"), /*#__PURE__*/React.createElement("h4", null, "\u05E7\u05D8\u05E2\u05D9 \u05DE\u05D7\u05E7\u05E8"), /*#__PURE__*/React.createElement("p", null, "50 \u05E7\u05D8\u05E2\u05D9 \u05DE\u05D7\u05E7\u05E8 \u05E2\u05DD \u05E9\u05D0\u05DC\u05D5\u05EA, \u05D4\u05E6\u05E2\u05D5\u05EA \u05E4\u05EA\u05E8\u05D5\u05DF \u05D5\u05D4\u05E1\u05D1\u05E8\u05D9\u05DD."), /*#__PURE__*/React.createElement("span", {
+  }, "\u05E4\u05D5\u05E8\u05DE\u05D8 \u05D1\u05D2\u05E8\u05D5\u05EA"), /*#__PURE__*/React.createElement("h4", null, "\u05E7\u05D8\u05E2\u05D9 \u05DE\u05D7\u05E7\u05E8"), /*#__PURE__*/React.createElement("p", null, "50 \u05E7\u05D8\u05E2\u05D9\u05DD \u05D1\u05E4\u05D5\u05E8\u05DE\u05D8 \u05D1\u05D2\u05E8\u05D5\u05EA, \u05E2\u05DD \u05E4\u05EA\u05E8\u05D5\u05E0\u05D5\u05EA \u05DE\u05DC\u05D0\u05D9\u05DD."), /*#__PURE__*/React.createElement("span", {
     className: "price"
   }, "\u20AA95"))), /*#__PURE__*/React.createElement("a", {
     className: "book",
@@ -1409,27 +1538,24 @@ function About() {
     target: "_blank",
     rel: "noopener"
   }, /*#__PURE__*/React.createElement("img", {
-    src: "book-glossary.png",
-    alt: "\u05DE\u05D5\u05E0\u05D7\u05D5\u05DF"
+    src: "book-glossary.jpg",
+    alt: "\u05DB\u05E8\u05D9\u05DB\u05EA \u05D4\u05DE\u05D5\u05E0\u05D7\u05D5\u05DF",
+    loading: "lazy"
   }), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("span", {
     className: "tag"
-  }, "\u05EA\u05E9\u05E4\u05F4\u05D5 \xB7 2026"), /*#__PURE__*/React.createElement("h4", null, "\u05DE\u05D5\u05E0\u05D7\u05D5\u05DF"), /*#__PURE__*/React.createElement("p", null, "\u05DE\u05D9\u05DC\u05D5\u05DF \u05DE\u05D5\u05D3\u05E4\u05E1 \u05E9\u05DC 452 \u05DE\u05D5\u05E9\u05D2\u05D9\u05DD, \u05DE\u05E0\u05D5\u05E7\u05D3 \u05D5\u05DE\u05D0\u05D5\u05D9\u05E8."), /*#__PURE__*/React.createElement("span", {
+  }, "\u05EA\u05E9\u05E4\u05F4\u05D5 \xB7 2026"), /*#__PURE__*/React.createElement("h4", null, "\u05DE\u05D5\u05E0\u05D7\u05D5\u05DF"), /*#__PURE__*/React.createElement("p", null, "452 \u05DE\u05D5\u05E9\u05D2\u05D9\u05DD \u05DE\u05E0\u05D5\u05E7\u05D3\u05D9\u05DD, \u05D1\u05D3\u05E4\u05D5\u05E1."), /*#__PURE__*/React.createElement("span", {
     className: "price"
-  }, "\u20AA69")))), /*#__PURE__*/React.createElement("div", {
-    className: "bundle"
-  }, /*#__PURE__*/React.createElement("h4", null, "\u05E9\u05DC\u05D5\u05E9\u05EA \u05D4\u05E1\u05E4\u05E8\u05D9\u05DD \u05D9\u05D7\u05D3 \uD83C\uDF81"), /*#__PURE__*/React.createElement("p", null, "\u05DB\u05DC \u05D4\u05D0\u05E8\u05D2\u05D6 \u05DC\u05D1\u05D2\u05E8\u05D5\u05EA"), /*#__PURE__*/React.createElement("div", {
-    className: "prices"
-  }, /*#__PURE__*/React.createElement("span", {
-    className: "old"
-  }, "\u20AA313"), /*#__PURE__*/React.createElement("span", {
-    className: "new"
-  }, "\u20AA249"), /*#__PURE__*/React.createElement("span", {
-    className: "save"
-  }, "\u05D7\u05D5\u05E1\u05DB\u05D9\u05DD \u20AA64")), /*#__PURE__*/React.createElement("a", {
-    href: WA,
+  }, "\u20AA69")))), /*#__PURE__*/React.createElement("p", {
+    className: "sec-sub",
+    style: {
+      textAlign: 'center',
+      marginTop: 10
+    }
+  }, "\u05E4\u05E8\u05E7 \u05DC\u05D3\u05D5\u05D2\u05DE\u05D4 \u05D7\u05D9\u05E0\u05DD \u05DE\u05DB\u05DC \u05E1\u05E4\u05E8 \xB7 ", /*#__PURE__*/React.createElement("a", {
+    href: SITE + '/shop',
     target: "_blank",
     rel: "noopener"
-  }, "\u05DC\u05E8\u05DB\u05D9\u05E9\u05EA \u05D4\u05D7\u05D1\u05D9\u05DC\u05D4 \u2192")), /*#__PURE__*/React.createElement("div", {
+  }, "\u05DC\u05DB\u05DC \u05D4\u05E1\u05E4\u05E8\u05D9\u05DD \u05D1\u05D0\u05EA\u05E8 \u2190")), /*#__PURE__*/React.createElement("div", {
     className: "install-about"
   }, /*#__PURE__*/React.createElement("img", {
     src: "icon-192.png",
@@ -1459,14 +1585,20 @@ function About() {
     href: "mailto:biomedilab88@gmail.com"
   }, /*#__PURE__*/React.createElement("span", {
     className: "em"
-  }, "\u2709\uFE0F"), " \u05DE\u05D9\u05D9\u05DC")), /*#__PURE__*/React.createElement("div", {
+  }, "\u2709\uFE0F"), " \u05DE\u05D9\u05D9\u05DC")), /*#__PURE__*/React.createElement("p", {
+    className: "sec-sub",
+    style: {
+      textAlign: 'center',
+      marginTop: 8
+    }
+  }, "\u05D0\u05F3\u2014\u05D4\u05F3 \xB7 10:00\u201421:00"), /*#__PURE__*/React.createElement("div", {
     style: {
       textAlign: 'center',
       marginTop: 14
     }
   }, /*#__PURE__*/React.createElement("a", {
     className: "btn btn-ghost",
-    href: "https://nethanelmedina88-cmyk.github.io/Bio_MediLab/",
+    href: SITE,
     target: "_blank",
     rel: "noopener",
     style: {

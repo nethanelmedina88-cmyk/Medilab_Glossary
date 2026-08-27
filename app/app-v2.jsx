@@ -427,27 +427,113 @@ function Crossword({dark}){
   </div>);
 }
 
+/* ---------- ABOUT: content mirrored from medilabacademy.com ---------- */
+const SITE='https://medilabacademy.com';
+const CLASSROOM=[
+  {src:'classroom-1.webp',alt:'שיעור על מבנה ה-DNA בכיתה'},
+  {src:'classroom-2.webp',alt:'תלמידים בחלוקי מעבדה בפעילות בחוץ'},
+  {src:'classroom-3.webp',alt:'תמונת סוף שנה עם הכיתה'},
+  {src:'classroom-4.webp',alt:'עבודה בקבוצות בשיעור'},
+  {src:'classroom-5.webp',alt:'הרצאה מול הכיתה'},
+  {src:'classroom-6.webp',alt:'חגיגת סיום שנה'}
+];
+const TESTIMONIALS=[
+  {n:'תהל ח׳',g:85,t:'המבחן הראשון שלי נגמר ב-40, והחלטתי שאני שונאת את זה — אבל נתנאל לא הסכים. השלמנו ביחד יותר משנה של פערים.'},
+  {n:'אמלי ס׳',g:88,t:'כשהיה לי קשה, הוא תמיד דאג להבין מה הקושי האמיתי. בלי העזרה שלו לא הייתי מגיעה לציון שהגעתי אליו.'},
+  {n:'יונתן מ׳',g:89,t:'הסביר את החומר בצורה הכי ברורה, ותמיד ענה על שאלות גם מחוץ לשיעור. אצל נתנאל אפשר להגיד: מי שרצה — הצליח.'},
+  {n:'שון ס׳',g:95,t:'מביא את הלימודים בצורה נגישה עם דוגמאות מהעולם האמיתי, ומצית אהבה למדעים ולביולוגיה בפרט.'},
+  {n:'איתן ו׳',g:97,t:'היכולת להפוך כל שיעור לחוויה היא נדירה, והוא מעמיק הרבה מעבר לתוכנית הלימודים — מתוך תשוקה אמיתית לידע.'},
+  {n:'רוני ב׳',g:98,t:'יודע למצוא את הדימוי המדויק שמסביר גם נושאים מורכבים, ומעביר שיעורים בצחוק ובחן.'},
+  {n:'דניאלה ק׳',g:98,t:'מצגות מרתקות, מחקרים וניסויים מדהימים. הפקנו המון ידע ובעיקר אין-סוף סקרנות.'},
+  {n:'נועה א׳',g:100,t:'הפך את המקצוע מתחום אפור ומשעמם למקצוע הכי מעניין שלמדתי בתיכון.'},
+  {n:'יולי א׳',g:100,t:'קשוב, סבלני, בגובה העיניים — והיה מוכן לעצור ולהסביר שוב, גם מיליון פעם בדרכים שונות.'}
+];
+// 5s per photo. Honours prefers-reduced-motion: an auto-advancing carousel is exactly the
+// kind of motion that setting exists to stop, so there we show one photo and let the dots drive.
+function Classroom(){
+  const [i,setI]=useState(0);
+  const [paused,setPaused]=useState(false);
+  useEffect(()=>{
+    let reduce=false;
+    try{ reduce=window.matchMedia('(prefers-reduced-motion: reduce)').matches; }catch(e){}
+    if(reduce||paused) return;
+    const id=setInterval(()=>setI(n=>(n+1)%CLASSROOM.length),5000);
+    return ()=>clearInterval(id);
+  },[paused]);
+  return (<div className="cr-wrap">
+    <div className="cr-stage" onClick={()=>setPaused(p=>!p)} title={paused?'המשך':'עצירה'}>
+      {CLASSROOM.map((s,n)=>(
+        <img key={s.src} src={s.src} alt={s.alt} loading="lazy"
+             className={'cr-img'+(n===i?' on':'')} aria-hidden={n!==i}/>
+      ))}
+    </div>
+    <div className="cr-dots">{CLASSROOM.map((s,n)=>(
+      <button key={n} className={'cr-dot'+(n===i?' on':'')} onClick={()=>setI(n)}
+              aria-label={'תמונה '+(n+1)+' מתוך '+CLASSROOM.length}/>
+    ))}</div>
+  </div>);
+}
 function About(){
   return (<>
     <div className="hero"><h1>אודות</h1><p>נתנאל יוחאי מדינה · מורה לביולוגיה ולביוטכנולוגיה</p></div>
     <div className="about-hero"><img className="portrait" src="portrait.jpg" alt="נתנאל מדינה"/>
       <div><div className="about-kicker">שיעורים פרטיים · 5 יח״ל · ביוטכנולוגיה 10 יח״ל</div><div className="about-name">נעים להכיר — נתנאל 👋</div></div></div>
-    <p className="about-body">מורה לביולוגיה ולביוטכנולוגיה עם <b>10 שנות ניסיון בתיכון</b>, מגיש תלמידים לבגרות בביולוגיה (5 יח״ל) ובביוטכנולוגיה (10 יח״ל).</p>
-    <p className="about-body"><b>מעביר שיעורים פרטיים — יחידניים (אחד-על-אחד) ובקבוצות קטנות</b>, בזום או פרונטלי במרכז למידה. ליווי אישי, מותאם לרמה ולקצב של כל תלמיד — עד הבגרות. 📈</p>
+    <p className="about-body">מורה לביולוגיה ולביוטכנולוגיה עם <b>10 שנות ניסיון בהכנה לבגרות</b> בביולוגיה (5 יח״ל) ובביוטכנולוגיה (10 יח״ל).</p>
+    <p className="about-body"><b>שיעורים אחד-על-אחד או בקבוצות קטנות</b> — מקוון בזום או פרונטלי במרכז ״כיוונים״ באשדוד. שיחת היכרות ראשונה תמיד על חשבוני. 📈</p>
     <div className="quote">״אני מאמין שלכל תלמיד יש דרך משלו להבין, והתפקיד שלי הוא למצוא אותה.״</div>
-    <div className="stat-row"><div className="stat-box"><b>10</b><span>שנות הוראה</span></div><div className="stat-box"><b>1,600+</b><span>שאלות בגרות</span></div><div className="stat-box"><b>3</b><span>ספרי עזר</span></div></div>
-    <div className="degrees">
-      <div className="degree"><span className="tag">B.Sc</span><div><b>תואר ראשון בביולוגיה</b><span>אוניברסיטת חיפה</span></div></div>
-      <div className="degree"><span className="tag">M.Teach</span><div><b>תואר שני בהוראת המדעים</b><span>מכללת אורנים</span></div></div>
-      <div className="degree"><span className="tag">M.Sc</span><div><b>תואר שני בביוטכנולוגיה</b><span>מכון ויצמן למדע</span></div></div>
+    <div className="stat-row">
+      <div className="stat-box"><b>94</b><span>ציון ממוצע</span></div>
+      <div className="stat-box"><b>100</b><span>הציון הגבוה</span></div>
+      <div className="stat-box"><b>10+</b><span>שנות ניסיון</span></div>
     </div>
+    <div className="degrees">
+      <div className="degree"><span className="tag">B.Sc</span><div><b>ביולוגיה</b><span>אוניברסיטת חיפה</span></div></div>
+      <div className="degree"><span className="tag">M.Teach</span><div><b>הוראת ביולוגיה</b><span>מכללת אורנים</span></div></div>
+      <div className="degree"><span className="tag">M.Sc</span><div><b>הוראת המדעים</b><span>מכון ויצמן למדע</span></div></div>
+    </div>
+
+    <h2 className="sec-title">הלומדה המלאה 🎓</h2>
+    <p className="sec-sub">שליפים הוא המונחון. באתר מחכה כל השאר.</p>
+    <div className="lomda">
+      <p>כל תת-נושא מקבל דרגת שליטה שעולה רק מתשובות נכונות על שאלות בגרות אמיתיות — כך רואים בדיוק מה עוד לא סגור, במקום להרגיש שקראתם.</p>
+      <div className="lomda-stats">
+        <div><b>893</b><span>שאלות בגרות אמיתיות</span></div>
+        <div><b>24</b><span>פרקים · 3 קורסי ליבה</span></div>
+        <div><b>1971–2025</b><span>שנות מועדים</span></div>
+      </div>
+      <ul className="lomda-list">
+        <li>הסבר לכל תשובה — נכונה או שגויה — שמראה איפה בדיוק נפלתם</li>
+        <li>שלושה רמזים מדורגים בכל שאלה שנתקעתם בה</li>
+        <li>שאלה אישית למורה על כל שאלה, עם תשובה בדרך כלל באותו יום</li>
+        <li>מפת מסע אישית ב-24 פרקים, ומדליה על כל פרק שנסגר</li>
+      </ul>
+      <a className="btn btn-accent lomda-cta" href={SITE+'/start'} target="_blank" rel="noopener">14 יום חינם, בלי כרטיס אשראי ←</a>
+    </div>
+
+    <h2 className="sec-title">מה תלמידים כותבים 💬</h2>
+    <p className="sec-sub">גוררים לצדדים · הציון שקיבלו בבגרות מופיע לצד השם</p>
+    <Scroller className="tsts">
+      {TESTIMONIALS.map((t,i)=>(
+        <figure className="tst" key={i}>
+          <blockquote>{t.t}</blockquote>
+          <figcaption><span className="tst-n">{t.n}</span><span className="tst-g">{t.g}</span></figcaption>
+        </figure>
+      ))}
+    </Scroller>
+
+    <h2 className="sec-title">רגעים מהכיתה 📸</h2>
+    <p className="sec-sub">עשר שנים של שיעורים, מעבדות וסופי שנה</p>
+    <Classroom/>
+
     <h2 className="sec-title">שלושת הספרים שכתבתי 📚</h2><p className="sec-sub">מותאמים לתוכנית הלימודים תשפ״ו · מנוקדים, מאוירים, נגישים</p>
     <div className="books">
-      <a className="book" href={WA} target="_blank" rel="noopener"><img src="book-questions.png" alt="ספר השאלות"/><div><span className="tag">מהדורה II</span><h4>ספר השאלות</h4><p>1,674 שאלות בגרות בנושאי הליבה וההעמקה.</p><span className="price">₪149</span></div></a>
-      <a className="book" href={WA} target="_blank" rel="noopener"><img src="book-research.png" alt="קטעי מחקר"/><div><span className="tag">פורמט בגרות</span><h4>קטעי מחקר</h4><p>50 קטעי מחקר עם שאלות, הצעות פתרון והסברים.</p><span className="price">₪95</span></div></a>
-      <a className="book" href={WA} target="_blank" rel="noopener"><img src="book-glossary.png" alt="מונחון"/><div><span className="tag">תשפ״ו · 2026</span><h4>מונחון</h4><p>מילון מודפס של 452 מושגים, מנוקד ומאויר.</p><span className="price">₪69</span></div></a>
+      <a className="book" href={WA} target="_blank" rel="noopener"><img src="book-questions.jpg" alt="כריכת ספר השאלות" loading="lazy"/><div><span className="tag">מהדורה II</span><h4>ספר השאלות</h4><p>1,706 שאלות בגרות, לפי נושא ותת-נושא.</p><span className="price">₪149</span></div></a>
+      <a className="book" href={WA} target="_blank" rel="noopener"><img src="book-research.jpg" alt="כריכת קטעי מחקר" loading="lazy"/><div><span className="tag">פורמט בגרות</span><h4>קטעי מחקר</h4><p>50 קטעים בפורמט בגרות, עם פתרונות מלאים.</p><span className="price">₪95</span></div></a>
+      <a className="book" href={WA} target="_blank" rel="noopener"><img src="book-glossary.jpg" alt="כריכת המונחון" loading="lazy"/><div><span className="tag">תשפ״ו · 2026</span><h4>מונחון</h4><p>452 מושגים מנוקדים, בדפוס.</p><span className="price">₪69</span></div></a>
     </div>
-    <div className="bundle"><h4>שלושת הספרים יחד 🎁</h4><p>כל הארגז לבגרות</p><div className="prices"><span className="old">₪313</span><span className="new">₪249</span><span className="save">חוסכים ₪64</span></div><a href={WA} target="_blank" rel="noopener">לרכישת החבילה →</a></div>
+    <p className="sec-sub" style={{textAlign:'center',marginTop:10}}>
+      פרק לדוגמה חינם מכל ספר · <a href={SITE+'/shop'} target="_blank" rel="noopener">לכל הספרים באתר ←</a>
+    </p>
     <div className="install-about">
       <img src="icon-192.png" alt="" aria-hidden="true"/>
       <div><h4>התקינו את שליפים למסך הבית</h4><p>גישה מהירה כמו אפליקציה אמיתית — עובדת גם ללא אינטרנט.</p></div>
@@ -460,7 +546,8 @@ function About(){
       <a href="https://instagram.com/bio_bagrut" target="_blank" rel="noopener"><span className="em">📷</span> @bio_bagrut</a>
       <a href="mailto:biomedilab88@gmail.com"><span className="em">✉️</span> מייל</a>
     </div>
-    <div style={{textAlign:'center',marginTop:14}}><a className="btn btn-ghost" href="https://nethanelmedina88-cmyk.github.io/Bio_MediLab/" target="_blank" rel="noopener" style={{textDecoration:'none'}}>לאתר המלא ←</a></div>
+    <p className="sec-sub" style={{textAlign:'center',marginTop:8}}>א׳—ה׳ · 10:00—21:00</p>
+    <div style={{textAlign:'center',marginTop:14}}><a className="btn btn-ghost" href={SITE} target="_blank" rel="noopener" style={{textDecoration:'none'}}>לאתר המלא ←</a></div>
     <p className="credit">אייקונים: <a href="https://github.com/jdecked/twemoji" target="_blank" rel="noopener">Twemoji</a> · רישיון CC-BY 4.0</p>
     <div className="legal-links">
       <a href="legal.html#terms" target="_blank" rel="noopener">תנאי שימוש</a>
