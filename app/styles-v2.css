@@ -303,16 +303,23 @@ html.dark .gate-loss{background:#3a2a10;border-color:#8a6520;color:#f0d5a8!impor
 .lomda-list li{font-size:13px;line-height:1.5;color:var(--text-2)}
 .lomda-cta{width:100%;justify-content:center;text-decoration:none}
 
-.tsts{gap:10px;margin-top:8px}
-.tst{flex:0 0 78%;max-width:300px;margin:0;background:var(--surface);border:1px solid var(--border);
-  border-radius:var(--r-lg);padding:14px 16px;box-shadow:var(--e1);display:flex;flex-direction:column;gap:10px}
-.tst blockquote{margin:0;font-size:13.5px;line-height:1.6;color:var(--text-2)}
-.tst blockquote::before{content:'”';font-family:'Secular One';font-size:26px;color:var(--accent);line-height:0;
-  display:inline-block;transform:translateY(8px);margin-inline-end:4px}
-.tst figcaption{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:auto}
-.tst-n{font-family:'Secular One';font-size:13px}
-.tst-g{flex:0 0 auto;font-family:'Secular One';font-size:13px;color:#fff;background:var(--grad);
-  border-radius:999px;padding:3px 11px}
+/* two cards per view, so the row scrolls half as far.
+   Needs the same flex+overflow setup .chips has — Scroller only supplies the wrapper. */
+.tsts{display:flex;gap:10px;margin-top:8px;overflow-x:auto;-webkit-overflow-scrolling:touch;
+  padding-bottom:4px;scrollbar-width:none;scroll-snap-type:x proximity}
+.tsts::-webkit-scrollbar{display:none}
+.tst{scroll-snap-align:start}
+.tst{flex:0 0 calc(50% - 5px);min-width:158px;margin:0;background:var(--surface);border:1px solid var(--border);
+  border-radius:var(--r-lg);padding:13px 14px;box-shadow:var(--e1);display:flex;flex-direction:column;gap:10px}
+.tst blockquote{margin:0;font-size:12.5px;line-height:1.55;color:var(--text-2)}
+.tst blockquote::before{content:'”';font-family:'Secular One';font-size:24px;color:var(--accent);line-height:0;
+  display:inline-block;transform:translateY(7px);margin-inline-end:3px}
+.tst figcaption{display:flex;align-items:center;gap:7px;margin-top:auto}
+.tst-av{flex:0 0 auto;width:34px;height:34px;border-radius:50%;object-fit:cover;
+  border:2px solid var(--surface);outline:1.5px solid var(--accent);background:var(--surface-2)}
+.tst-n{font-family:'Secular One';font-size:12px;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.tst-g{flex:0 0 auto;font-family:'Secular One';font-size:12px;color:#fff;background:var(--grad);
+  border-radius:999px;padding:3px 9px}
 
 .cr-wrap{margin-top:8px}
 .cr-stage{position:relative;aspect-ratio:3/2;border-radius:var(--r-lg);overflow:hidden;

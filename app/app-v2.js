@@ -1354,42 +1354,53 @@ const CLASSROOM = [{
   src: 'classroom-6.webp',
   alt: 'חגיגת סיום שנה'
 }];
+// Quotes are verbatim excerpts from medilabacademy.com; photos come from the same cards there,
+// so a face is never paired with the wrong name.
 const TESTIMONIALS = [{
   n: 'תהל ח׳',
   g: 85,
-  t: 'המבחן הראשון שלי נגמר ב-40, והחלטתי שאני שונאת את זה — אבל נתנאל לא הסכים. השלמנו ביחד יותר משנה של פערים.'
+  img: 'rec-tahel.jpg',
+  t: 'המבחן הראשון שלי נגמר ב-40. השלמנו ביחד יותר משנה של פערים.'
 }, {
   n: 'אמלי ס׳',
   g: 88,
-  t: 'כשהיה לי קשה, הוא תמיד דאג להבין מה הקושי האמיתי. בלי העזרה שלו לא הייתי מגיעה לציון שהגעתי אליו.'
+  img: 'rec-emily.jpg',
+  t: 'בלי העזרה המקצועית שלו לא הייתי מגיעה לציון שהגעתי אליו.'
 }, {
   n: 'יונתן מ׳',
   g: 89,
-  t: 'הסביר את החומר בצורה הכי ברורה, ותמיד ענה על שאלות גם מחוץ לשיעור. אצל נתנאל אפשר להגיד: מי שרצה — הצליח.'
+  img: 'rec-yonatan.jpg',
+  t: 'אצל נתנאל באמת אפשר להגיד: מי שרצה — הצליח.'
 }, {
   n: 'שון ס׳',
   g: 95,
-  t: 'מביא את הלימודים בצורה נגישה עם דוגמאות מהעולם האמיתי, ומצית אהבה למדעים ולביולוגיה בפרט.'
+  img: 'rec-shon.jpg',
+  t: 'מצית אהבה אצל התלמידים למדעים וביולוגיה בפרט.'
 }, {
   n: 'איתן ו׳',
   g: 97,
-  t: 'היכולת להפוך כל שיעור לחוויה היא נדירה, והוא מעמיק הרבה מעבר לתוכנית הלימודים — מתוך תשוקה אמיתית לידע.'
+  img: 'rec-eitan.jpg',
+  t: 'היכולת להפוך כל שיעור לחוויה היא נדירה.'
 }, {
   n: 'רוני ב׳',
   g: 98,
-  t: 'יודע למצוא את הדימוי המדויק שמסביר גם נושאים מורכבים, ומעביר שיעורים בצחוק ובחן.'
+  img: 'rec-roni.jpg',
+  t: 'יודע למצוא את הדימוי המדויק שמסביר גם נושאים מורכבים.'
 }, {
   n: 'דניאלה ק׳',
   g: 98,
-  t: 'מצגות מרתקות, מחקרים וניסויים מדהימים. הפקנו המון ידע ובעיקר אין-סוף סקרנות.'
+  img: 'rec-daniela.jpg',
+  t: 'הפקנו המון ידע ובעיקר אין-סוף סקרנות.'
 }, {
   n: 'נועה א׳',
   g: 100,
+  img: 'rec-noa.jpg',
   t: 'הפך את המקצוע מתחום אפור ומשעמם למקצוע הכי מעניין שלמדתי בתיכון.'
 }, {
   n: 'יולי א׳',
   g: 100,
-  t: 'קשוב, סבלני, בגובה העיניים — והיה מוכן לעצור ולהסביר שוב, גם מיליון פעם בדרכים שונות.'
+  img: 'rec-yuli.jpg',
+  t: 'ביולוגיה היה בין השיעורים היחידים שאהבתי, והוא הסיבה לכך.'
 }];
 // 5s per photo. Honours prefers-reduced-motion: an auto-advancing carousel is exactly the
 // kind of motion that setting exists to stop, so there we show one photo and let the dots drive.
@@ -1492,7 +1503,14 @@ function About() {
   }, TESTIMONIALS.map((t, i) => /*#__PURE__*/React.createElement("figure", {
     className: "tst",
     key: i
-  }, /*#__PURE__*/React.createElement("blockquote", null, t.t), /*#__PURE__*/React.createElement("figcaption", null, /*#__PURE__*/React.createElement("span", {
+  }, /*#__PURE__*/React.createElement("blockquote", null, t.t), /*#__PURE__*/React.createElement("figcaption", null, /*#__PURE__*/React.createElement("img", {
+    className: "tst-av",
+    src: t.img,
+    alt: t.n,
+    loading: "lazy",
+    width: "34",
+    height: "34"
+  }), /*#__PURE__*/React.createElement("span", {
     className: "tst-n"
   }, t.n), /*#__PURE__*/React.createElement("span", {
     className: "tst-g"
