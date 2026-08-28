@@ -105,16 +105,50 @@ if('serviceWorker' in navigator){
   });
 }
 </script>
-<div id="cookiebar" role="dialog" aria-label="הודעת עוגיות" style="display:none;position:fixed;inset-inline:0;bottom:0;z-index:9999;background:#15212C;color:#fff;padding:14px 16px;box-shadow:0 -6px 24px rgba(0,0,0,.3);font-family:'Assistant',system-ui,sans-serif">
-  <div style="max-width:520px;margin:0 auto;display:flex;gap:12px;align-items:center;flex-wrap:wrap;justify-content:center;font-size:14px">
-    <span style="flex:1;min-width:200px">אנו משתמשים בעוגיות ובאחסון מקומי לתפעול האפליקציה ולשמירת ההעדפות שלך. <a href="legal.html#privacy" style="color:#F4A52A">מדיניות הפרטיות</a></span>
-    <button id="cookieok" style="background:#F4A52A;color:#15212C;border:none;border-radius:10px;padding:9px 22px;font-weight:700;font-family:inherit;font-size:14px;cursor:pointer">אישור</button>
+<style>
+  /* The bar sits ABOVE the bottom navigation — pinned to bottom:0 it covered the nav and
+     locked the user out of the tabs. --cookiebar-nav is the measured nav height. */
+  #cookiebar{display:none;position:fixed;inset-inline:0;bottom:var(--cookiebar-nav,0px);z-index:60;
+    background:#15212C;color:#fff;padding:13px 16px calc(13px + env(safe-area-inset-bottom,0px));
+    box-shadow:0 -6px 24px rgba(0,0,0,.32);font-family:'Assistant',system-ui,sans-serif;
+    border-top:1px solid rgba(255,255,255,.12)}
+  #cookiebar .cb-in{max-width:520px;margin:0 auto;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+  #cookiebar p{flex:1 1 190px;margin:0;font-size:13px;line-height:1.5}
+  #cookiebar a{color:#F7B23B;text-decoration:underline}
+  #cookieok{flex:0 0 auto;background:#F4A52A;color:#15212C;border:none;border-radius:10px;
+    padding:11px 26px;font-weight:800;font-family:inherit;font-size:14.5px;cursor:pointer;min-height:44px}
+  #cookieok:active{transform:scale(.97)}
+  @media (max-width:430px){ #cookieok{flex:1 1 100%} }
+</style>
+<div id="cookiebar" role="dialog" aria-label="הודעת עוגיות">
+  <div class="cb-in">
+    <p>אנו משתמשים בעוגיות ובאחסון מקומי לתפעול האפליקציה ולשמירת ההעדפות שלך.
+      <a href="legal.html#privacy">מדיניות הפרטיות</a></p>
+    <button id="cookieok" type="button">אישור</button>
   </div>
 </div>
 <script>
-(function(){ try{ if(localStorage.getItem('sl-cookie-ok')==='1') return; }catch(e){}
-  var bar=document.getElementById('cookiebar'); if(!bar) return; bar.style.display='block';
-  var btn=document.getElementById('cookieok'); if(btn) btn.addEventListener('click',function(){ try{localStorage.setItem('sl-cookie-ok','1');}catch(e){} bar.style.display='none'; });
+(function(){
+  try{ if(localStorage.getItem('sl-cookie-ok')==='1') return; }catch(e){}
+  var bar=document.getElementById('cookiebar'); if(!bar) return;
+  // Keep the bar clear of the bottom nav. The nav is rendered by React, so poll briefly
+  // until it exists, then track it on resize (its height changes with the safe-area inset).
+  function place(){
+    var nav=document.querySelector('.nav');
+    var h=nav?Math.round(nav.getBoundingClientRect().height):0;
+    document.documentElement.style.setProperty('--cookiebar-nav', h+'px');
+  }
+  var tries=0;
+  var poll=setInterval(function(){ place(); if(document.querySelector('.nav')||++tries>40) clearInterval(poll); },150);
+  window.addEventListener('resize',place);
+  bar.style.display='block';
+  var btn=document.getElementById('cookieok');
+  if(btn) btn.addEventListener('click',function(){
+    try{ localStorage.setItem('sl-cookie-ok','1'); }catch(e){}
+    bar.style.display='none';
+    window.removeEventListener('resize',place);
+    document.documentElement.style.removeProperty('--cookiebar-nav');
+  });
 })();
 </script>
 </body>
