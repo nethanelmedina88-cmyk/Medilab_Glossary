@@ -440,16 +440,45 @@ const CLASSROOM=[
 // Quotes are verbatim excerpts from medilabacademy.com; photos come from the same cards there,
 // so a face is never paired with the wrong name.
 const TESTIMONIALS=[
-  {n:'תהל ח׳',g:85,img:'rec-tahel.jpg',t:'המבחן הראשון שלי נגמר ב-40. השלמנו ביחד יותר משנה של פערים.'},
-  {n:'אמלי ס׳',g:88,img:'rec-emily.jpg',t:'בלי העזרה המקצועית שלו לא הייתי מגיעה לציון שהגעתי אליו.'},
-  {n:'יונתן מ׳',g:89,img:'rec-yonatan.jpg',t:'אצל נתנאל באמת אפשר להגיד: מי שרצה — הצליח.'},
-  {n:'שון ס׳',g:95,img:'rec-shon.jpg',t:'מצית אהבה אצל התלמידים למדעים וביולוגיה בפרט.'},
-  {n:'איתן ו׳',g:97,img:'rec-eitan.jpg',t:'היכולת להפוך כל שיעור לחוויה היא נדירה.'},
-  {n:'רוני ב׳',g:98,img:'rec-roni.jpg',t:'יודע למצוא את הדימוי המדויק שמסביר גם נושאים מורכבים.'},
-  {n:'דניאלה ק׳',g:98,img:'rec-daniela.jpg',t:'הפקנו המון ידע ובעיקר אין-סוף סקרנות.'},
-  {n:'נועה א׳',g:100,img:'rec-noa.jpg',t:'הפך את המקצוע מתחום אפור ומשעמם למקצוע הכי מעניין שלמדתי בתיכון.'},
-  {n:'יולי א׳',g:100,img:'rec-yuli.jpg',t:'ביולוגיה היה בין השיעורים היחידים שאהבתי, והוא הסיבה לכך.'}
+  {n:'תהל ח׳',g:85,img:'rec-tahel.jpg',t:'בתחילת כיתה י״א הגעתי לכיתה של נתנאל. ביולוגיה הרגישה לי כמו שפה זרה, והמבחן הראשון שלי נגמר ב-40. החלטתי שאני שונאת את זה — אבל נתנאל לא הסכים. השלמנו ביחד יותר משנה של פערים. הוא היה איתי גם כשרציתי לוותר, האמין בי והזכיר לי שאני מסוגלת.'},
+  {n:'אמלי ס׳',g:88,img:'rec-emily.jpg',t:'נתנאל היה הרבה מעבר למורה עבורי. כשהיה לי קשה בלימודים, הוא תמיד דאג להבין מה הקושי האמיתי, ולהתאים את העזרה למה שאני צריכה באותו רגע. בלי העזרה המקצועית שלו לא הייתי מגיעה לציון שהגעתי אליו, ובלי האמונה שלו לא הייתי נמצאת במקום שאליו שאפתי להגיע.'},
+  {n:'יונתן מ׳',g:89,img:'rec-yonatan.jpg',t:'נתנאל תמיד דאג לי כמורה — שאני אצליח בצורה הכי טובה שאפשר. הסביר את החומר בצורה הכי ברורה, ותמיד ענה על שאלות גם מחוץ לשיעור. אצל נתנאל באמת אפשר להגיד: מי שרצה — הצליח. הוא דאג לנו גם לימודית וגם אישית.'},
+  {n:'שון ס׳',g:95,img:'rec-shon.jpg',t:'נתנאל מורה מעולה — גם בצורה שהוא מביא את הלימודים באופן נגיש עם דוגמאות מהעולם האמיתי להבנה עמוקה, וגם בגישה החיובית שלו. מעבר לחומר, הוא מורה שאוהב להרחיב את הידע, ומצית אהבה אצל התלמידים למדעים וביולוגיה בפרט.'},
+  {n:'איתן ו׳',g:97,img:'rec-eitan.jpg',t:'נתנאל הוא הרבה יותר מסתם מורה, הוא המורה הטוב ביותר שזכיתי ללמוד אצלו. היכולת להפוך כל שיעור לחוויה היא נדירה, והוא דואג להעמיק ולהרחיב הרבה מעבר לתוכנית הלימודים — מתוך תשוקה אמיתית לידע. כשתלמיד שואל שאלה, הוא חוקר לעומק ומחזיר תשובה מפורטת וברורה.'},
+  {n:'רוני ב׳',g:98,img:'rec-roni.jpg',t:'נתנאל הוא מורה מיוחד ולא שגרתי. מעורר השראה, נותן יחס אישי לכל תלמיד ומאמין בכולם. יודע למצוא את הדימוי המדויק שמסביר גם נושאים מורכבים, ומעביר שיעורים בצחוק ובחן. דורש מכל אחד את המקסימום ודוחף לקצה היכולת, כי ההצלחה שלנו חשובה לו.'},
+  {n:'דניאלה ק׳',g:98,img:'rec-daniela.jpg',t:'נתנאל מורה מעורר השראה בכמות תשומת הלב שהפגנת כלפי כל קושי שתלמידים חוו, ועזרת לנווט אותם להצלחה במבחנים. תמיד היה חשוב לך להרחיב את האופקים ולהציג את התוכן בביולוגיה בצורה הכי מעניינת — מצגות מרתקות, מחקרים וניסויים מדהימים.'},
+  {n:'נועה א׳',g:100,img:'rec-noa.jpg',t:'אם הייתם אומרים לי בתחילת כיתה י׳ שלא רק שאסיים בציון מעולה אלא גם אתאהב במקצוע, לא הייתי מאמינה. נתנאל הפך את המקצוע מתחום אפור ומשעמם למקצוע הכי מעניין שלמדתי בתיכון.'},
+  {n:'יולי א׳',g:100,img:'rec-yuli.jpg',t:'נתנאל תמיד היה לי לאוזן קשבת, ולימוד איתו השאיר עליי חותם אמיתי. קשוב, סבלני, בגובה העיניים — והיה מוכן לעצור ולהסביר שוב, גם מיליון פעם בדרכים שונות. ביולוגיה היה בין השיעורים היחידים שאהבתי, והוא הסיבה לכך.'}
 ];
+// Auto-scrolling strip. The list is rendered twice so the loop is seamless; the second copy is
+// hidden from assistive tech. Motion pauses on hover, on the button, and for
+// prefers-reduced-motion — WCAG 2.2.2 needs a way to stop anything that moves for over 5s.
+function Testimonials(){
+  const [paused,setPaused]=useState(false);
+  useEffect(()=>{
+    try{ if(window.matchMedia('(prefers-reduced-motion: reduce)').matches) setPaused(true); }catch(e){}
+  },[]);
+  const items=TESTIMONIALS.concat(TESTIMONIALS);
+  return (<div className="marq-wrap">
+    <div className={'marq'+(paused?' paused':'')}>
+      <div className="marq-track">
+        {items.map((t,i)=>{ const dup=i>=TESTIMONIALS.length;
+          return (<figure className="tst" key={i} aria-hidden={dup||undefined}>
+            <blockquote>{t.t}</blockquote>
+            <figcaption>
+              <img className="tst-av" src={t.img} alt={dup?'':t.n} loading="lazy" width="38" height="38"/>
+              <span className="tst-n">{t.n}</span>
+              <span className="tst-g">{t.g}</span>
+            </figcaption>
+          </figure>);
+        })}
+      </div>
+    </div>
+    <button className="marq-btn" onClick={()=>setPaused(p=>!p)} aria-pressed={paused}>
+      {paused?'▶ להמשך הגלילה':'⏸ לעצירה'}
+    </button>
+  </div>);
+}
 // 5s per photo. Honours prefers-reduced-motion: an auto-advancing carousel is exactly the
 // kind of motion that setting exists to stop, so there we show one photo and let the dots drive.
 function Classroom(){
@@ -513,19 +542,8 @@ function About(){
     </div>
 
     <h2 className="sec-title">מה תלמידים כותבים 💬</h2>
-    <p className="sec-sub">גוררים לצדדים · הציון שקיבלו בבגרות מופיע לצד השם</p>
-    <Scroller className="tsts">
-      {TESTIMONIALS.map((t,i)=>(
-        <figure className="tst" key={i}>
-          <blockquote>{t.t}</blockquote>
-          <figcaption>
-            <img className="tst-av" src={t.img} alt={t.n} loading="lazy" width="34" height="34"/>
-            <span className="tst-n">{t.n}</span>
-            <span className="tst-g">{t.g}</span>
-          </figcaption>
-        </figure>
-      ))}
-    </Scroller>
+    <p className="sec-sub">הציון שקיבלו בבגרות מופיע לצד השם</p>
+    <Testimonials/>
 
     <h2 className="sec-title">רגעים מהכיתה 📸</h2>
     <p className="sec-sub">עשר שנים של שיעורים, מעבדות וסופי שנה</p>

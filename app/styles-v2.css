@@ -303,23 +303,38 @@ html.dark .gate-loss{background:#3a2a10;border-color:#8a6520;color:#f0d5a8!impor
 .lomda-list li{font-size:13px;line-height:1.5;color:var(--text-2)}
 .lomda-cta{width:100%;justify-content:center;text-decoration:none}
 
-/* two cards per view, so the row scrolls half as far.
-   Needs the same flex+overflow setup .chips has — Scroller only supplies the wrapper. */
-.tsts{display:flex;gap:10px;margin-top:8px;overflow-x:auto;-webkit-overflow-scrolling:touch;
-  padding-bottom:4px;scrollbar-width:none;scroll-snap-type:x proximity}
-.tsts::-webkit-scrollbar{display:none}
-.tst{scroll-snap-align:start}
-.tst{flex:0 0 calc(50% - 5px);min-width:158px;margin:0;background:var(--surface);border:1px solid var(--border);
-  border-radius:var(--r-lg);padding:13px 14px;box-shadow:var(--e1);display:flex;flex-direction:column;gap:10px}
-.tst blockquote{margin:0;font-size:12.5px;line-height:1.55;color:var(--text-2)}
-.tst blockquote::before{content:'”';font-family:'Secular One';font-size:24px;color:var(--accent);line-height:0;
-  display:inline-block;transform:translateY(7px);margin-inline-end:3px}
-.tst figcaption{display:flex;align-items:center;gap:7px;margin-top:auto}
-.tst-av{flex:0 0 auto;width:34px;height:34px;border-radius:50%;object-fit:cover;
+/* Auto-scrolling testimonial strip. The track is forced LTR so translateX is predictable —
+   under RTL the duplicated copy lands on the wrong side and the loop visibly jumps.
+   Each card sets itself back to RTL for its Hebrew text. */
+.marq-wrap{margin-top:8px}
+.marq{overflow:hidden;
+  -webkit-mask-image:linear-gradient(to right,transparent,#000 22px,#000 calc(100% - 22px),transparent);
+  mask-image:linear-gradient(to right,transparent,#000 22px,#000 calc(100% - 22px),transparent)}
+/* Spacing lives on the card, not as `gap`: 18 cards have 17 gaps, so translateX(-50%) would
+   land half a gap off and the loop would jump 6px every pass. A per-card margin makes each
+   copy exactly half the track. */
+.marq-track{display:flex;direction:ltr;width:max-content;
+  animation:marq 95s linear infinite}
+.marq.paused .marq-track,.marq:hover .marq-track{animation-play-state:paused}
+@keyframes marq{ from{transform:translateX(0)} to{transform:translateX(-50%)} }
+@media (prefers-reduced-motion: reduce){ .marq-track{animation:none} }
+
+.tst{direction:rtl;flex:0 0 272px;margin:0 12px 0 0;background:var(--surface);border:1px solid var(--border);
+  border-radius:var(--r-lg);padding:16px 17px;box-shadow:var(--e1);display:flex;flex-direction:column;gap:12px}
+.tst blockquote{margin:0;font-size:14px;line-height:1.65;color:var(--text-2)}
+.tst blockquote::before{content:'”';font-family:'Secular One';font-size:27px;color:var(--accent);line-height:0;
+  display:inline-block;transform:translateY(9px);margin-inline-end:4px}
+.tst figcaption{display:flex;align-items:center;gap:9px;margin-top:auto}
+.tst-av{flex:0 0 auto;width:38px;height:38px;border-radius:50%;object-fit:cover;
   border:2px solid var(--surface);outline:1.5px solid var(--accent);background:var(--surface-2)}
-.tst-n{font-family:'Secular One';font-size:12px;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.tst-g{flex:0 0 auto;font-family:'Secular One';font-size:12px;color:#fff;background:var(--grad);
-  border-radius:999px;padding:3px 9px}
+.tst-n{font-family:'Secular One';font-size:13.5px;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.tst-g{flex:0 0 auto;font-family:'Secular One';font-size:13px;color:#fff;background:var(--grad);
+  border-radius:999px;padding:3px 11px}
+
+.marq-btn{display:block;margin:10px auto 0;padding:7px 16px;border-radius:var(--r-pill);
+  background:var(--surface);border:1px solid var(--border);color:var(--text-2);
+  font-size:12.5px;font-weight:700;box-shadow:var(--e1)}
+.marq-btn:active{transform:scale(.96)}
 
 .cr-wrap{margin-top:8px}
 .cr-stage{position:relative;aspect-ratio:3/2;border-radius:var(--r-lg);overflow:hidden;
