@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SHLIFIM · בדיקת ניסוחים למורה</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;500;600;700;800&family=Rubik:wght@600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#FBFAF6;--surface:#fff;--line:#ECE7DA;--ink:#15212C;--ink2:#5A6470;--ink3:#8A93A0;
+    --blue:#1B6FA8;--green:#3F8C3F;--green-soft:#EAF6EA;--coral:#F0654F;--coral-soft:#FDECE8;
+    --amber:#B96F00;--amber-soft:#FBF1DE;--yellow:#F9D85C;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Assistant',system-ui,sans-serif;background:#e9e4d7;color:var(--ink);direction:rtl;-webkit-font-smoothing:antialiased;line-height:1.6}
+
+  .top{position:sticky;top:0;z-index:10;background:rgba(251,250,246,.96);backdrop-filter:blur(10px);border-bottom:1px solid var(--line);padding:14px 18px 12px}
+  .top h1{font-family:'Rubik';font-weight:800;font-size:21px;background:linear-gradient(90deg,#1B6FA8,#3F8C3F);-webkit-background-clip:text;background-clip:text;color:transparent}
+  .top .lead{font-size:13.5px;color:var(--ink2);margin-top:3px;max-width:64ch}
+  .bar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:11px}
+  .pill{font-size:13px;font-weight:700;padding:6px 12px;border-radius:999px;background:#fff;border:1px solid var(--line);color:var(--ink2)}
+  .pill b{color:var(--blue);font-variant-numeric:tabular-nums}
+  .pill.ok b{color:var(--green)} .pill.flag b{color:var(--coral)} .pill.left b{color:var(--amber)}
+  .search{flex:1;min-width:200px;padding:9px 13px;border:1px solid var(--line);border-radius:12px;font-family:inherit;font-size:14px;background:#fff}
+  .filters{display:flex;gap:6px;flex-wrap:wrap;margin-top:9px}
+  .fbtn{font-size:12.5px;font-weight:700;padding:6px 13px;border-radius:999px;border:1px solid var(--line);background:#fff;color:var(--ink2);cursor:pointer;transition:.12s}
+  .fbtn.on{background:var(--ink);color:#fff;border-color:var(--ink)}
+  .fbtn:focus-visible{outline:2px solid var(--blue);outline-offset:2px}
+  .export{margin-inline-start:auto;font-size:12.5px;font-weight:800;padding:8px 15px;border-radius:11px;border:none;background:linear-gradient(135deg,#1B6FA8,#155a87);color:#fff;cursor:pointer}
+  .export:disabled{opacity:.45;cursor:default}
+
+  .wrap{max-width:900px;margin:16px auto;padding:0 14px 120px}
+  .card{background:var(--surface);border:1px solid var(--line);border-radius:16px;margin-bottom:12px;overflow:hidden;box-shadow:0 4px 14px rgba(0,0,0,.04)}
+  .card.is-ok{border-color:#BFE3BF} .card.is-flag{border-color:#F3B9AC}
+  .chead{display:flex;align-items:baseline;gap:10px;padding:13px 16px 9px;flex-wrap:wrap}
+  .chead .he{font-family:'Rubik';font-weight:700;font-size:18px}
+  .chead .en{font-size:12.5px;color:var(--ink3)}
+  .chead .subj{margin-inline-start:auto;font-size:11.5px;font-weight:700;color:#fff;padding:3px 10px;border-radius:999px}
+  .c-cell{background:#1B6FA8}.c-body{background:#c9601a}.c-eco{background:#3F8C3F}.c-micro{background:#5e4b97}.c-comp{background:#1f7a70}.c-gen{background:#D24B36}.c-none{background:#8A93A0}
+  .cmp{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--line);border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+  .col{background:#fff;padding:11px 16px 13px}
+  .col .lbl{font-size:11px;font-weight:800;letter-spacing:.04em;color:var(--ink3);margin-bottom:4px}
+  .col.para{background:#FCFBF7}
+  .col.para .lbl{color:var(--amber)}
+  .col .txt{font-size:14.5px;color:var(--ink)}
+  .actions{display:flex;gap:8px;align-items:center;padding:11px 16px;flex-wrap:wrap}
+  .act{font-size:13px;font-weight:800;padding:8px 15px;border-radius:10px;border:1px solid var(--line);background:#fff;cursor:pointer;transition:.12s}
+  .act:focus-visible{outline:2px solid var(--blue);outline-offset:2px}
+  .act.ok.on{background:var(--green);color:#fff;border-color:var(--green)}
+  .act.flag.on{background:var(--coral);color:#fff;border-color:var(--coral)}
+  .fix{flex:1;min-width:180px;display:none;padding:8px 12px;border:1px solid #F3B9AC;border-radius:10px;font-family:inherit;font-size:13.5px;background:#FFFBFA;resize:vertical}
+  .card.is-flag .fix{display:block}
+  .empty{text-align:center;color:var(--ink3);padding:60px 20px;font-size:15px}
+
+  .toast{position:fixed;bottom:20px;inset-inline-start:50%;transform:translateX(50%) translateY(80px);background:var(--ink);color:#fff;padding:11px 20px;border-radius:12px;font-size:13.5px;font-weight:700;box-shadow:0 10px 30px rgba(0,0,0,.25);opacity:0;transition:.28s;z-index:20}
+  .toast.show{transform:translateX(50%) translateY(0);opacity:1}
+
+  @media (max-width:620px){ .cmp{grid-template-columns:1fr} }
+  @media (prefers-reduced-motion:reduce){ *{transition:none!important} }
+</style>
+</head>
+<body>
+<div class="top">
+  <h1>בדיקת ניסוחים — 465 מושגים</h1>
+  <p class="lead">הניסוחים המנוסחים־מחדש (בעמודה הכתומה) נוצרו על ידי בינה מלאכותית ומשמשים במבחון. עבור על כל מושג: <b>אשר</b> אם הניסוח מדויק מדעית, או <b>סמן לתיקון</b> וכתוב את ההערה. ההתקדמות נשמרת אוטומטית בדפדפן.</p>
+  <div class="bar">
+    <span class="pill">סה״כ <b id="c-total">0</b></span>
+    <span class="pill ok">אושרו <b id="c-ok">0</b></span>
+    <span class="pill flag">לתיקון <b id="c-flag">0</b></span>
+    <span class="pill left">נותרו <b id="c-left">0</b></span>
+    <button class="export" id="export" disabled>⬇ ייצוא רשימת תיקונים</button>
+  </div>
+  <div class="bar">
+    <input class="search" id="q" placeholder="🔍 חיפוש מושג…">
+  </div>
+  <div class="filters" id="filters">
+    <button class="fbtn on" data-f="all">הכול</button>
+    <button class="fbtn" data-f="todo">לא נבדקו</button>
+    <button class="fbtn" data-f="ok">אושרו</button>
+    <button class="fbtn" data-f="flag">לתיקון</button>
+  </div>
+</div>
+
+<div class="wrap" id="out"><div class="empty">טוען מושגים…</div></div>
+<div class="toast" id="toast"></div>
+
+<script src="../glossary.js"></script>
+<script>
+(function(){
+  var G = window.GLOSSARY || [];
+  var KEY = 'ml-para-review';
+  var state = {};
+  try { state = JSON.parse(localStorage.getItem(KEY) || '{}'); } catch(e){ state = {}; }
+
+  var colors = {'התא':'c-cell','גוף האדם':'c-body','אקולוגיה':'c-eco','מיקרוביולוגיה':'c-micro','פיזיולוגיה השוואתית':'c-comp','הנדסה גנטית':'c-gen'};
+  var out = document.getElementById('out');
+  var q = document.getElementById('q');
+  var toastEl = document.getElementById('toast');
+  var filter = 'all', query = '';
+  var toastTimer;
+
+  function save(){ localStorage.setItem(KEY, JSON.stringify(state)); }
+  function toast(msg){ toastEl.textContent = msg; toastEl.classList.add('show'); clearTimeout(toastTimer); toastTimer = setTimeout(function(){ toastEl.classList.remove('show'); }, 1800); }
+
+  function counts(){
+    var ok=0, flag=0;
+    G.forEach(function(t){ var s=state[t.hebrew]; if(s&&s.v==='ok')ok++; else if(s&&s.v==='flag')flag++; });
+    document.getElementById('c-total').textContent = G.length;
+    document.getElementById('c-ok').textContent = ok;
+    document.getElementById('c-flag').textContent = flag;
+    document.getElementById('c-left').textContent = G.length - ok - flag;
+    document.getElementById('export').disabled = flag===0;
+  }
+
+  function visible(t){
+    var s = state[t.hebrew], v = s ? s.v : '';
+    if(filter==='todo' && v) return false;
+    if(filter==='ok' && v!=='ok') return false;
+    if(filter==='flag' && v!=='flag') return false;
+    if(query && (t.hebrew.indexOf(query)===-1 && (t.english||'').toLowerCase().indexOf(query.toLowerCase())===-1)) return false;
+    return true;
+  }
+
+  function render(){
+    var shown = G.filter(visible);
+    if(!shown.length){ out.innerHTML = '<div class="empty">אין מושגים שתואמים לסינון.</div>'; return; }
+    var html = '';
+    shown.forEach(function(t){
+      var s = state[t.hebrew] || {};
+      var cls = s.v==='ok' ? 'is-ok' : s.v==='flag' ? 'is-flag' : '';
+      var para = t.paraphrase || t.definition;
+      html += '<div class="card '+cls+'" data-h="'+esc(t.hebrew)+'">'
+        + '<div class="chead"><span class="he">'+esc(t.hebrew)+'</span>'
+        + (t.english?'<span class="en">'+esc(t.english)+'</span>':'')
+        + '<span class="subj '+(colors[t.subject]||'c-none')+'">'+esc(t.subject||'—')+'</span></div>'
+        + '<div class="cmp">'
+        +   '<div class="col orig"><div class="lbl">הגדרת מקור (במילון)</div><div class="txt">'+esc(t.definition)+'</div></div>'
+        +   '<div class="col para"><div class="lbl">ניסוח AI (במבחון)</div><div class="txt">'+esc(para)+'</div></div>'
+        + '</div>'
+        + '<div class="actions">'
+        +   '<button class="act ok '+(s.v==='ok'?'on':'')+'" data-a="ok">✓ מאושר</button>'
+        +   '<button class="act flag '+(s.v==='flag'?'on':'')+'" data-a="flag">✎ לתיקון</button>'
+        +   '<textarea class="fix" data-fix placeholder="מה לתקן / הניסוח הנכון…">'+esc(s.note||'')+'</textarea>'
+        + '</div>'
+        + '</div>';
+    });
+    out.innerHTML = html;
+  }
+
+  function esc(s){ return String(s==null?'':s).replace(/[&<>"]/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]; }); }
+
+  out.addEventListener('click', function(e){
+    var btn = e.target.closest('.act'); if(!btn) return;
+    var card = btn.closest('.card'), h = card.getAttribute('data-h');
+    var a = btn.getAttribute('data-a');
+    var cur = state[h] && state[h].v;
+    if(cur===a){ delete state[h]; }        // toggle off
+    else { state[h] = state[h]||{}; state[h].v = a; }
+    save(); counts();
+    // update just this card's classes/buttons without full re-render (keeps textarea focus)
+    card.classList.toggle('is-ok', state[h] && state[h].v==='ok');
+    card.classList.toggle('is-flag', state[h] && state[h].v==='flag');
+    card.querySelector('.act.ok').classList.toggle('on', state[h] && state[h].v==='ok');
+    card.querySelector('.act.flag').classList.toggle('on', state[h] && state[h].v==='flag');
+    if(a==='ok') toast('אושר: '+h);
+    if(filter!=='all'){ setTimeout(render, 350); }
+  });
+
+  out.addEventListener('input', function(e){
+    if(!e.target.matches('[data-fix]')) return;
+    var h = e.target.closest('.card').getAttribute('data-h');
+    state[h] = state[h]||{v:'flag'}; state[h].note = e.target.value; save();
+  });
+
+  document.getElementById('filters').addEventListener('click', function(e){
+    var b = e.target.closest('.fbtn'); if(!b) return;
+    filter = b.getAttribute('data-f');
+    [].forEach.call(this.children, function(c){ c.classList.toggle('on', c===b); });
+    render();
+  });
+
+  var qt;
+  q.addEventListener('input', function(){ clearTimeout(qt); qt=setTimeout(function(){ query=q.value.trim(); render(); },150); });
+
+  document.getElementById('export').addEventListener('click', function(){
+    var flagged = G.filter(function(t){ return state[t.hebrew] && state[t.hebrew].v==='flag'; });
+    var lines = ['רשימת ניסוחים לתיקון — SHLIFIM','נוצר: '+new Date().toLocaleString('he-IL'),'סה״כ: '+flagged.length+' מושגים','',''];
+    flagged.forEach(function(t,i){
+      var s = state[t.hebrew];
+      lines.push((i+1)+'. '+t.hebrew+(t.english?' ('+t.english+')':'')+'  ['+(t.subject||'')+']');
+      lines.push('   מקור:  '+t.definition);
+      lines.push('   ניסוח AI: '+(t.paraphrase||''));
+      lines.push('   הערת המורה: '+(s.note||'(ללא הערה)'));
+      lines.push('');
+    });
+    var blob = new Blob([lines.join('\n')], {type:'text/plain;charset=utf-8'});
+    var a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'shlifim-ניסוחים-לתיקון.txt';
+    a.click();
+    URL.revokeObjectURL(a.href);
+    toast('יוצאו '+flagged.length+' מושגים לתיקון');
+  });
+
+  counts(); render();
+})();
+</script>
+</body>
+</html>
